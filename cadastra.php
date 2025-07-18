@@ -13,6 +13,9 @@
         </section>
         
         <form id="form" class="form">
+            <div class="form_content" >
+                <span id="mensagem">Menssagem</span>
+            </div>
             <div class="form_content">
                 <label for="nome">Nome</label>
                 <input type="text" id="nome" name="nome" placeholder="Digite seu nome">
@@ -38,7 +41,7 @@
                 <input type="password" id="senha_confirmacao"  placeholder="Digite sua senha">
                 <a>mensagen de erro</a>
             </div>
-           
+            <a href="./login.php">Ja tenho conta</a>
             <button type="submit" id="cadastrar">Cadastrar</button>
         </form>
     </div>

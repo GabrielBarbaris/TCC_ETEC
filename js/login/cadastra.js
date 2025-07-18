@@ -4,7 +4,7 @@ const sobrenome = document.getElementById("sobrenome");
 const telefone = document.getElementById("telefone");
 const senha = document.getElementById("senha");
 const senha_confirmacao = document.getElementById("senha_confirmacao");
-
+$('#mensagem').fadeOut(0);
 form.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -147,7 +147,11 @@ function checa_form(){
                 success: function (response) {
                     response = response.trim();
                     if (response != "erro") {
-                        alert("cadastro com sucesso")
+                        $('#mensagem').html("Cadastrado com sucesso");
+                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+                        setTimeout(function(){
+                            $('#form')[0].reset(); // Limpa o formulário após 2.5 segundos
+                        }, 2500);
                         
                     } else {
                         console.log("Erro no servidor ao cadastrar.");

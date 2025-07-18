@@ -1,9 +1,6 @@
 const form = document.getElementById("form");
-const nome = document.getElementById("nome");
-const sobrenome = document.getElementById("sobrenome");
 const telefone = document.getElementById("telefone");
 const senha = document.getElementById("senha");
-const senha_confirmacao = document.getElementById("senha_confirmacao");
 
 form.addEventListener("submit", (event) => {
     event.preventDefault();
@@ -34,51 +31,26 @@ telefone.addEventListener("input", function () {
     telefone.value = valor;
 });
 
-nome.addEventListener("blur",() =>{
-    checa_nome();
-})
-sobrenome.addEventListener("blur",() =>{
-    checa_sobrenome();
-})
+
 telefone.addEventListener("blur",() =>{
     checa_telefone();
 })
 senha.addEventListener("blur",() =>{
     checa_senha();
 })
-senha_confirmacao.addEventListener("blur",() =>{
-    checa_senhaConfimacao();
-})
 
 
 //checagens--------------------------------------------------------
-function checa_nome() {
-    const valor_nome = nome.value;
-    if (valor_nome === "") {
-        error_imput(nome, "preencha um nome de usuario");
-    } else {
-        const form_item = nome.parentElement;
-        form_item.className = "form_content";
-    }
-}
 
-function checa_sobrenome() {
-    const valor_sobrenome = sobrenome.value;
-    if (valor_sobrenome === "") {
-        error_imput(sobrenome, "preencha seu sobrenome");
-    } else {
-        const form_item = sobrenome.parentElement;
-        form_item.className = "form_content";
-    }
-}
+
 
 function checa_telefone() {
     const valor_telefone = telefone.value;
 
     if (valor_telefone === "") {
-        error_imput(telefone, "preencha seu telefone");
+        error_imput(telefone, "digite seu telefone");
     } else if (valor_telefone.length != 15) {
-        error_imput(telefone, "preencha seu numero completo");
+        error_imput(telefone, "seu telefone esta incompleto");
     }
     else {
         const form_item = telefone.parentElement;
@@ -91,41 +63,21 @@ function checa_senha() {
     const valor_senha = senha.value;
 
     if (valor_senha === "") {
-        error_imput(senha, "digite uma senha");
-    } else if (valor_senha.length < 8) {
-        error_imput(senha, "minimo de 8 caracteres");
-    }
-    else {
+        error_imput(senha, "senha invalida");
+    } else {
         const form_item = senha.parentElement;
         form_item.className = "form_content";
     }
 
 }
 
-function checa_senhaConfimacao() {
-    const valor_senha = senha.value;
-    const valor_senhaConfirmacao = senha_confirmacao.value;
 
-    if (valor_senhaConfirmacao === "") {
-        error_imput(senha_confirmacao, "repita sua senha");
-    } else if (valor_senhaConfirmacao != valor_senha) {
-        error_imput(senha_confirmacao, "sua senha não esta igual");
-    }
-    else {
-        const form_item = senha_confirmacao.parentElement;
-        form_item.className = "form_content";
-    }
-
-}
 
 //validação final------------------------------------------------------------
 
 function checa_form(){
-    checa_nome();
-    checa_sobrenome();
     checa_telefone();
     checa_senha();
-    checa_senhaConfimacao();
 
     const form_item= form.querySelectorAll(".form_content");
     
@@ -134,30 +86,7 @@ function checa_form(){
     });
 
     if(validado){
-       $(document).ready(function () {
-            nomes=$('#nome').val();
-            sobrenomes=$('#sobrenome').val();
-            telefones=$('#telefone').val();
-            senhas=$('#senha').val();
-            
-            $.ajax({
-                url: 'cadastraLogin.php',
-                type: 'POST',
-                data: { nome: nomes, sobrenome: sobrenomes, telefone: telefones, senha: senhas },
-                success: function (response) {
-                    response = response.trim();
-                    if (response != "erro") {
-                        alert("cadastro com sucesso")
-                        
-                    } else {
-                        console.log("Erro no servidor ao cadastrar.");
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Erro na requisição: ", error);
-                }
-            });
-        });
+       alert("logado");
     }
 
 }

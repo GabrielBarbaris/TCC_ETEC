@@ -9,11 +9,13 @@
 <body>
     <div class="container">
         <section class="header">
-            <h2>Nova Conta</h2>
+            <h2>Login</h2>
         </section>
         
         <form id="form" class="form">
-            
+            <div class="form_content">
+                <span id="mensagem">Menssagem</span>
+            </div>
             <div class="form_content">
                 <label for="Telefone">Telefone</label>
                 <input type="text" id="telefone" name="telefone" placeholder="Digite seu Telefone" >
@@ -25,8 +27,8 @@
                 <a>mensagen de erro</a>
             </div>
             
-            
-            <button type="submit" id="cadastrar">Cadastrar</button>
+            <a href="./cadastra.php">Cadastrar</a>
+            <button type="submit" id="cadastrar">Logar</button>
         </form>
     </div>
 
