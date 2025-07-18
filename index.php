@@ -31,7 +31,7 @@
       <div class="corpo">
         <div class="corpo_1">
           <dialog id="login">
-            <iframe src="login.html"></iframe>
+            <iframe src="cadastra.php"></iframe>
           </dialog>
           <div class="churrasco_qualidade">
             <div class="separao">
