@@ -6,10 +6,10 @@ USE CasaDeCarnes_Fernandes;
 CREATE TABLE Usuario (
     id_usuario INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL,
-    email VARCHAR(100) NOT NULL UNIQUE,
+    sobrenome VARCHAR(100) NOT NULL,
     senha VARCHAR(255) NOT NULL,
     tipo_usuario ENUM('cliente', 'funcionario', 'admin') NOT NULL DEFAULT 'cliente',
-    endereco TEXT NOT NULL,
+    endereco TEXT ,
     telefone VARCHAR(15) NOT NULL
 );
 
