@@ -1,24 +1,29 @@
 <?php
-    include "conexao.php";
-    $nome = $_POST['nome'];
-    $sobrenome = $_POST['sobrenome'];
-    $telefone = $_POST['telefone'];
-    $senha = $_POST['senha'];
-    
+include "conexao.php";
+$nome = $_POST['nome'];
+$sobrenome = $_POST['sobrenome'];
+$telefone = $_POST['telefone'];
+$senha = $_POST['senha'];
+
+
+
+$sql2 = "SELECT * FROM usuario WHERE telefone = '$telefone';";
+$result2 = $conn->query($sql2);
+
+
+if ($result2->num_rows == 0) {
     $sql = "INSERT INTO usuario(nome,sobrenome,senha,tipo_usuario,endereco,telefone)
             VALUES('$nome','$sobrenome','$senha','cliente','','$telefone');";
-    
-            $result = $conn->query($sql);
-            
-    echo"$sql";
-    if($result->num_rows > 0){
+
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
         $row = $result->fetch_assoc();
 
         echo "ok";
     } else {
         echo "erro";
     }
-
-    $conn->close();
-
-?>
+} else {
+    echo "erro";
+}
+$conn->close();

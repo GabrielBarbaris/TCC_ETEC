@@ -155,6 +155,11 @@ function checa_form(){
                         
                     } else {
                         console.log("Erro no servidor ao cadastrar.");
+                         $('#mensagem').html("essa conta ja existe");
+                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+                        setTimeout(function(){
+                            $('#form')[0].reset(); // Limpa o formulário após 2.5 segundos
+                        }, 2500);
                     }
                 },
                 error: function (xhr, status, error) {
