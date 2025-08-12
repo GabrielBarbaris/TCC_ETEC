@@ -1,3 +1,5 @@
+@import './globals.css';
+
 .container{
     width: 100%;
     min-height: 100vh;
@@ -16,13 +18,29 @@
     height: 100vh;
     background-color: #F8F8F8;   
     display: flex;
+    justify-content: center;
 }
 
 .form{
-    
-    margin-top: 100px;
+    margin-top: 10%;
+    flex-direction: column;
+    gap: 10px;
+    display: flex;
 }
 
 .form p{
-    font-family: Arial, Helvetica, sans-serif;
+    font-family: "Baloo";
+    color: #5C4444;
+    font-size: 200%;
+    flex-direction: column;
 }
+
+.form input,
+.form textarea,
+.form button {
+    width: 100%; /* ocupa toda a largura */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+

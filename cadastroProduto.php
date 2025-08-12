@@ -44,6 +44,12 @@
           <div class="formulario">
             <div class="form">
               <p> CADASTRO PRODUTO </P> 
+                 <input type="text" name="nome" required>
+
+                <input type="email" name="email" required>
+
+              <textarea name="mensagem" rows="4"></textarea>
+
             </div>
           </div>
       </div>
