@@ -28,7 +28,7 @@
     display: flex;
 }
 
-.form p{
+.titulo{
     font-family: "Baloo";
     color: #5C4444;
     font-size: 200%;
@@ -44,3 +44,58 @@
     border-radius: 5px;
   }
 
+  .form_content a,
+  .form_row a {
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+    visibility: hidden;
+}
+
+
+.form_row {
+    display: flex;
+    gap: 10px; /* espaço entre os campos */
+}
+
+.input-preco {
+    flex: 1; /* ocupa espaço proporcionalmente */
+    max-width: 120px; /* deixa pequeno */
+}
+
+.input-unidade {
+    flex: 1; /* outro campo ao lado do preço */
+}
+
+.form_content select {
+    width: 100%;           /* ocupar toda a largura disponível */
+    padding: 10px;         /* espaço interno */
+    border-radius: 5px;    /* cantos arredondados */
+    border: 1px solid #ccc;/* borda cinza */
+    font-size: 14px;       /* tamanho da fonte */
+    background-color: #fff;/* fundo branco */
+}
+
+.radio-group {
+    display: flex;
+    gap: 20px; /* espaço entre os radios */
+    justify-content: flex-start; /* ou center, se quiser centralizar na tela */
+  }
+  
+  .radio-item {
+    display: flex;
+    flex-direction: column; /* coloca o texto embaixo do círculo */
+    align-items: center;    /* centraliza o texto em relação ao radio */
+    cursor: pointer;
+  }
+  
+  .radio-item input[type="radio"] {
+    width: 24px;  /* tamanho do círculo */
+    height: 24px;
+    margin-bottom: 5px; /* espaço entre o círculo e o texto */
+  }
+
+  .tipo{
+    font-family: Arial, Helvetica, sans-serif;
+    color:rgb(255, 0, 0);
+}
