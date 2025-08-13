@@ -68,9 +68,9 @@
                     <a>mensagem de erro</a>
                 </div>
             </div>
-
+            <p class="tipo">Tipo</p>
             <div class="radio-group">
-                <p class="tipo">Tipo</p>
+                
                 <label class="radio-item">
                   <input type="checkbox" name="tipo" value="manta">
                   <span>Manta</span>
@@ -87,9 +87,39 @@
                   <input type="checkbox" name="tipo" value="moida">
                   <span>Moída</span>
                 </label>
-                <!-- continue com os outros -->
+                <label class="radio-item">
+                  <input type="checkbox" name="tipo" value="moida">
+                  <span>Peça</span>
+                </label>
+                <label class="radio-item">
+                  <input type="checkbox" name="tipo" value="moida">
+                  <span>Strogonoff</span>
+                </label>
+                <label class="radio-item">
+                  <input type="checkbox" name="tipo" value="moida">
+                  <span>Tirinha</span>
+                </label>
+                <label class="radio-item">
+                  <input type="checkbox" name="tipo" value="moida">
+                  <span>Medalhão</span>
+                </label>
+                <label class="radio-item">
+                  <input type="checkbox" name="tipo" value="moida">
+                  <span>Espetinho</span>
+                </label>
             </div>
 
+            <div class="form_content">
+                    <label for="preco">Preço</label>
+                    <input type="text" id="preco" name="preco" placeholder="R$00,00">
+                    <a>mensagem de erro</a>
+                </div>
+
+                <div class="form_content">
+                    <label for="preco">Preço</label>
+                    <input type="text" id="preco" name="preco" placeholder="R$00,00">
+                    <a>mensagem de erro</a>
+                </div>
         </div>
     </div>
 </div>

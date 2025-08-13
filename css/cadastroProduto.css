@@ -95,7 +95,8 @@
     margin-bottom: 5px; /* espaço entre o círculo e o texto */
   }
 
-  .tipo{
+  .tipo,
+  .form label{
     font-family: Arial, Helvetica, sans-serif;
-    color:rgb(255, 0, 0);
+    color:#00000097;
 }
