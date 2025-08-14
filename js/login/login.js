@@ -86,7 +86,48 @@ function checa_form(){
     });
 
     if(validado){
-       alert("logado");
+            tel=$('#telefone').val();
+            se=$('#senha').val();
+
+            // $('#mensagem').html("Usuário ok");
+            //$('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+            $.ajax({
+                url: 'efetuaLogin.php',
+                type: 'POST',
+                data: {telefone:tel,senha:se},
+
+                success: function(response) {
+                   
+                    response=response.trim();
+
+                    if(response !== "erro"){
+                        $('#mensagem').html("Você sera relacionado");
+                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+
+                        var dados = response.split("|");
+                        var id = dados[0];
+                        var nome = dados[1];
+                        var tipo = dados[2];
+                      
+                        if(tipo == "admin"){
+                            window.location.href = "cadastroProduto.php?id="+id;
+                        }else if( tipo == "cliente"){
+                        //window.location.href = "principal.php?id="+id+"&nome="+nome+"&tipo="+tipo;
+                        window.location.href = "index.php?id="+id;
+                        }
+                    }else{
+                         $('#mensagem').html("Algun doscampos esta incorreto");
+                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+                    }
+                    
+                    
+                },
+                    error: function(xhr, status, error) {
+                        console.log("Erro na requisição: ", error);
+                    }
+                
+
+            });
     }
 
 }
