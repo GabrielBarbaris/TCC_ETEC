@@ -39,9 +39,11 @@
 .form textarea,
 .form button {
     width: 100%; /* ocupa toda a largura */
-    padding: 10px;
+    padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
+    margin-block-end: 10px;
+    margin-top: 5px;
   }
 
   .form_content a,
@@ -99,4 +101,8 @@
   .form label{
     font-family: Arial, Helvetica, sans-serif;
     color:#00000097;
+}
+
+.form_content .descricao{
+    height: 200px;
 }

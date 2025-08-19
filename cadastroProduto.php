@@ -110,15 +110,22 @@
             </div>
 
             <div class="form_content">
-                    <label for="preco">Preço</label>
-                    <input type="text" id="preco" name="preco" placeholder="R$00,00">
+                    <label for="peso">Peso mínimo</label>
+                    <input type="text" id="peso" name="peso" placeholder="Quantidade mínima do produto">
                     <a>mensagem de erro</a>
                 </div>
 
                 <div class="form_content">
-                    <label for="preco">Preço</label>
-                    <input type="text" id="preco" name="preco" placeholder="R$00,00">
+                    <label for="intervalo">Intervalo</label>
+                    <input type="text" id="intervalo" name="intervalo" placeholder="Intervalo de peso de cada produto">
                     <a>mensagem de erro</a>
+                </div>
+                <div class="form_content">
+                  <div class="descricao">  
+                    <label for="descricao">Descrição</label>
+                    <input type="input" id="descricao" name="descricao" placeholder="Digite a descrição do produto neste campo">
+                    <a>mensagem de erro</a>
+                  </div>
                 </div>
         </div>
     </div>
