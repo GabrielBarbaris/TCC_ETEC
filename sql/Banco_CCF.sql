@@ -12,16 +12,15 @@ CREATE TABLE tbUsuario (
     endereco TEXT,
     telefone VARCHAR(15) NOT NULL
 );
-<<<<<<< HEAD
-	SELECT telefone FROM usuario WHERE telefone = "(17) 99201-8283";
-=======
 
 -- Inserts: Usuario
 INSERT INTO tbUsuario(nome, sobrenome, senha, tipo_usuario, endereco, telefone)
 VALUES ("Casa de Carnes", "Fernandes", "123", "admin", '', "(17) 99201-8283");
+
+INSERT INTO tbUsuario(nome, sobrenome, senha, tipo_usuario, endereco, telefone)
+VALUES ("teste", "teste", "123", "cliente", '', "(11) 11111-1111");
 -- -----------------------------------------------------------------------------------------
 
->>>>>>> d0cf27f06216af058a1e700786212b3fb312d9f4
 -- Tabela: Categoria
 CREATE TABLE tbCategoria (
     id_categoria INT AUTO_INCREMENT PRIMARY KEY,
@@ -44,25 +43,46 @@ CREATE TABLE tbcorte (
 	id_corte INT AUTO_INCREMENT PRIMARY KEY,
 	nome_corte VARCHAR(50) NOT null
 );
+
+INSERT INTO tbcorte(nome_corte)
+VALUES ("manta"),
+		 ("bife"),
+		 ("panela"),
+		 ("moida"),
+		 ("peça"),
+		 ("strogonoff"),
+		 ("tirinha"),
+		 ("medalhão"),
+		 ("espetinho");
 -- -----------------------------------------------------------------------------------------
 
 -- Tabela: Produto
 CREATE TABLE tbProduto (
     id_produto INT AUTO_INCREMENT PRIMARY KEY,
     cod_categoria INT NOT NULL,
-    cod_corte INT NOT NULL,
     nome_produto VARCHAR(100) NOT NULL,
     preco DECIMAL(10,2) NOT NULL,
+    peso_minimo DECIMAL(10,2) NOT NULL,
+    peso_maximo DECIMAL(10,2) NOT NULL,
+    intervalo_peso DECIMAL(10,2) NOT NULL,
     descricao TEXT,
     imagem_url VARCHAR(255),
     tipo_quantidade ENUM('UNIDADE', 'PESO') NOT NULL,
     FOREIGN KEY (cod_categoria) REFERENCES tbCategoria(id_categoria)
-        ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (cod_corte) REFERENCES tbcorte(id_corte)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 -- --------------------------------------------------------------------------------------------
 
+-- Tabela: quantidade de corte do produto------------------------------------------------------
+CREATE TABLE tbQuantidadeCorte(
+	cod_produto INT NOT NULL,
+ 	cod_corte INT NOT NULL,
+ 	FOREIGN KEY (cod_produto) REFERENCES tbProduto(id_produto)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+   FOREIGN KEY (cod_corte) REFERENCES tbcorte(id_corte)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- --------------------------------------------------------------------------------------------
 
 
 -- Tabela: Pedido
