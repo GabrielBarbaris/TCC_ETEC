@@ -112,7 +112,7 @@ function checa_form(){
                         var tipo = dados[2];
                       
                         if(tipo == "admin"){
-                            window.location.href = "cadastroProduto.php?id="+id;
+                            window.location.href = "homeAdm.php?id="+id;
                         }else if( tipo == "cliente"){
                         //window.location.href = "principal.php?id="+id+"&nome="+nome+"&tipo="+tipo;
                         window.location.href = "index.php?id="+id;
