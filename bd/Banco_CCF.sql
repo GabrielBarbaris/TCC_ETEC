@@ -12,7 +12,7 @@ CREATE TABLE Usuario (
     endereco TEXT ,
     telefone VARCHAR(15) NOT NULL
 );
-
+	SELECT telefone FROM usuario WHERE telefone = "(17) 99201-8283";
 -- Tabela: Categoria
 CREATE TABLE Categoria (
     id_categoria INT AUTO_INCREMENT PRIMARY KEY,
