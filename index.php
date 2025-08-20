@@ -30,9 +30,9 @@
       </div>
       <div class="corpo">
         <div class="corpo_1">
-          <dialog id="login">
-          ola mundo  <!--<iframe src="cadastra.php"></iframe>-->
-          </dialog>
+          <!--<dialog id="login">
+          <iframe src="cadastra.php"></iframe>
+          </dialog>-->
           <div class="churrasco_qualidade">
             <div class="separao">
               <p class="p"><span class="text-wrapper">churrasco de </span> <span class="span">qualidade</span></p>
@@ -483,7 +483,7 @@
               <input type="text" id="searchInput" placeholder="pesquisar">
             </div>
             <button onclick="cadastrar_cliente()">
-              <img class="user-user" src="img/login.png" />
+              <a href="cadastra.php"><img class="user-user" src="img/login.png" /></a>
             </button>
 
             <button>

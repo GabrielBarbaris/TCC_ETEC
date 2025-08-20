@@ -4,7 +4,11 @@ const sobrenome = document.getElementById("sobrenome");
 const telefone = document.getElementById("telefone");
 const senha = document.getElementById("senha");
 const senha_confirmacao = document.getElementById("senha_confirmacao");
+
+
 $('#mensagem').fadeOut(0);
+
+
 form.addEventListener("submit", (event) => {
     event.preventDefault();
 

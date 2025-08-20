@@ -7,12 +7,12 @@ $senha = $_POST['senha'];
 
 
 
-$sql2 = "SELECT * FROM usuario WHERE telefone = '$telefone';";
+$sql2 = "SELECT * FROM tbUsuario WHERE telefone = '$telefone';";
 $result2 = $conn->query($sql2);
 
 
 if ($result2->num_rows == 0) {
-    $sql = "INSERT INTO usuario(nome,sobrenome,senha,tipo_usuario,endereco,telefone)
+    $sql = "INSERT INTO tbUsuario(nome,sobrenome,senha,tipo_usuario,endereco,telefone)
             VALUES('$nome','$sobrenome','$senha','cliente','','$telefone');";
 
     $result = $conn->query($sql);

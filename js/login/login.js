@@ -2,6 +2,8 @@ const form = document.getElementById("form");
 const telefone = document.getElementById("telefone");
 const senha = document.getElementById("senha");
 
+$('#mensagem').fadeOut(0);
+
 form.addEventListener("submit", (event) => {
     event.preventDefault();
 
