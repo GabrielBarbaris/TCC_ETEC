@@ -1,2 +1,6 @@
 # TCC_ETEC
 construção do tcc de uma casa de carnes 
+
+ola joão
+
+ola Barbaris

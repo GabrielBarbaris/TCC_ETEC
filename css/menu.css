@@ -1,0 +1,15 @@
+@import "./globals.css";
+
+.container{
+background-color: #800000;
+display: flex;
+
+}
+.img{
+  width: 229px;
+  height: 61px;
+  top: 24px;
+  left: 19px;
+  position: absolute;
+  object-fit: cover;
+}
