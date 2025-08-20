@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta charset="utf-8" />
   <link rel="stylesheet" href="css/globals.css" />
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/index.css" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
 
@@ -499,7 +499,7 @@
     </div>
   </div>
 
-  <script src="./js/inicio/botoesAdicionar.js"></script>
+  <script src="./js/botoesAdicionar.js"></script>
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/login/login.css" />
+    <link rel="stylesheet" href="./css/login.css" />
     <title>login</title>
 </head>
 <body>
@@ -34,7 +34,7 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
-    <script src="./js/login/login.js"></script>
+    <script src="./js/login.js"></script>
     
 </body>
 </html>
