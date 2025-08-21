@@ -1,15 +1,34 @@
 @import "./globals.css";
 
-.container{
-background-color: #800000;
-display: flex;
+.container {
+  position: relative;
+  background-color: #800000;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+  height: 70px;
+  align-items: center;
+  padding: 20px;
+}
+
+.img {
+  object-fit: cover;
+}
+
+.funcao .nav_bar{
+  display: flex;
+  flex-direction: row;
 
 }
-.img{
-  width: 229px;
-  height: 61px;
-  top: 24px;
-  left: 19px;
-  position: absolute;
-  object-fit: cover;
+.funcao .nav_item{
+  margin: 10px;
+
+}
+
+a{
+  text-decoration: none; /* remove o sublinhado */
+  color: inherit;
+  font-family: "Shaimus Clean-Regular";
+  color: #ffffff;   
 }

@@ -8,9 +8,9 @@
 </head>
 <body>
     <header>
-        <div class="info_header">
-            
-        </div>
+        <?php
+        include "menuAdm.php";
+        ?>
     </header>
 </body>
 </html>

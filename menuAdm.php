@@ -12,6 +12,19 @@
         <div class="img">
            <img src="img/logo.png">
         </div>
+        <div class="funcao">
+            <ul class="nav_bar">
+                <li class="nav_item">
+                    <a href="#" class="nav_link">Cadastro produto</a>
+                </li>
+                <li class="nav_item">
+                    <a href="#" class="nav_link">Cadastro Corte</a>
+                </li>
+                <li class="nav_item">
+                    <a href="#" class="nav_link">Pedido</a>
+                </li>
+            </ul>
+        </div>
     </div>
 </body>
 </html>
