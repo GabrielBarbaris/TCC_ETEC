@@ -8,20 +8,25 @@
 
 </head>
 <body>
-    <div class="container">
+    <div class="menu">
         <div class="img">
            <img src="img/logo.png">
         </div>
         <div class="funcao">
             <ul class="nav_bar">
+
                 <li class="nav_item">
-                    <a href="#" class="nav_link">Cadastro produto</a>
+                    <a href="cadastroProduto.php" class="nav_link">produtos</a>
                 </li>
                 <li class="nav_item">
-                    <a href="#" class="nav_link">Cadastro Corte</a>
+                    <a href="cadastraCortes.php" class="nav_link">cortes</a>
                 </li>
                 <li class="nav_item">
-                    <a href="#" class="nav_link">Pedido</a>
+                    <a href="#" class="nav_link">Pedidos</a>
+                </li>
+                </li>
+                <li class="nav_item">
+                    <a href="homeAdm.php" class="nav_link">inicio</a>
                 </li>
             </ul>
         </div>
