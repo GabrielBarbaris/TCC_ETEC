@@ -21,11 +21,11 @@
     justify-content: center;
 }
 
-.form{
+.form {
     margin-top: 10%;
-    flex-direction: column;
-    gap: 10px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* duas colunas iguais */
+    gap: 20px; /* espaço entre colunas e linhas */
 }
 
 .titulo{
@@ -44,6 +44,7 @@
     border-radius: 5px;
     margin-block-end: 10px;
     margin-top: 5px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
   }
 
   .form_content a,
@@ -76,6 +77,7 @@
     border: 1px solid #ccc;/* borda cinza */
     font-size: 14px;       /* tamanho da fonte */
     background-color: #fff;/* fundo branco */
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
 }
 
 .radio-group {
@@ -106,3 +108,13 @@
 .form_content .descricao{
     height: 200px;
 }
+
+input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    background-color: transparent;
+    border: 2px solid #333; /* cria sua própria borda */
+    border-radius: 4px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* sombra sem borda branca */
+    cursor: pointer;
+  }
