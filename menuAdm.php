@@ -19,14 +19,7 @@
                     <a href="cadastroProduto.php" class="nav_link">produtos</a>
                 </li>
                 <li class="nav_item">
-                    <a href="cadastraCortes.php" class="nav_link">cortes</a>
-                </li>
-                <li class="nav_item">
-                    <a href="#" class="nav_link">Pedidos</a>
-                </li>
-                </li>
-                <li class="nav_item">
-                    <a href="homeAdm.php" class="nav_link">inicio</a>
+                    <a href="cadastraPedido.php" class="nav_link">Pedidos</a>
                 </li>
             </ul>
         </div>
