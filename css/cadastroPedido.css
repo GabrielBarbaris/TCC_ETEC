@@ -67,9 +67,18 @@ body {
     font-family: Baloo;
     font-size: 16px;
     cursor: pointer;
+    margin-bottom: 5px;
     
 }
+.produto{
+    display:flex;
+    flex-direction: column;
+    justify-content: end;
+}
+.produto button{
+    width: 30%;
 
+}
 .form_content.error input {
     border-color: #fc5e5e;
 }
@@ -128,4 +137,18 @@ body {
     display: block;
     margin-bottom: 0px;
 
+}
+
+/*caixa radio*/
+
+ .pedido .radio{
+    display:flex;
+    justify-content: center;
+
+}
+
+.pedido .item_radio{
+    display: flex;
+    flex-direction: column;
+    margin-left: 80px;
 }
