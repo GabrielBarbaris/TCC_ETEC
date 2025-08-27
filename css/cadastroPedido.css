@@ -67,7 +67,7 @@ body {
     font-family: Baloo;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 14px;
+    
 }
 
 .form_content.error input {
@@ -92,4 +92,40 @@ body {
 
 .form a {
     font-family: "Calibre";
+}
+
+/*Caixa de texto com botão no lado*/
+
+/*
+<div class="form_content_produto">
+    <label for="nome"> produto</label>
+    <input type="text" id="nome" name="nome" placeholder="Digite seu nome">
+    <button>pesquisar</button>
+    <a>mensagen de erro</a>
+</div>
+*/
+.form_content_botao{
+    margin-bottom: 8px;
+    padding-bottom: 18px;
+    position: relative;
+    font-family: "Calibre";
+    color: #807a75;
+}
+.form_content_botao input{
+    display: inline-block;
+    width: 79%;
+    border-radius: 3px;
+    padding: 10px;
+    border: 2px, solid #dfdfdf;
+}
+.form_content_botao button{
+    display: inline-block;
+    width: 20%;
+;
+    
+}
+.form_content_botao label {
+    display: block;
+    margin-bottom: 0px;
+
 }

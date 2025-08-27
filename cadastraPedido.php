@@ -18,12 +18,13 @@
         <form id="form" class="form">
 
             <div class="form_content">
-                <label for="nome">Nome</label>
+                <label for="nome"> produto</label>
                 <input type="text" id="nome" name="nome" placeholder="Digite seu nome">
                 <a>mensagen de erro</a>
             </div>
+            
             <div class="form_content">
-                <label for="sobrenome">Sobrenome</label>
+                <label for="sobrenome">corte</label>
                 <input type="text" id="sobrenome" name="sobrenome" placeholder="Digite seu sobrenome">
                 <a>mensagen de erro</a>
             </div>
