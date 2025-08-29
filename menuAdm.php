@@ -8,7 +8,7 @@
 
 </head>
 <body>
-    <div class="menu">
+    <header class="menu">
         <div class="img">
            <img src="img/logo.png">
         </div>
@@ -23,6 +23,6 @@
                 </li>
             </ul>
         </div>
-    </div>
+    </header>
 </body>
 </html>

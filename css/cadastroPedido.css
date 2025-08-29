@@ -8,14 +8,21 @@ body {
 
 
 }
-.container{
-    width: 600px;
+
+.container {
+    width: 100%;
     padding-top: 70px;
     display: flex;
     flex-direction: column;
 }
+.tela1{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    width: 40%;
+}
 
-.titulo{
+.titulo {
     font-family: "Baloo";
     color: #5C4444;
     font-size: 30px;
@@ -23,13 +30,13 @@ body {
 }
 
 .form {
-    padding: 18px;
+    padding: 5px;
 
 }
 
 .form_content {
     margin-bottom: 8px;
-    padding-bottom: 18px;
+    padding-bottom: 5px;
     position: relative;
     font-family: "Calibre";
     color: #807a75;
@@ -46,7 +53,7 @@ body {
     display: block;
     width: 100%;
     border-radius: 3px;
-    padding: 10px;
+    padding: 5px;
     border: 2px, solid #dfdfdf;
 }
 
@@ -60,7 +67,7 @@ body {
 .form button {
     background-color: #600E0E;
     color: #ffffff;
-    width: 100%;
+    width: 20%;
     border: 0;
     border-radius: 10px;
     padding: 8px;
@@ -68,17 +75,12 @@ body {
     font-size: 16px;
     cursor: pointer;
     margin-bottom: 5px;
-    
+    float: right;
 }
-.produto{
-    display:flex;
-    flex-direction: column;
-    justify-content: end;
-}
-.produto button{
-    width: 30%;
 
-}
+
+
+
 .form_content.error input {
     border-color: #fc5e5e;
 }
@@ -88,10 +90,10 @@ body {
     text-align: center;
     padding: 10px;
     color: rgb(255, 255, 255);
-    border:3px,solid, rgba(243, 4, 4, 0.156);
+    border: 3px, solid, rgba(243, 4, 4, 0.156);
     background-color: rgba(105, 23, 23, 0.593);
     border-radius: 13px;
-     
+
 }
 
 .form_content.error a {
@@ -113,26 +115,29 @@ body {
     <a>mensagen de erro</a>
 </div>
 */
-.form_content_botao{
+.form_content_botao {
     margin-bottom: 8px;
     padding-bottom: 18px;
     position: relative;
     font-family: "Calibre";
     color: #807a75;
 }
-.form_content_botao input{
+
+.form_content_botao input {
     display: inline-block;
     width: 79%;
     border-radius: 3px;
     padding: 10px;
     border: 2px, solid #dfdfdf;
 }
-.form_content_botao button{
+
+.form_content_botao button {
     display: inline-block;
     width: 20%;
-;
-    
+    ;
+
 }
+
 .form_content_botao label {
     display: block;
     margin-bottom: 0px;
@@ -141,14 +146,15 @@ body {
 
 /*caixa radio*/
 
- .pedido .radio{
-    display:flex;
-    justify-content: center;
+.pedido .radio {
+    display: flex;
+
 
 }
 
-.pedido .item_radio{
+.pedido .item_radio {
     display: flex;
     flex-direction: column;
-    margin-left: 80px;
+    padding: 20px;
+    
 }

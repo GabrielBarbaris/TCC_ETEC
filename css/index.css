@@ -21,7 +21,7 @@
   width: 100%;
 }
 
-.CONES button {
+.barra_tarefas button {
   cursor: pointer;
   background-color: transparent;
   border: none;
@@ -35,10 +35,10 @@
 }
 
 .corpo {
-  width: 70%;
   margin: auto;
   display: flex;
   justify-content: center;
+  flex-direction: row;
 }
 
 
@@ -207,6 +207,8 @@
   padding: 0;
   border-radius: 16px;
   box-shadow:  0 3px 5px rgb(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
 }
 .corpo_1 iframe{
   width: 100%;
@@ -1724,12 +1726,12 @@
 }
 
 .churrasco_qualidade {
-  width: 1331px;
-  height: 550px;
+  width: 70vw;
   margin: auto;
   display: flex;
   justify-content: center;
   margin-block: 50px;
+  flex-wrap: wrap;
 }
 
 .kit_fernandes {
@@ -1864,7 +1866,7 @@
   left: 439px;
 }
 
-.tela-inicial .CONES {
+.tela-inicial .barra_tarefas {
   position: absolute;
   width: 600px;
   height: 50px;
