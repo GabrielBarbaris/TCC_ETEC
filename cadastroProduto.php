@@ -18,7 +18,8 @@
 
   <div class="container">
     <div class="imagem">
-      <!-- aqui vai sua área de imagem -->
+      <div class="exemplo"></div>
+      <button>inserir imagem</button>
     </div>
     <div class="formulario">
       <div class="form">
@@ -44,6 +45,8 @@
             <label for="categoria">Categoria</label>
             <select id="categoria" name="categoria">
               <option>Escolha a categoria</option>
+               <option>Escolha a categoria</option>
+                <option>Escolha a categoria</option>
               <!-- outras opções -->
             </select>
             <a>mensagem de erro</a>
@@ -83,15 +86,17 @@
         </div>
 
         <!-- Descrição (ocupa as 2 colunas) -->
-        <div class="form_content" style="grid-column: 1 / span 2;">
+        <div class="form_content_descricao" style="grid-column: 1 / span 2;">
           <div class="descricao">
             <label for="descricao">Descrição</label>
             <input type="input" id="descricao" name="descricao" placeholder="Digite a descrição do produto neste campo">
             <a>mensagem de erro</a>
           </div>
+          <button>cadastrar</button>
+
         </div>
 
-      </div>
+</form>
     </div>
   </div>
 

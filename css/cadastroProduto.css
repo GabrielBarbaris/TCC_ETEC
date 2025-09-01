@@ -1,22 +1,27 @@
 @import './globals.css';
 
-.container{
+.container {
     width: 100%;
     min-height: 100vh;
     display: flex;
     justify-content: center;
 }
 
-.imagem{
+.imagem {
     width: 50%;
     min-height: 100vh;
     background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 100px;
 }
 
-.formulario{
+.formulario {
     width: 50%;
     height: 100vh;
-    background-color: #F8F8F8;   
+    background-color: #F8F8F8;
     display: flex;
     justify-content: center;
 }
@@ -24,11 +29,15 @@
 .form {
     margin-top: 10%;
     display: grid;
-    grid-template-columns: 1fr 1fr; /* duas colunas iguais */
-    gap: 20px; /* espaço entre colunas e linhas */
+    grid-template-columns: 1fr 1fr;
+    /* duas colunas iguais */
+
+    /* duas colunas iguais */
+    gap: 20px;
+    /* espaço entre colunas e linhas */
 }
 
-.titulo{
+.titulo {
     font-family: "Baloo";
     color: #5C4444;
     font-size: 200%;
@@ -38,17 +47,19 @@
 .form input,
 .form textarea,
 .form button {
-    width: 100%; /* ocupa toda a largura */
+    width: 100%;
+    /* ocupa toda a largura */
     padding: 20px;
-    border: 1px solid #ccc;
+    cursor: pointer;
     border-radius: 5px;
-    margin-block-end: 10px;
-    margin-top: 5px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-  }
 
-  .form_content a,
-  .form_row a {
+    margin-top: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    border: #00000097;
+}
+
+.form_content a,
+.form_row a {
     position: absolute;
     bottom: 0px;
     left: 0;
@@ -58,54 +69,70 @@
 
 .form_row {
     display: flex;
-    gap: 10px; /* espaço entre os campos */
+    gap: 10px;
+    /* espaço entre os campos */
 }
 
 .input-preco {
-    flex: 1; /* ocupa espaço proporcionalmente */
-    max-width: 120px; /* deixa pequeno */
+    flex: 1;
+    /* ocupa espaço proporcionalmente */
+    max-width: 120px;
+    /* deixa pequeno */
 }
 
 .input-unidade {
-    flex: 1; /* outro campo ao lado do preço */
+    flex: 1;
+    /* outro campo ao lado do preço */
 }
 
 .form_content select {
-    width: 100%;           /* ocupar toda a largura disponível */
-    padding: 10px;         /* espaço interno */
-    border-radius: 5px;    /* cantos arredondados */
-    border: 1px solid #ccc;/* borda cinza */
-    font-size: 14px;       /* tamanho da fonte */
-    background-color: #fff;/* fundo branco */
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    width: 100%;
+    /* ocupar toda a largura disponível */
+    padding: 10px;
+    /* espaço interno */
+    border-radius: 5px;
+    /* cantos arredondados */
+    border: 1px solid #ccc;
+    /* borda cinza */
+    font-size: 14px;
+    /* tamanho da fonte */
+    background-color: #fff;
+    /* fundo branco */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
 }
 
 .radio-group {
     display: flex;
-    gap: 20px; /* espaço entre os radios */
-    justify-content: flex-start; /* ou center, se quiser centralizar na tela */
-  }
-  
-  .radio-item {
-    display: flex;
-    flex-direction: column; /* coloca o texto embaixo do círculo */
-    align-items: center;    /* centraliza o texto em relação ao radio */
-    cursor: pointer;
-  }
-  
-  .radio-item input[type="radio"] {
-    width: 24px;  /* tamanho do círculo */
-    height: 24px;
-    margin-bottom: 5px; /* espaço entre o círculo e o texto */
-  }
-
-  .tipo,
-  .form label{
-    font-family: Arial, Helvetica, sans-serif;
-    color:#00000097;
+    gap: 20px;
+    /* espaço entre os radios */
+    justify-content: flex-start;
+    /* ou center, se quiser centralizar na tela */
 }
 
-.form_content .descricao{
+.radio-item {
+    display: flex;
+    flex-direction: column;
+    /* coloca o texto embaixo do círculo */
+    align-items: center;
+    /* centraliza o texto em relação ao radio */
+    cursor: pointer;
+}
+
+.radio-item input[type="radio"] {
+    width: 24px;
+    /* tamanho do círculo */
+    height: 24px;
+    margin-bottom: 5px;
+    /* espaço entre o círculo e o texto */
+}
+
+.tipo,
+.form label {
+    font-family: Arial, Helvetica, sans-serif;
+    color: #00000097;
+}
+
+.form_content .descricao {
     height: 200px;
 }
 
@@ -113,8 +140,37 @@ input[type="checkbox"] {
     width: 20px;
     height: 20px;
     background-color: transparent;
-    border: 2px solid #333; /* cria sua própria borda */
+    border: 2px solid #333;
+    /* cria sua própria borda */
     border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3); /* sombra sem borda branca */
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    /* sombra sem borda branca */
     cursor: pointer;
-  }
+}
+
+.exemplo {
+    background-color: aqua;
+    height: 100px;
+    width: 100px;
+}
+
+.form button {
+    background-color: #800000;
+    cursor: pointer;
+    font-family: 'Baloo';
+    color: #fff;
+    border-radius: 10px;
+    font-size: 20px;
+}
+
+.imagem button {
+    background-color: #800000;
+    cursor: pointer;
+    font-family: 'Baloo';
+    color: #fff;
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 20px;
+    border: 0px;
+    box-shadow: 0 0 9px rgba(0, 0, 0, 0.3);
+}
