@@ -70,36 +70,36 @@ CREATE TABLE tbProduto (
     FOREIGN KEY (cod_categoria) REFERENCES tbCategoria(id_categoria)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+INSERT INTO tbProduto 
+(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+VALUES
+(1, 'Kit Mistura', 27.90, 0.50, 0.10, 'Kit de carnes variadas para o dia a dia.', 'img/kitMistura.png', 'PESO');
 
 INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, peso_maximo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Kit Mistura', 27.90, 0.50, 1.20, 0.10, 'Kit de carnes variadas para o dia a dia.', 'img/kitMistura.png', 'PESO');
+(1, 'Contra Filé', 69.90, 1.00, 0.10, 'Corte bovino macio e saboroso, ideal para grelha.', 'img/contraFile.png', 'PESO');
 
 INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, peso_maximo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Contra Filé', 69.90, 1.00, 2.00, 0.10, 'Corte bovino macio e saboroso, ideal para grelha.', 'img/contraFile.png', 'PESO');
+(1, 'Carne Moída Bovina', 34.90, 0.50, 0.10, 'Carne moída fresca, ideal para refogados e recheios.', 'img/carneMoida.png', 'PESO');
 
 INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, peso_maximo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Carne Moída Bovina', 34.90, 0.50, 1.50, 0.10, 'Carne moída fresca, ideal para refogados e recheios.', 'img/carneMoida.png', 'PESO');
+(1, 'Pão de Hambúrguer', 9.90, 0.20, 0.10, 'Pão macio próprio para hambúrgueres artesanais.', 'img/pao.png', 'UNIDADE');
 
 INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, peso_maximo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Pão de Hambúrguer', 9.90, 0.20, 0.50, 0.10, 'Pão macio próprio para hambúrgueres artesanais.', 'img/pao.png', 'UNIDADE');
+(1, 'Fraldinha Bovina', 59.90, 0.80, 0.10, 'Carne bovina macia, ideal para churrasco e assados.', 'img/fraldinha.png', 'PESO');
 
 INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, peso_maximo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Fraldinha Bovina', 59.90, 0.80, 1.20, 0.10, 'Carne bovina macia, ideal para churrasco e assados.', 'img/fraldinha.png', 'PESO');
+(1, 'Hambúrguer Bovino Artesanal', 14.90, 0.15, 0.05, 'Hambúrguer artesanal feito com carne selecionada.', 'img/hamburguer.png', 'UNIDADE');
 
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, peso_maximo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
-VALUES
-(1, 'Hambúrguer Bovino Artesanal', 14.90, 0.15, 0.20, 0.05, 'Hambúrguer artesanal feito com carne selecionada.', 'img/hamburguer.png', 'UNIDADE');
 
 
 

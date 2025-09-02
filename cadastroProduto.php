@@ -41,6 +41,7 @@
           <input type="text" id="preco" name="preco" placeholder="R$00,00">
           <a>mensagem de erro</a>
         </div>
+        
         <!-- Categoria -->
         <div class="form_content">
           <label for="categoria">Categoria</label>

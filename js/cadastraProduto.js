@@ -19,6 +19,7 @@ form.addEventListener("submit", (event) => {
     alert("valido");
 })
 
+
 //mensagemde erro------------------------------------------------------
 function error_imput(input, message) {
     const form_item = input.parentElement;
