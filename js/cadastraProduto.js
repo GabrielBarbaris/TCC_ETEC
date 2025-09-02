@@ -19,34 +19,85 @@ form.addEventListener("submit", (event) => {
     checa_nome();
 
 
-    const form_item= form.querySelectorAll(".form_content");
-    
-    const validado = [...form_item].every( (item) => {
+    const form_item = form.querySelectorAll(".form_content");
+
+    const validado = [...form_item].every((item) => {
         return item.className === "form_content"
     });
 
-    if(validado){
+    if (validado) {
         alert("valido");
-    }else{
+    } else {
         alert("invalido");
     }
 })
 
+//mascaras---------------------------------------------------------
+preco.addEventListener("input", function () {
+    let valor = preco.value;
 
-nome.addEventListener("blur",() =>{
+    // Remove tudo que não for número
+    valor = valor.replace(/[^0-9.]/g, "");
+
+    // garante que só tenha UM ponto
+    let partes = valor.split(".");
+    if (partes.length > 2) {
+        valor = partes[0] + "." + partes.slice(1).join("");
+    }
+
+    // limita a 2 casas decimais
+    if (partes[1] && partes[1].length > 2) {
+        partes[1] = partes[1].substring(0, 2);
+        valor = partes[0] + "." + partes[1];
+    }
+    if (partes[0] && partes[0].length > 3) {
+        partes[0] = partes[0].substring(0, 3);
+    }
+
+    // monta o valor de forma segura
+    if (partes.length > 1) {
+        valor = partes[0] + "." + partes[1];
+    } else {
+        valor = partes[0]; // só a parte inteira
+    }
+
+
+    preco.value = valor;
+});
+
+
+//blurs-------------------------------------------------------------
+
+nome.addEventListener("blur", () => {
     checa_nome();
+
+})
+preco.addEventListener("blur", () => {
+    checa_preco();
+
 })
 
 //checagens--------------------------------------------------------
 function checa_nome() {
     const valor_nome = nome.value;
     if (valor_nome === "") {
-        error_imput(nome, "preencha um nome de usuario");
+        error_imput(nome, "preencha o nome do produto");
     } else {
         const form_item = nome.parentElement;
         form_item.className = "form_content";
     }
 }
+
+function checa_preco() {
+    const valor_preco = preco.value;
+    if (valor_preco === "") {
+        error_imput(preco, "preencha o valor do produto");
+    } else {
+        const form_item = preco.parentElement;
+        form_item.className = "form_content";
+    }
+}
+
 
 
 //mensagemde erro------------------------------------------------------
