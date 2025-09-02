@@ -63,7 +63,6 @@ CREATE TABLE tbProduto (
     nome_produto VARCHAR(100) NOT NULL,
     preco DECIMAL(10,2) NOT NULL,
     peso_minimo DECIMAL(10,2) NOT NULL,
-    peso_maximo DECIMAL(10,2) NOT NULL,
     intervalo_peso DECIMAL(10,2) NOT NULL,
     descricao TEXT,
     imagem_url VARCHAR(255),
