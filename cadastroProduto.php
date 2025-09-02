@@ -41,14 +41,29 @@
           <input type="text" id="preco" name="preco" placeholder="R$00,00">
           <a>mensagem de erro</a>
         </div>
-        
+
         <!-- Categoria -->
         <div class="form_content">
           <label for="categoria">Categoria</label>
           <select id="categoria" name="categoria">
-            <option>Escolha a categoria</option>
-            <option>Escolha a categoria</option>
-            <option>Escolha a categoria</option>
+            <option value="">Escolha a categoria</option>
+            <?php
+              require 'conexao.php';
+              $comandoSql = 'SELECT * FROM tbcategoria ;';
+              $result = mysqli_query($conn, $comandoSql);
+
+              if (mysqli_num_rows($result) > 0) {
+                while ($categorias = mysqli_fetch_assoc($result)) {
+                  $id = $categorias['id_categoria'];
+                  $nome = htmlspecialchars($categorias['nome_categoria'], ENT_QUOTES);
+                  echo "<option value='$id'>$nome</option>";
+                }
+              }else {
+                echo "<option value=''>Não existe categoria</option>";
+              }
+            ?>
+
+            
             <!-- outras opções -->
           </select>
           <a>mensagem de erro</a>
@@ -59,62 +74,38 @@
         <p class="tipo" style="grid-column: 1 / span 2;">Tipo</p>
 
         <div class="radio-group" style="grid-column: 1 / span 2;">
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="manta">
-            <span>Manta</span>
-          </label>
+        <?php
+              require 'conexao.php';
+              $comandoSql = 'SELECT * FROM tbcorte ;';
+              $result = mysqli_query($conn, $comandoSql);
 
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="bife">
-            <span>Bife</span>
-          </label>
+              if (mysqli_num_rows($result) > 0) {
+                while ($cortes = mysqli_fetch_assoc($result)) {
+                  $id = $cortes['id_corte'];
+                  $nome = htmlspecialchars($cortes['nome_corte'], ENT_QUOTES);
+                  echo "<label class='radio-item'>
+                          <input type='checkbox' name='tipo' value='$id'>
+                          <span>$nome</span>
+                        </label>";
+                }
+              }else {
+                echo '<p>Não existem cortes cadastrados!</p>';
+              }
+            ?>
+          
 
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="panela">
-            <span>Panela</span>
-          </label>
-
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="moida">
-            <span>Moída</span>
-          </label>
-
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="peca">
-            <span>Peça</span>
-          </label>
-
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="strogonoff">
-            <span>Strogonoff</span>
-          </label>
-
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="tirinha">
-            <span>Tirinha</span>
-          </label>
-
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="medalhao">
-            <span>Medalhão</span>
-          </label>
-
-          <label class="radio-item">
-            <input type="checkbox" name="tipo" value="espetinho">
-            <span>Espetinho</span>
-          </label>
         </div>
 
         <!-- Radio unidade peso -->
         <p class="tipo" style="grid-column: 1 / span 2;">Medida</p>
         <div class="radio-group" style="grid-column: 1 / span 2;">
           <label class="radio-item">
-            <input type="radio" name="medida" value="Kilograma">
-            <span>Kilograma</span>
+            <input type="radio" name="medida" value="PESO">
+            <span>Peso</span>
           </label>
 
           <label class="radio-item">
-            <input type="radio" name="medida" value="Unidade">
+            <input type="radio" name="medida" value="UNIDADE">
             <span>Unidade</span>
           </label>
 
