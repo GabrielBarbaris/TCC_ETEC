@@ -17,43 +17,23 @@ form.addEventListener("submit", (event) => {
     checa_form();
 })
 
-telefone.addEventListener("input", function () {
-    let valor = telefone.value;
-
-    // Remove tudo que não for número
-    valor = valor.replace(/\D/g, "");
-
-    // Formata com máscara (11) 98765-4321
-    if (valor.length > 0) {
-        valor = "(" + valor;
-    }
-    if (valor.length > 3) {
-        valor = valor.slice(0, 3) + ") " + valor.slice(3);
-    }
-    if (valor.length > 10) {
-        valor = valor.slice(0, 10) + "-" + valor.slice(10);
-    }
-    if (valor.length > 15) {
-        valor = valor.slice(0, 15);
-    }
-
-    telefone.value = valor;
-});
-
-nome.addEventListener("blur",() =>{
-    checa_nome();
+produto.addEventListener("blur",() =>{
+    checa_produto();
 })
-sobrenome.addEventListener("blur",() =>{
-    checa_sobrenome();
+quantidade.addEventListener("blur",() =>{
+    checa_quantidade();
 })
-telefone.addEventListener("blur",() =>{
-    checa_telefone();
+corte.addEventListener("blur",() =>{
+    checa_corte();
 })
-senha.addEventListener("blur",() =>{
-    checa_senha();
+horario.addEventListener("blur",() =>{
+    checa_horario();
 })
-senha_confirmacao.addEventListener("blur",() =>{
-    checa_senhaConfimacao();
+cliente.addEventListener("blur",() =>{
+    checa_cliente();
+})
+recebimento.addEventListener("blur",() =>{
+    checa_recebimento();
 })
 
 
@@ -88,71 +68,63 @@ function checa_corte() {
     }
 }
 
-function checa_senha() {
-    const valor_senha = senha.value;
-
-    if (valor_senha === "") {
-        error_imput(senha, "digite uma senha");
-    } else if (valor_senha.length < 8) {
-        error_imput(senha, "minimo de 8 caracteres");
-    }
-    else {
-        const form_item = senha.parentElement;
+function checa_horario() {
+    const valor_horario = horario.value;
+    if (valor_horario === "") {
+        error_imput(horario, "Preencha o horário");
+    } else {
+        const form_item = horario.parentElement;
         form_item.className = "form_content";
     }
+}
 
+function checa_cliente() {
+    const valor_cliente = cliente.value;
+    if (valor_cliente === "") {
+        error_imput(cliente, "Preencha o nome do cliente");
+    } else {
+        const form_item = cliente.parentElement;
+        form_item.className = "form_content";
+    }
 }
 
 //validação final------------------------------------------------------------
-
-function checa_form(){
-    checa_nome();
-    checa_sobrenome();
-    checa_telefone();
-    checa_senha();
-    checa_senhaConfimacao();
-
-    const form_item= form.querySelectorAll(".form_content");
-    
-    const validado = [...form_item].every( (item) => {
-        return item.className === "form_content"
+/*if (validado) {
+    $.ajax({
+        url: "cadastraPedido.php", // destino do PHP
+        type: "POST",
+        data: {
+            produto: produto.value,
+            quantidade: quantidade.value,
+            corte: corte.value,
+            horario: horario.value,
+            cliente: cliente.value,
+            recebimento: recebimento.value,
+            endereco: endereco.value
+        },
+        success: function (response) {
+            response = response.trim();
+            if (response != "erro") {
+                $("#mensagem").html("Pedido cadastrado com sucesso!");
+                $("#mensagem").fadeIn(300).delay(2000).fadeOut(400);
+                setTimeout(function () {
+                    $("#form")[0].reset();
+                }, 2500);
+            } else {
+                $("#mensagem").html("Erro: esse pedido já existe!");
+                $("#mensagem").fadeIn(300).delay(2000).fadeOut(400);
+                setTimeout(function () {
+                    $("#form")[0].reset();
+                }, 2500);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log("Erro na requisição: ", error);
+        }
     });
-
-    if(validado){
-       $(document).ready(function () {
-            nomes=$('#nome').val();
-            sobrenomes=$('#sobrenome').val();
-            telefones=$('#telefone').val();
-            senhas=$('#senha').val();
-            
-            $.ajax({
-                url: 'cadastraLogin.php',
-                type: 'POST',
-                data: { nome: nomes, sobrenome: sobrenomes, telefone: telefones, senha: senhas },
-                success: function (response) {
-                    response = response.trim();
-                    if (response != "erro") {
-                        $('#mensagem').html("Cadastrado com sucesso");
-                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
-                        setTimeout(function(){
-                            $('#form')[0].reset(); // Limpa o formulário após 2.5 segundos
-                        }, 2500);
-                        
-                    } else {
-                        console.log("Erro no servidor ao cadastrar.");
-                         $('#mensagem').html("essa conta ja existe");
-                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
-                        setTimeout(function(){
-                            $('#form')[0].reset(); // Limpa o formulário após 2.5 segundos
-                        }, 2500);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Erro na requisição: ", error);
-                }
-            });
-        });
-    }
+}*/
+if (validado) {
+    
 
 }
 

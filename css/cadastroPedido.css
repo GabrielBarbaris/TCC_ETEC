@@ -99,6 +99,7 @@ body {
 .form_content.error a {
     color: #fc5e5e;
     visibility: visible;
+    margin-top: 20px;
 }
 
 .form a {

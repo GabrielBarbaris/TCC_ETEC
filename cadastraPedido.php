@@ -19,6 +19,9 @@
             <h3 class="titulo">Cadastro de Pedido</h3>
 
             <form id="form" class="form">
+            <div class="form_content" >
+                <span id="mensagem">Menssagem</span>
+            </div>
                 <section class="produto">
                     <div class="form_content">
                         <label for="produto"> produto</label>
