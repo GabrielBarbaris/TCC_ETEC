@@ -73,7 +73,7 @@
         <!-- Tipo -->
         <p class="tipo" style="grid-column: 1 / span 2;">Tipo</p>
 
-        <div class="radio-group" style="grid-column: 1 / span 2;">
+        <div class="radio-group " style="grid-column: 1 / span 2;">
         <?php
               require 'conexao.php';
               $comandoSql = 'SELECT * FROM tbcorte ;';
@@ -93,7 +93,7 @@
               }
             ?>
           
-
+              <a>mensagem de erro</a>
         </div>
 
         <!-- Radio unidade peso -->
@@ -127,7 +127,7 @@
 
         <!-- Descrição -->
 
-        <div class="form_descricao">
+        <div class="form_descricao" style="grid-column: span 2">
           <label for="descricao">Descrição</label>
           <input type="input" id="descricao" name="descricao" placeholder="Digite a descrição do produto neste campo">
           <a>mensagem de erro</a>

@@ -185,3 +185,24 @@ input[type="radio" ] {
 .form_content.error input {
     border: 1px solid #fc5e5e;
 }
+
+.form_content.error select {
+    border: 1px solid #fc5e5e;
+}
+
+.radio-group.error label{
+    border: 1px solid #fc5e5e;
+    
+
+}
+.radio-group.error a {
+    color: #fc5e5e;
+    visibility: visible;
+    
+}
+.radio-group a {
+    color: #000000;
+    visibility: hidden;
+    font-family: 'Calibre';
+
+}

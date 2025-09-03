@@ -5,7 +5,7 @@ const preco = document.getElementById("preco");
 const categoria = document.getElementById("categoria");
 const tipo = document.getElementById("tipo");
 const medida = document.getElementById("medida");
-const peso_min = document.getElementById("peso_min");
+const peso_min = document.getElementById("peso");
 const intervalo = document.getElementById("intervalo");
 const descricao = document.getElementById("descricao");
 //----------------------------------------------------------------------
@@ -14,22 +14,7 @@ const descricao = document.getElementById("descricao");
 
 
 form.addEventListener("submit", (event) => {
-    event.preventDefault();
-
-    checa_nome();
-
-
-    const form_item = form.querySelectorAll(".form_content");
-
-    const validado = [...form_item].every((item) => {
-        return item.className === "form_content"
-    });
-
-    if (validado) {
-        alert("valido");
-    } else {
-        alert("invalido");
-    }
+    
 })
 
 //mascaras---------------------------------------------------------
@@ -76,6 +61,24 @@ preco.addEventListener("blur", () => {
     checa_preco();
 
 })
+categoria.addEventListener("blur", () => {
+    checa_categoria();
+
+})
+
+peso_min.addEventListener("blur", () => {
+    checa_peso();
+
+})
+intervalo.addEventListener("blur", () => {
+    checa_intervalo();
+
+})
+
+descricao.addEventListener("blur", () => {
+    checa_descricao();
+
+})
 
 //checagens--------------------------------------------------------
 function checa_nome() {
@@ -98,6 +101,45 @@ function checa_preco() {
     }
 }
 
+function checa_categoria() {
+    const valor_categoria = categoria.value;
+    if (valor_categoria === "") {
+        error_imput(categoria, "selecione uma categoria");
+    } else {
+        const form_item = categoria.parentElement;
+        form_item.className = "form_content";
+    }
+}
+
+function checa_peso() {
+    const valor_peso = peso_min.value;
+    if (valor_peso === "") {
+        error_imput(peso_min, "selecione umm peso");
+    } else {
+        const form_item = peso_min.parentElement;
+        form_item.className = "form_content";
+    }
+}
+
+function checa_intervalo() {
+    const valor_intervalo = intervalo.value;
+    if (valor_intervalo === "") {
+        error_imput(intervalo, "selecione um intervalo");
+    } else {
+        const form_item = intervalo.parentElement;
+        form_item.className = "form_content";
+    }
+}
+
+function checa_descricao() {
+    const valor_descricao = descricao.value;
+    if (valor_descricao === "") {
+        error_imput(descricao, "selecione um intervalo");
+    } else {
+        const form_item = descricao.parentElement;
+        form_item.className = "form_content";
+    }
+}
 
 
 //mensagemde erro------------------------------------------------------
@@ -107,4 +149,11 @@ function error_imput(input, message) {
 
     text_message.innerText = message;
     form_item.className = "form_content error";
+}
+function error_radio(radio, message) {
+    const form_item = radio.parentElement;
+    const text_message = form_item.querySelector("a");
+
+    text_message.innerText = message;
+    form_item.className = "radio-group error";
 }
