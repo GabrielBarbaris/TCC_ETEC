@@ -29,11 +29,7 @@
 .form {
     margin-top: 70px;
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    /* duas colunas iguais */
-
-    /* duas colunas iguais */
-    gap: 20px;
+    grid-template-columns: 1fr 1fr;    gap: 20px;
     /* espaço entre colunas e linhas */
 }
 
@@ -82,8 +78,8 @@
 .radio-group {
     display: flex;
     gap: 20px;
-    font-family: inherit;
-    justify-content: flex-start;
+    justify-content: center;
+    position: relative;
 }
 
 
@@ -190,19 +186,23 @@ input[type="radio" ] {
     border: 1px solid #fc5e5e;
 }
 
-.radio-group.error label{
-    border: 1px solid #fc5e5e;
-    
+.radio-group.error label input[type="checkbox"] {
+    box-shadow: 0px 0px 0px 1px #fc5e5e;
 
 }
 .radio-group.error a {
     color: #fc5e5e;
     visibility: visible;
-    
 }
 .radio-group a {
     color: #000000;
     visibility: hidden;
     font-family: 'Calibre';
+    position: absolute;
+    bottom: -16px;
+    display: block;
+    text-align: center;
+    width: 100%;
 
 }
+

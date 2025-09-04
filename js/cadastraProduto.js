@@ -18,6 +18,8 @@ form.addEventListener("submit", (event) => {
 })
 
 //mascaras---------------------------------------------------------
+
+//preços
 preco.addEventListener("input", function () {
     let valor = preco.value;
 
@@ -50,6 +52,72 @@ preco.addEventListener("input", function () {
     preco.value = valor;
 });
 
+//peso minimo
+peso_min.addEventListener("input", function () {
+    let valor = peso_min.value;
+
+    // Remove tudo que não for número
+    valor = valor.replace(/[^0-9.]/g, "");
+
+    // garante que só tenha UM ponto
+    let partes = valor.split(".");
+    if (partes.length > 2) {
+        valor = partes[0] + "." + partes.slice(1).join("");
+    }
+
+    // limita a 2 casas decimais
+    if (partes[1] && partes[1].length > 2) {
+        partes[1] = partes[1].substring(0, 3);
+        valor = partes[0] + "." + partes[1];
+    }
+    if (partes[0] && partes[0].length > 3) {
+        partes[0] = partes[0].substring(0, 3);
+    }
+
+    // monta o valor de forma segura
+    if (partes.length > 1) {
+        valor = partes[0] + "." + partes[1];
+    } else {
+        valor = partes[0]; // só a parte inteira
+    }
+
+
+    peso_min.value = valor;
+});
+
+//intervalo
+intervalo.addEventListener("input", function () {
+    let valor = intervalo.value;
+
+    // Remove tudo que não for número
+    valor = valor.replace(/[^0-9.]/g, "");
+
+    // garante que só tenha UM ponto
+    let partes = valor.split(".");
+    if (partes.length > 2) {
+        valor = partes[0] + "." + partes.slice(1).join("");
+    }
+
+    // limita a 2 casas decimais
+    if (partes[1] && partes[1].length > 2) {
+        partes[1] = partes[1].substring(0, 3);
+        valor = partes[0] + "." + partes[1];
+    }
+    if (partes[0] && partes[0].length > 3) {
+        partes[0] = partes[0].substring(0, 3);
+    }
+
+    // monta o valor de forma segura
+    if (partes.length > 1) {
+        valor = partes[0] + "." + partes[1];
+    } else {
+        valor = partes[0]; // só a parte inteira
+    }
+
+
+    intervalo.value = valor;
+});
+
 
 //blurs-------------------------------------------------------------
 
@@ -79,6 +147,23 @@ descricao.addEventListener("blur", () => {
     checa_descricao();
 
 })
+
+document.addEventListener("DOMContentLoaded", () => {
+    const tipo = document.querySelector(".radio-group");
+    if (tipo) {
+        const checkboxes = tipo.querySelectorAll("input[type='checkbox']");
+        
+        // Adiciona o evento 'change' a cada checkbox
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", () => {
+                checa_tipo(); // Valida sempre que um checkbox for clicado
+            });
+        });
+    } else {
+        console.error("Elemento com a classe 'radio-group' não encontrado.");
+    }
+});
+
 
 //checagens--------------------------------------------------------
 function checa_nome() {
@@ -140,6 +225,22 @@ function checa_descricao() {
         form_item.className = "form_content";
     }
 }
+function checa_tipo() {
+    const tipo = document.querySelector(".radio-group");
+    const checkboxes = tipo.querySelectorAll("input[type='checkbox']");
+    const errorMessage = tipo.querySelector("a"); // Seleciona o elemento para exibir a mensagem de erro
+
+    // Verifica se pelo menos um checkbox está selecionado
+    const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);
+
+    if (!isChecked) {
+        errorMessage.innerText = "Selecione pelo menos uma opção.";
+        tipo.classList.add("error"); // Adiciona a classe de erro
+    } else {
+        errorMessage.innerText = ""; // Limpa a mensagem de erro
+        tipo.classList.remove("error"); // Remove a classe de erro
+    }
+}
 
 
 //mensagemde erro------------------------------------------------------
@@ -150,10 +251,18 @@ function error_imput(input, message) {
     text_message.innerText = message;
     form_item.className = "form_content error";
 }
-function error_radio(radio, message) {
-    const form_item = radio.parentElement;
-    const text_message = form_item.querySelector("a");
+function error_checkbox(checkboxGroup, message) {
+    const form_item = checkboxGroup.parentElement; // O contêiner do grupo de checkboxes
+    const text_message = form_item.querySelector("a"); // Mensagem de erro
 
-    text_message.innerText = message;
-    form_item.className = "radio-group error";
+    // Verifica se pelo menos um checkbox está selecionado
+    const isChecked = Array.from(checkboxGroup.querySelectorAll("input[type='checkbox']")).some(checkbox => checkbox.checked);
+
+    if (!isChecked) {
+        text_message.innerText = message;
+        form_item.className = "checkbox-group error";
+    } else {
+        text_message.innerText = ""; // Limpa a mensagem de erro
+        form_item.className = "checkbox-group"; // Remove a classe de erro
+    }
 }
