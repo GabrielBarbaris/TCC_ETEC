@@ -30,7 +30,7 @@
                     </div>
                     <div class="form_content">
                         <label for="quantidade"> quantidade</label>
-                        <input type="text" id="quantidade" quantidade="nome" placeholder="quantidade">
+                        <input type="text" id="quantidade" name="quantidade" placeholder="quantidade">
                         <a>mensagem de erro</a>
                     </div>
 
@@ -38,7 +38,7 @@
                         <label for="corte">corte</label>
                         <input type="text" id="corte" name="corte" placeholder="digite o tipo de corte">
 
-                        <a>mensagem de erro</a>
+                        <a>mensagem de erro</a>''
                     </div>
                     <button>Adicionar</button>
                 </section>
@@ -46,12 +46,12 @@
 
                     <div class="form_content">
                         <label for="horario"> horario de retirada</label>
-                        <input type="text" id="horario" quantidade="horario" placeholder="horario">
+                        <input type="text" id="horario" name="horario" placeholder="horario">
                         <a>mensagem de erro</a>
                     </div>
                     <div class="form_content">
                         <label for="cliente"> cliente</label>
-                        <input type="text" id="cliente" quantidade="cliente" placeholder="cliente">
+                        <input type="text" id="cliente" name="cliente" placeholder="cliente">
                         <a>mensagem de erro</a>
                     </div>
                     <div class="form_content">
@@ -68,8 +68,20 @@
                         </div>
 
                         <div id="endereco" class="hidden">
-                            <label for="campo_endereco">Digite o endereço</label>
-                            <input type="text" id="campo_endereco" name="endereco">
+                            <label for="cep">CEP</label>
+                            <input type="text" id="cep" name="cep" placeholder="Digite o CEP (apenas números)">
+
+                            <label for="campo_endereco">Endereço</label>
+                            <div class="input-group mb-3" style="display: flex; align-items: stretch; gap: 8px;">
+                                <div class="input-group-prepend" style="display: flex;">
+                                    <span class="input-group-text" id="numero-addon" style="display:flex; align-items:center; padding: 10px 12px; background:#f3f3f3; border:2px solid #dfdfdf; border-radius:8px; color:#4a4642;">Nº</span>
+                                </div>
+                                <input type="text" class="form-control" id="numero_endereco" name="numero" placeholder="Número" aria-label="Número" aria-describedby="numero-addon" style="max-width: 110px; border:2px solid #dfdfdf; border-radius:8px; padding:10px 12px;">
+                                <input type="text" class="form-control" id="campo_endereco" name="endereco" placeholder="Rua, bairro, cidade - UF" aria-label="Endereço" style="flex:1 1 auto; min-width:0; border:2px solid #dfdfdf; border-radius:8px; padding:10px 12px;">
+                            </div>
+
+                            <label for="complemento_endereco">Complemento (opcional)</label>
+                            <input type="text" id="complemento_endereco" name="complemento" placeholder="Apartamento, bloco, referência">
                         </div>
                         </div>
                 </section>

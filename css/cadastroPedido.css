@@ -1,165 +1,243 @@
 @import './globals.css';
 
+/* Variáveis de tema */
+:root {
+  --primary: #600E0E;
+  --primary-700: #4b0b0b;
+  --bg: #f6f7fb;
+  --text-heading: #5C4444;
+  --text-body: #4a4642;
+  --muted: #807a75;
+  --border: #dfdfdf;
+  --error: #fc5e5e;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-    background-color: #ffffff;
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-
-
+  background-color: var(--bg);
+  color: var(--text-body);
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .container {
-    width: 100%;
-    padding-top: 70px;
-    display: flex;
-    flex-direction: column;
+  width: 100%;
+  max-width: 980px;
+  padding: 96px 16px 40px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
-.tela1{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-    width: 40%;
+
+.tela1 {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  padding: 24px 24px 8px;
 }
 
 .titulo {
-    font-family: "Baloo";
-    color: #5C4444;
-    font-size: 30px;
-    padding: 20px;
+  font-family: "Baloo", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji";
+  color: var(--text-heading);
+  font-size: 30px;
+  padding: 8px 8px 16px;
+  margin: 0 0 8px;
+  text-align: center;
 }
 
 .form {
-    padding: 5px;
+  display: grid;
+  gap: 16px;
+}
 
+section.produto,
+section.pedido {
+  display: grid;
+  gap: 12px;
+  padding: 8px 0 4px;
 }
 
 .form_content {
-    margin-bottom: 8px;
-    padding-bottom: 5px;
-    position: relative;
-    font-family: "Calibre";
-    color: #807a75;
-
+  margin-bottom: 4px;
+  position: relative;
+  font-family: "Calibre", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
+  color: var(--muted);
 }
 
 .form_content label {
-    display: inline-block;
-    margin-bottom: 0px;
-
+  display: inline-block;
+  margin-bottom: 6px;
+  color: var(--text-body);
+  font-weight: 600;
 }
 
 .form_content input {
-    display: block;
-    width: 100%;
-    border-radius: 3px;
-    padding: 5px;
-    border: 2px, solid #dfdfdf;
+  display: block;
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 2px solid var(--border);
+  background: #fff;
+  color: var(--text-body);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.form_content input::placeholder {
+  color: #a8a8a8;
+}
+
+.form_content input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(96, 14, 14, 0.12);
 }
 
 .form_content a {
-    position: absolute;
-    bottom: 0px;
-    left: 0;
-    visibility: hidden;
+  position: relative;
+  display: block;
+  margin-top: 6px;
+  visibility: hidden;
+  min-height: 0;
+  font-size: 12px;
 }
 
+/* Mensagem global */
+.form_content span#mensagem {
+  display: none; /* controlado via jQuery */
+  text-align: center;
+  padding: 10px 12px;
+  color: #ffffff;
+  background-color: rgba(105, 23, 23, 0.85);
+  border-left: 4px solid var(--primary);
+  border-radius: 8px;
+}
+
+/* Botões */
 .form button {
-    background-color: #600E0E;
-    color: #ffffff;
-    width: 20%;
-    border: 0;
-    border-radius: 10px;
-    padding: 8px;
-    font-family: Baloo;
-    font-size: 16px;
-    cursor: pointer;
-    margin-bottom: 5px;
-    float: right;
+  background-color: var(--primary);
+  color: #ffffff;
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-family: Baloo, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
+  font-size: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: auto;
+  float: none;
+  transition: background-color 0.2s ease, transform 0.06s ease;
 }
 
+.form button:hover {
+  background-color: var(--primary-700);
+}
 
+.form button:active {
+  transform: translateY(1px);
+}
 
-
+/* Estados de erro */
 .form_content.error input {
-    border-color: #fc5e5e;
-}
-
-.form_content span {
-    display: block;
-    text-align: center;
-    padding: 10px;
-    color: rgb(255, 255, 255);
-    border: 3px, solid, rgba(243, 4, 4, 0.156);
-    background-color: rgba(105, 23, 23, 0.593);
-    border-radius: 13px;
-
+  border-color: var(--error);
+  background-color: #fff5f5;
 }
 
 .form_content.error a {
-    color: #fc5e5e;
-    visibility: visible;
-    margin-top: 20px;
+  color: var(--error);
+  visibility: visible;
 }
 
 .form a {
-    font-family: "Calibre";
+  font-family: "Calibre", system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
 }
 
-/*Caixa de texto com botão no lado*/
-
-/*
-<div class="form_content_produto">
-    <label for="nome"> produto</label>
-    <input type="text" id="nome" name="nome" placeholder="Digite seu nome">
-    <button>pesquisar</button>
-    <a>mensagen de erro</a>
-</div>
-*/
+/* Inputs com botão ao lado (se usado futuramente) */
 .form_content_botao {
-    margin-bottom: 8px;
-    padding-bottom: 18px;
-    position: relative;
-    font-family: "Calibre";
-    color: #807a75;
+  margin-bottom: 8px;
+  position: relative;
+  font-family: "Calibre";
+  color: var(--muted);
 }
 
 .form_content_botao input {
-    display: inline-block;
-    width: 79%;
-    border-radius: 3px;
-    padding: 10px;
-    border: 2px, solid #dfdfdf;
+  display: inline-block;
+  width: 78%;
+  border-radius: 8px;
+  padding: 10px 12px;
+  border: 2px solid var(--border);
 }
 
 .form_content_botao button {
-    display: inline-block;
-    width: 20%;
-    ;
-
+  display: inline-block;
+  width: 21%;
 }
 
 .form_content_botao label {
-    display: block;
-    margin-bottom: 0px;
-
+  display: block;
+  margin-bottom: 6px;
 }
 
-/*caixa radio*/
-
+/* Rádio */
 .pedido .radio {
-    display: flex;
-
-
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
 }
 
 .pedido .item_radio {
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: #fff;
+}
+
+.pedido .item_radio input[type="radio"] {
+  transform: scale(1.05);
+}
+
+/* Campo de endereço (mostra/oculta via classe) */
+#endereco {
+  margin-top: 8px;
 }
 
 .hidden {
-    display: none;
+  display: none !important;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .container {
+    padding-top: 84px;
   }
+  .tela1 {
+    padding: 20px 16px 6px;
+  }
+}
+
+@media (max-width: 600px) {
+  .titulo {
+    font-size: 26px;
+  }
+  .form_content input {
+    padding: 9px 10px;
+  }
+  .form button {
+    width: 100%;
+    justify-content: center;
+  }
+}
