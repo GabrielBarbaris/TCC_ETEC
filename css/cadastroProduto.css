@@ -1,208 +1,270 @@
-@import './globals.css';
+/*@import './globals.css';*/
 
+/* Reset/consistência */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+
+/* Layout principal */
 .container {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  background: #f5f5f7;
 }
 
+/* Painel da imagem (esquerda) */
 .imagem {
-    width: 50%;
-    min-height: 100vh;
-    background-color: rgb(255, 255, 255);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 100px;
+  width: 50%;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  padding: 40px 24px;
 }
 
+/* Painel do formulário (direita) */
 .formulario {
-    width: 50%;
-    height: 100vh;
-    background-color: #F8F8F8;
-    display: flex;
-    justify-content: center;
+  width: 50%;
+  min-height: 100vh;
+  background-color: #F8F8F8;
+  display: flex;
+  justify-content: center;
 }
 
 .form {
-    margin-top: 70px;
-    display: grid;
-    grid-template-columns: 1fr 1fr;    gap: 20px;
-    /* espaço entre colunas e linhas */
+  width: 100%;
+  max-width: 680px;
+  margin-top: 70px; /* espaçamento para o menu */
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px; /* espaço entre colunas e linhas */
 }
 
 .titulo {
-    font-family: "Baloo";
-    color: #5C4444;
-    font-size: 30px;
-    flex-direction: column;
+  font-family: "Baloo";
+  color: #5C4444;
+  font-size: 30px;
 }
 
-.form input,
-.form textarea,
-.form button {
-    width: 100%;
-    padding: 20px;
-    border-radius: 5px;
-    margin-top: 5px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    border: #00000097;
-}
-
-.form_content a {
-    bottom: 0px;
-    left: 0;
-    visibility: hidden;
-    font-family: 'Calibre';
-}
-
-
-.form_content select {
-    width: 100%;
-    /* ocupar toda a largura disponível */
-    padding: 20px;
-    /* espaço interno */
-    border-radius: 5px;
-    /* cantos arredondados */
-    border: 1px solid #ccc;
-    /* borda cinza */
-    font-size: 14px;
-    /* tamanho da fonte */
-    background-color: #fff;
-    /* fundo branco */
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-}
-
-.radio-group {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    position: relative;
-}
-
-
-.radio-item {
-    display: flex;
-    flex-direction: column;
-    /* coloca o texto embaixo do círculo */
-    align-items: center;
-    /* centraliza o texto em relação ao radio */
-    cursor: pointer;
-}
-
-.radio-item input[type="radio"] {
-    width: 24px;
-    /* tamanho do círculo */
-    height: 24px;
-    margin-bottom: 5px;
-    /* espaço entre o círculo e o texto */
-}
-
+/* Tipografia de rótulos */
 .tipo,
 .form label {
-    font-family: Arial, Helvetica, sans-serif;
-    color: #00000097;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #00000097;
 }
 
-
-input[type="checkbox" ] {
-    width: 20px;
-    height: 20px;
-    background-color: transparent;
-    border: 2px solid #333;
-    /* cria sua própria borda */
-    border-radius: 4px;
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
-    /* sombra sem borda branca */
-    cursor: pointer;
+/* Bloco de conteúdo do campo */
+.form_content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
-input[type="radio" ] {
-    width: 20px;
-    height: 20px;
-    background-color: transparent;
-    border: 2px solid #333;
-    /* cria sua própria borda */
-    border-radius: 100px;
-    box-shadow: 0 0 0px rgba(0, 0, 0, 0.3);
-    /* sombra sem borda branca */
-    cursor: pointer;
-    font-family: "Calibre";
+/* Campos de entrada padrão */
+.form input,
+.form textarea,
+.form select {
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #dddddd;
+  background: #fff;
+  color: #222;
+  font-size: 14px;
+  outline: none;
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
 }
 
+.form textarea { resize: vertical; }
 
-.exemplo {
-    background-color: aqua;
-    height: 400px;
-    width: 400px;
+.form input::placeholder,
+.form textarea::placeholder { color: #9aa0a6; }
+
+.form input:focus,
+.form textarea:focus,
+.form select:focus {
+  border-color: #800000;
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12);
 }
 
-.form button {
-    background-color: #800000;
-    cursor: pointer;
-    font-family: 'Baloo';
-    color: #fff;
-    border-radius: 10px;
-    font-size: 20px;
-    padding: 0px;
-    margin-bottom: 20px;
-    grid-column: span 2;
-
+/* Mensagens de erro dos campos individuais */
+.form_content a {
+  font-family: 'Calibre';
+  font-size: 12px;
+  color: #6b6b6b;
+  visibility: hidden;
+  min-height: 16px; /* reserva espaço para evitar salto de layout */
 }
 
-.imagem button {
-    background-color: #800000;
-    cursor: pointer;
-    font-family: 'Baloo';
-    color: #fff;
-    border-radius: 10px;
-    font-size: 20px;
-    padding: 20px;
-    border: 0px;
-    box-shadow: 0 0 9px rgba(0, 0, 0, 0.3);
-}
-
-.form_descricao {
-    grid-column: span 2;
-}
-
-.form_descricao a {
-    position: absolute;
-    bottom: 0px;
-    left: 0;
-    visibility: hidden;
-}
 .form_content.error a {
-    color: #fc5e5e;
-    visibility: visible;
-}
-.form_content.error input {
-    border: 1px solid #fc5e5e;
+  color: #fc5e5e;
+  visibility: visible;
 }
 
+.form_content.error input,
+.form_content.error textarea,
 .form_content.error select {
-    border: 1px solid #fc5e5e;
+  border: 1px solid #fc5e5e;
+  box-shadow: 0 0 0 3px rgba(252, 94, 94, 0.12);
 }
 
-.radio-group.error label input[type="checkbox"] {
-    box-shadow: 0px 0px 0px 1px #fc5e5e;
+/* Select específico para aparência consistente */
+.form_content select {
+  appearance: none;
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  background-color: #fff;
+  background-image: linear-gradient(45deg, transparent 50%, #666 50%),
+                    linear-gradient(135deg, #666 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 11px) calc(50% - 3px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
 
+/* Grupo de opções (cortes e medida) */
+.radio-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 16px;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative; /* para mensagem de erro posicionada */
 }
-.radio-group.error a {
-    color: #fc5e5e;
-    visibility: visible;
+
+.radio-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
 }
+
+.radio-item span { font-size: 14px; color: #333; }
+
+/* Personalização sutil dos inputs de opção */
+input[type="checkbox"],
+input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #800000; /* suporte moderno */
+  cursor: pointer;
+}
+
+/* Estados de erro para grupos de opções */
+.radio-group.error label input[type="checkbox"],
+.radio-group.error label input[type="radio"] {
+  box-shadow: 0 0 0 2px #fc5e5e;
+  border-radius: 4px;
+}
+
+/* Mensagem de erro do grupo (centralizada abaixo) */
 .radio-group a {
-    color: #000000;
-    visibility: hidden;
-    font-family: 'Calibre';
-    position: absolute;
-    bottom: -16px;
-    display: block;
-    text-align: center;
-    width: 100%;
-
+  color: #000000;
+  visibility: hidden;
+  font-family: 'Calibre';
+  font-size: 12px;
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  right: 0;
+  text-align: center;
 }
 
+.radio-group.error a {
+  color: #fc5e5e;
+  visibility: visible;
+}
+
+/* Área de exemplo/preview da imagem */
+.exemplo {
+  width: 100%;
+  max-width: 420px;
+  aspect-ratio: 1 / 1;
+  border: 2px dashed #c9c9c9;
+  border-radius: 12px;
+  background-color: #fafafa;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.04);
+}
+
+/* Botões */
+.form button,
+.imagem button,
+.upload-trigger button {
+  background-color: #800000;
+  color: #fff;
+  font-family: 'Baloo';
+  font-size: 18px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  border: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  transition: background-color .2s ease, transform .06s ease, box-shadow .2s ease;
+}
+
+.form button:hover,
+.imagem button:hover,
+.upload-trigger button:hover { background-color: #6a0000; }
+
+.form button:active,
+.imagem button:active,
+.upload-trigger button:active { transform: translateY(1px); }
+
+.form button:disabled { opacity: .6; cursor: not-allowed; }
+
+/* Botão de submit ocupa as 2 colunas no desktop */
+.form button#cadastrar { grid-column: span 2; margin-bottom: 24px; }
+
+/* Responsividade */
+@media (max-width: 1200px) {
+  .form { max-width: 620px; }
+}
+
+@media (max-width: 1024px) {
+  .imagem { width: 45%; }
+  .formulario { width: 55%; }
+}
+
+@media (max-width: 840px) {
+  .container { flex-direction: column; }
+  .imagem, .formulario { width: 100%; min-height: auto; }
+  .form { grid-template-columns: 1fr; margin-top: 32px; padding: 0 16px; }
+  .form button#cadastrar { grid-column: 1; }
+}
+
+/* Ajustes finos de acessibilidade */
+.form input:focus-visible,
+.form textarea:focus-visible,
+.form select:focus-visible,
+.form button:focus-visible,
+.imagem button:focus-visible,
+.upload-trigger button:focus-visible {
+  outline: 2px solid rgba(128, 0, 0, 0.5);
+  outline-offset: 2px;
+}
+
+/* Validação visual da imagem (padrão semelhante aos outros campos) */
+.imagem .exemplo { cursor: pointer; }
+.imagem .imagem-erro {
+  font-family: 'Calibre';
+  font-size: 12px;
+  color: #6b6b6b;
+  min-height: 16px; /* reserva espaço */
+  text-align: center;
+  visibility: hidden;
+}
+.imagem.error .exemplo {
+  border-color: #fc5e5e;
+  box-shadow: 0 0 0 3px rgba(252, 94, 94, 0.12);
+}
+.imagem.error .imagem-erro {
+  color: #fc5e5e;
+  visibility: visible;
+}

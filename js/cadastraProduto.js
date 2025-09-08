@@ -10,11 +10,101 @@ const intervalo = document.getElementById("intervalo");
 const descricao = document.getElementById("descricao");
 //----------------------------------------------------------------------
 
+// imagem (input escondido) e preview (div .exemplo)
+const imagemInput = document.getElementById("imagem");
+const previewBox = document.querySelector(".exemplo");
+let imagemErroEl = null;
+
+(function initImagemUI(){
+  const imagemContainer = document.querySelector(".imagem");
+  if (imagemContainer && !imagemErroEl){
+    imagemErroEl = document.createElement("span");
+    imagemErroEl.className = "imagem-erro";
+    imagemContainer.appendChild(imagemErroEl);
+  }
+
+  if (previewBox){
+    previewBox.style.cursor = "pointer";
+    previewBox.addEventListener("click", () => imagemInput && imagemInput.click());
+  }
+})();
+
+function clearImagemError(){
+  if (imagemErroEl) imagemErroEl.textContent = "";
+  const imagemContainer = document.querySelector(".imagem");
+  if (imagemContainer){ imagemContainer.classList.remove("error"); }
+}
+function setImagemError(msg){
+  if (imagemErroEl) imagemErroEl.textContent = msg;
+  const imagemContainer = document.querySelector(".imagem");
+  if (imagemContainer){ imagemContainer.classList.add("error"); }
+}
+
+function previewImagem(file){
+  const allowed = ["image/jpeg","image/png","image/webp","image/jpg"];
+  const maxSize = 5 * 1024 * 1024; // 5MB
+  if (!file){ setImagemError("selecione uma imagem."); return false; }
+  if (!allowed.includes(file.type)){
+    setImagemError("Formato inválido. Use JPG, PNG ou WEBP.");
+    return false;
+  }
+  if (file.size > maxSize){
+    setImagemError("Imagem muito grande (máx. 5MB).");
+    return false;
+  }
+  const url = URL.createObjectURL(file);
+  if (previewBox){
+    previewBox.style.backgroundImage = `url('${url}')`;
+    previewBox.style.backgroundSize = "contain";
+    previewBox.style.backgroundRepeat = "no-repeat";
+    previewBox.style.backgroundPosition = "center";
+    previewBox.style.borderStyle = "dashed";
+  }
+  clearImagemError();
+  return true;
+}
+
+if (imagemInput){
+  imagemInput.addEventListener("change", (e) => {
+    const file = e.target.files && e.target.files[0];
+    previewImagem(file);
+  });
+}
+
 
 
 
 form.addEventListener("submit", (event) => {
-    
+    let valido = true;
+
+    // validações existentes
+    checa_nome();
+    checa_preco();
+    checa_categoria();
+    checa_peso();
+    checa_intervalo();
+    checa_descricao();
+    checa_tipo();
+
+    // validação da imagem obrigatória
+    if (!imagemInput || !imagemInput.files || imagemInput.files.length === 0){
+        setImagemError("Imagem obrigatória.");
+        valido = false;
+    } else {
+        const file = imagemInput.files[0];
+        if (!previewImagem(file)) {
+            valido = false;
+        }
+    }
+
+    // se houver qualquer erro marcado
+    const temErro = document.querySelector(".form_content.error") || document.querySelector(".radio-group.error");
+    if (temErro) valido = false;
+
+    if (!valido){
+        event.preventDefault();
+        event.stopPropagation();
+    }
 })
 
 //mascaras---------------------------------------------------------
@@ -162,6 +252,43 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("Elemento com a classe 'radio-group' não encontrado.");
     }
+
+    // Alterna exibição dos campos (Peso mínimo e Intervalo) conforme a medida selecionada
+    const radiosMedida = document.querySelectorAll("input[name='medida']");
+    const pesoContainer = document.getElementById("peso") ? document.getElementById("peso").closest(".form_content") : null;
+    const intervaloContainer = document.getElementById("intervalo") ? document.getElementById("intervalo").closest(".form_content") : null;
+
+    function setPesoVisibility() {
+        const isPeso = document.querySelector("input[name='medida'][value='PESO']")?.checked;
+        if (!pesoContainer || !intervaloContainer) return;
+
+        // Usa estilo inline para não depender de CSS adicional
+        if (isPeso) {
+            pesoContainer.style.display = "flex";
+            intervaloContainer.style.display = "flex";
+        } else {
+            pesoContainer.style.display = "none";
+            intervaloContainer.style.display = "none";
+        }
+
+        // Habilita/Desabilita e controla 'required'
+        [peso_min, intervalo].forEach((input) => {
+            if (!input) return;
+            input.required = !!isPeso;
+            input.disabled = !isPeso;
+            if (!isPeso) {
+                const parent = input.parentElement;
+                parent.classList.remove("error");
+                const a = parent.querySelector("a");
+                if (a) a.textContent = "";
+            }
+        });
+    }
+
+    if (radiosMedida.length) {
+        radiosMedida.forEach(r => r.addEventListener("change", setPesoVisibility));
+        setPesoVisibility(); // estado inicial
+    }
 });
 
 
@@ -197,9 +324,16 @@ function checa_categoria() {
 }
 
 function checa_peso() {
+    // Ignora validação se o campo estiver desabilitado (quando medida for UNIDADE)
+    if (peso_min.disabled) {
+        const form_item = peso_min.parentElement;
+        form_item.className = "form_content";
+        return;
+    }
+
     const valor_peso = peso_min.value;
     if (valor_peso === "") {
-        error_imput(peso_min, "selecione umm peso");
+        error_imput(peso_min, "preencha o peso mínimo");
     } else {
         const form_item = peso_min.parentElement;
         form_item.className = "form_content";
@@ -207,9 +341,16 @@ function checa_peso() {
 }
 
 function checa_intervalo() {
+    // Ignora validação se o campo estiver desabilitado (quando medida for UNIDADE)
+    if (intervalo.disabled) {
+        const form_item = intervalo.parentElement;
+        form_item.className = "form_content";
+        return;
+    }
+
     const valor_intervalo = intervalo.value;
     if (valor_intervalo === "") {
-        error_imput(intervalo, "selecione um intervalo");
+        error_imput(intervalo, "preencha o intervalo");
     } else {
         const form_item = intervalo.parentElement;
         form_item.className = "form_content";

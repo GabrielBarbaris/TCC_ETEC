@@ -125,7 +125,7 @@
         </div>
 
         <!-- Descrição -->
-        <div class="form_descricao" style="grid-column: span 2;">
+        <div class="form_content" style="grid-column: span 2;">
           <label for="descricao">Descrição</label>
           <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto neste campo" rows="4"></textarea>
           <a>mensagem de erro</a>
