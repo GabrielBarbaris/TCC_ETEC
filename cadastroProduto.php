@@ -20,15 +20,11 @@
     <!-- Pane da imagem (esquerda) -->
     <div class="imagem">
       <div class="exemplo"></div>
-      <!-- O botão abaixo aciona o input de arquivo escondido dentro do formulário -->
-      <label for="imagem" class="upload-trigger">
-        <button type="button">Selecionar imagem</button>
-      </label>
     </div>
 
     <!-- Pane do formulário (direita) -->
     <div class="formulario">
-      <form class="form" id="form" action="processaCadastro.php" method="POST" enctype="multipart/form-data" autocomplete="off">
+      <form class="form" id="form" action="processaCadastro.php" method="POST" enctype="multipart/form-data" autocomplete="off" novalidate>
         <!-- Input de arquivo real (escondido) para ser enviado junto com o formulário -->
         <input type="file" id="imagem" name="imagem" accept="image/*" required style="display:none" />
 
@@ -44,7 +40,7 @@
         <!-- Preço -->
         <div class="form_content">
           <label for="preco">Preço</label>
-          <input type="text" id="preco" name="preco" placeholder="R$ 0,00" inputmode="decimal" autocomplete="off">
+          <input type="text" id="preco" name="preco" placeholder="R$ 0,00" inputmode="decimal" autocomplete="off" required>
           <a>mensagem de erro</a>
         </div>
 
@@ -127,7 +123,7 @@
         <!-- Descrição -->
         <div class="form_content" style="grid-column: span 2;">
           <label for="descricao">Descrição</label>
-          <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto neste campo" rows="4"></textarea>
+          <textarea id="descricao" name="descricao" placeholder="Digite a descrição do produto neste campo" rows="4" required></textarea>
           <a>mensagem de erro</a>
         </div>
 
