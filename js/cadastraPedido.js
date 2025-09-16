@@ -35,6 +35,17 @@ horario.addEventListener("blur",() =>{
 cliente.addEventListener("blur",() =>{
     checa_cliente();
 })
+
+// validações de entrega em blur (quando aplicável)
+if (cepInput) {
+    cepInput.addEventListener('blur', checa_cep);
+}
+if (numeroInput) {
+    numeroInput.addEventListener('blur', checa_numero_endereco);
+}
+if (enderecoInput) {
+    enderecoInput.addEventListener('blur', checa_endereco_texto);
+}
 // validação do recebimento é tratada no submit e na alteração dos rádios
 
 
@@ -95,6 +106,49 @@ function checa_cliente() {
     return true;
 }
 
+// validações específicas de entrega (campo-a-campo)
+function checa_cep() {
+    if (!entregaRadio || !entregaRadio.checked) return true;
+    const valorCEP = cepInput ? limparCEP(cepInput.value) : '';
+    if (!valorCEP || valorCEP.length !== 8) {
+        error_imput(cepInput, 'Informe um CEP válido (8 dígitos)');
+        return false;
+    }
+    const form_item = cepInput.parentElement; form_item.className = 'form_content';
+    return true;
+}
+
+function checa_numero_endereco() {
+    if (!entregaRadio || !entregaRadio.checked) return true;
+    const valorNumero = numeroInput ? String(numeroInput.value).trim() : '';
+    const numeroDigits = valorNumero.replace(/\D/g, '');
+    if (!numeroDigits || Number(numeroDigits) <= 0) {
+        error_imput(numeroInput, 'Informe o número da casa (apenas dígitos)');
+        return false;
+    }
+    const form_item = numeroInput.parentElement; form_item.className = 'form_content';
+    return true;
+}
+
+function checa_endereco_texto() {
+    if (!entregaRadio || !entregaRadio.checked) return true;
+    const valorEnd = enderecoInput ? enderecoInput.value.trim() : '';
+    if (!valorEnd) {
+        error_imput(enderecoInput, 'Informe o endereço para entrega');
+        return false;
+    }
+    const form_item = enderecoInput.parentElement; form_item.className = 'form_content';
+    return true;
+}
+
+function checa_itens() {
+    if (!Array.isArray(itensPedido) || itensPedido.length === 0) {
+        $('#mensagem').html('Adicione ao menos um item ao pedido.').fadeIn(300).delay(2000).fadeOut(400);
+        return false;
+    }
+    return true;
+}
+
 function checa_recebimento() {
     const selecionado = document.querySelector('input[name="recebimento"]:checked');
     if (!selecionado) {
@@ -102,17 +156,11 @@ function checa_recebimento() {
         return false;
     }
     if (selecionado.value === 'entrega') {
-        const valorEnd = enderecoInput ? enderecoInput.value.trim() : '';
-        if (!valorEnd) {
-            $('#mensagem').html('Informe o endereço para entrega.').fadeIn(300).delay(2000).fadeOut(400);
-            return false;
-        }
-        const valorNumero = numeroInput ? String(numeroInput.value).trim() : '';
-        const numeroDigits = valorNumero.replace(/\D/g, '');
-        if (!numeroDigits || Number(numeroDigits) <= 0) {
-            $('#mensagem').html('Informe o número da casa (apenas dígitos).').fadeIn(300).delay(2000).fadeOut(400);
-            return false;
-        }
+        let ok = true;
+        if (!checa_cep()) ok = false;
+        if (!checa_endereco_texto()) ok = false;
+        if (!checa_numero_endereco()) ok = false;
+        if (!ok) return false;
     }
     return true;
 }
@@ -121,9 +169,7 @@ function checa_recebimento() {
 function checa_form() {
     let validado = true;
 
-    if (!checa_produto()) validado = false;
-    if (!checa_quantidade()) validado = false;
-    if (!checa_corte()) validado = false;
+    if (!checa_itens()) validado = false;
     if (!checa_horario()) validado = false;
     if (!checa_cliente()) validado = false;
     if (!checa_recebimento()) validado = false;
@@ -250,6 +296,66 @@ if (cepInput) {
         // Garantir que o campo endereço esteja visível quando há entrega
         atualizarVisibilidadeEndereco();
       }
+    }
+  });
+}
+
+// Painel de Itens (Adicionar -> lista à direita)
+const btnAdicionar = document.getElementById('btnAdicionar');
+const listaItensEl = document.getElementById('lista-itens');
+const contadorItensEl = document.getElementById('contador-itens');
+const painelFooterEl = document.getElementById('painel-itens-footer');
+let itensPedido = [];
+
+function escapeHtml(str) {
+  return String(str || '').replace(/[&<>\"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[s]));
+}
+
+function atualizarPainel() {
+  if (!listaItensEl) return;
+  if (contadorItensEl) contadorItensEl.textContent = String(itensPedido.length);
+  listaItensEl.innerHTML = itensPedido.map((it, idx) => `
+    <li>
+      <div class="item-info">
+        <strong>${escapeHtml(it.produto)}</strong>
+        <span class="muted">Qtd: ${escapeHtml(it.quantidade)} • Corte: ${escapeHtml(it.corte)}</span>
+      </div>
+      <button type="button" class="btn-remover" data-index="${idx}" aria-label="Remover item">×</button>
+    </li>
+  `).join('');
+  if (painelFooterEl) painelFooterEl.textContent = itensPedido.length ? ' ' : 'Nenhum item adicionado.';
+}
+
+if (btnAdicionar) {
+  btnAdicionar.addEventListener('click', () => {
+    const ok1 = checa_produto();
+    const ok2 = checa_quantidade();
+    const ok3 = checa_corte();
+    if (!(ok1 && ok2 && ok3)) return;
+
+    itensPedido.push({
+      produto: produto.value.trim(),
+      quantidade: quantidade.value.trim(),
+      corte: corte.value.trim()
+    });
+    atualizarPainel();
+
+    // limpa campos de produto para próxima adição
+    produto.value = '';
+    quantidade.value = '';
+    corte.value = '';
+    produto.focus();
+  });
+}
+
+if (listaItensEl) {
+  listaItensEl.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-remover');
+    if (!btn) return;
+    const idx = Number(btn.getAttribute('data-index'));
+    if (Number.isFinite(idx)) {
+      itensPedido.splice(idx, 1);
+      atualizarPainel();
     }
   });
 }
