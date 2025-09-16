@@ -110,6 +110,10 @@ if (imagemInput){
 
 
 form.addEventListener("submit", (event) => {
+    // sempre evitar o submit padrão; vamos controlar via AJAX
+    event.preventDefault();
+    event.stopPropagation();
+
     let valido = true;
 
     // validações existentes
@@ -134,13 +138,10 @@ form.addEventListener("submit", (event) => {
     }
 
     // se houver qualquer erro marcado
-    const temErro = document.querySelector(".form_content.error") || document.querySelector(".radio-group.error")  ;
+    const temErro = document.querySelector(".form_content.error") || document.querySelector(".radio-group.error");
     if (temErro) valido = false;
 
     if (!valido){
-        event.preventDefault();
-        event.stopPropagation();
-
         // dar foco e mostrar mensagens nos campos específicos
         const tipoGroup = document.querySelector(".radio-group input[type='checkbox']")?.closest(".radio-group");
         const refTipo = tipoGroup ? tipoGroup.querySelector("input[type='checkbox']") : null;
@@ -153,7 +154,66 @@ form.addEventListener("submit", (event) => {
         } else if (typeof form.reportValidity === "function") {
             form.reportValidity();
         }
+        return; // não segue com o envio
     }
+
+    // Se chegou aqui, está válido. Envia via AJAX para banco_CadastraProduto.php
+    const formData = new FormData(form);
+    const btn = document.getElementById("cadastrar");
+    if (btn) btn.disabled = true;
+
+    $.ajax({
+        url: 'banco_CadastraProduto.php',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+        success: function (response) {
+            response = (response || '').toString().trim();
+            if (response === 'ok') {
+                // feedback de sucesso
+                if ($('#mensagem').length) {
+                    $('#mensagem').html('Cadastrado com sucesso');
+                    $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+                } else {
+                    alert('Cadastrado com sucesso');
+                }
+
+                // resetar formulário e UI
+                form.reset();
+                clearPreviewBox();
+                if (imagemInput) imagemInput.setCustomValidity('');
+
+                // limpar estados de erro visuais
+                document.querySelectorAll('.form_content.error').forEach(el => el.classList.remove('error'));
+                document.querySelectorAll('.radio-group.error').forEach(el => el.classList.remove('error'));
+
+                // re-aplicar visibilidade de campos dependentes da medida
+                const sel = document.querySelector("input[name='medida']:checked");
+                if (sel) sel.dispatchEvent(new Event('change', { bubbles: true }));
+            } else {
+                // feedback de erro vindo do servidor
+                if ($('#mensagem').length) {
+                    $('#mensagem').html('Erro ao cadastrar o produto.');
+                    $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+                } else {
+                    alert('Erro ao cadastrar o produto.');
+                }
+            }
+        },
+        error: function (xhr, status, error) {
+            console.log('Erro na requisição: ', error);
+            if ($('#mensagem').length) {
+                $('#mensagem').html('Falha na requisição. Tente novamente.');
+                $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+            } else {
+                alert('Falha na requisição. Tente novamente.');
+            }
+        },
+        complete: function(){
+            if (btn) btn.disabled = false;
+        }
+    });
 })
 
 //mascaras---------------------------------------------------------

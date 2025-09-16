@@ -500,7 +500,7 @@
     </header>
   </div> <!-- .tela-inicial -->
 
-  <script src="./js/botoesAdicionar.js"></script>
+  <script src="./js/index.js"></script>
 </body>
 
 </html>
