@@ -1,0 +1,106 @@
+<?php
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    header('Content-Type: text/plain; charset=UTF-8');
+    require_once 'conexao.php';
+
+    $itensJson = $_POST['itens'] ?? '[]';
+    $itens = json_decode($itensJson, true);
+    if (!is_array($itens) || count($itens) === 0) {
+        echo 'erro';
+        exit;
+    }
+
+    $cliente = trim($_POST['cliente'] ?? '');
+    $horario = trim($_POST['horario'] ?? '');
+    $receb = strtoupper(trim($_POST['recebimento'] ?? 'RETIRADA'));
+    $tipoPedido = ($receb === 'ENTREGA') ? 'ENTREGA' : 'RETIRADA';
+
+    // Converte horário para HH:MM:SS ou NULL
+    $horarioTime = null;
+    if (preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $horario)) {
+        $horarioTime = (strlen($horario) === 5) ? ($horario . ':00') : $horario;
+    }
+
+    // Encontrar usuário pelo nome ou usar fallback (admin = 1)
+    $codUsuario = 1;
+
+    if ($cliente !== '') {
+        if ($stmt = $conn->prepare('SELECT id_usuario FROM tbUsuario WHERE nome = ? LIMIT 1')) {
+            $stmt->bind_param('s', $cliente);
+            if ($stmt->execute()) {
+                $stmt->bind_result($uid);
+                if ($stmt->fetch()) {
+                    $codUsuario = (int)$uid;
+                }
+            }
+            $stmt->close();
+        }
+    }
+
+    $conn->begin_transaction();
+    try {
+        // Cria pedido com total 0 e forma_pagamento indefinida
+        $forma = 'A DEFINIR';
+        $stmtPed = $conn->prepare('INSERT INTO tbPedido (cod_usuario, tipo_pedido, horario_retirada, forma_pagamento, preco_total) VALUES (?, ?, ?, ?, 0.00)');
+        if (!$stmtPed) { throw new Exception('prepare pedido'); }
+        $stmtPed->bind_param('isss', $codUsuario, $tipoPedido, $horarioTime, $forma);
+        if (!$stmtPed->execute()) { throw new Exception('exec pedido'); }
+        $pedidoId = $stmtPed->insert_id;
+        $stmtPed->close();
+
+        // Agregar itens por produto para evitar PK duplicada (mesmo produto várias linhas)
+        $agregados = [];
+        foreach ($itens as $it) {
+            $nomeProd = isset($it['produto']) ? trim((string)$it['produto']) : '';
+            $qtdRaw = isset($it['quantidade']) ? trim((string)$it['quantidade']) : '0';
+            if ($nomeProd === '') { throw new Exception('item_nome'); }
+            // Quantidade numérica (permite vírgula)
+            $qtd = (float)str_replace(',', '.', preg_replace('/[^0-9.,-]/', '', $qtdRaw));
+            if (!is_finite($qtd) || $qtd <= 0) { throw new Exception('item_qtd'); }
+
+            // Localiza produto por nome exato
+            $stmtP = $conn->prepare('SELECT id_produto, preco FROM tbProduto WHERE nome_produto = ? LIMIT 1');
+            if (!$stmtP) { throw new Exception('prepare sel produto'); }
+            $stmtP->bind_param('s', $nomeProd);
+            if (!$stmtP->execute()) { $stmtP->close(); throw new Exception('exec sel produto'); }
+            $stmtP->bind_result($pid, $preco);
+            if (!$stmtP->fetch()) { $stmtP->close(); throw new Exception('produto_nao_encontrado'); }
+            $stmtP->close();
+
+            $pid = (int)$pid;
+            $preco = (float)$preco;
+            if (!isset($agregados[$pid])) {
+                $agregados[$pid] = ['qtd' => 0.0, 'preco' => $preco];
+            }
+            $agregados[$pid]['qtd'] += $qtd;
+        }
+
+        $totalPedido = 0.0;
+        $insItem = $conn->prepare('INSERT INTO tbPedidoProduto (cod_pedido, cod_produto, quantidade, preco_unitario, preco_total_prod) VALUES (?, ?, ?, ?, ?)');
+        if (!$insItem) { throw new Exception('prepare ins item'); }
+        foreach ($agregados as $pid => $info) {
+            $qtd = (float)$info['qtd'];
+            $preco = (float)$info['preco'];
+            $subtotal = $qtd * $preco;
+            $totalPedido += $subtotal;
+            $insItem->bind_param('iiddd', $pedidoId, $pid, $qtd, $preco, $subtotal);
+            if (!$insItem->execute()) { $insItem->close(); throw new Exception('exec ins item'); }
+        }
+        $insItem->close();
+
+        // Atualiza total do pedido
+        $upd = $conn->prepare('UPDATE tbPedido SET preco_total = ? WHERE id_pedido = ?');
+        if (!$upd) { throw new Exception('prepare upd'); }
+        $upd->bind_param('di', $totalPedido, $pedidoId);
+        if (!$upd->execute()) { $upd->close(); throw new Exception('exec upd'); }
+        $upd->close();
+
+        $conn->commit();
+        echo 'ok';
+    } catch (Throwable $e) {
+        $conn->rollback();
+        echo 'erro';
+    }
+    exit;
+}
+?>

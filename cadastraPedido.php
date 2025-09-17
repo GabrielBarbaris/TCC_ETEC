@@ -1,3 +1,6 @@
+<?php 
+    include 'cadastraPedidoBD.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -18,7 +21,7 @@
         <div class="tela1">
             <h3 class="titulo">Cadastro de Pedido</h3>
 
-            <form id="form" class="form">
+            <form id="form" class="form" novalidate>
             <div class="form_content" >
                 <span id="mensagem">Menssagem</span>
             </div>
@@ -35,17 +38,34 @@
                     </div>
 
                     <div class="form_content">
-                        <label for="corte">corte</label>
-                        <input type="text" id="corte" name="corte" placeholder="digite o tipo de corte">
+                    <label for="corte">Corte</label>
+                    <select id="corte" name="corte">
+                        <option value="">Escolha o corte</option>
+                        <?php
+                        require_once 'conexao.php';
+                        $comandoSql = 'SELECT * FROM tbcorte;';
+                        $result = mysqli_query($conn, $comandoSql);
 
-                        <a>mensagem de erro</a>
+                        if ($result && mysqli_num_rows($result) > 0) {
+                            while ($cortes = mysqli_fetch_assoc($result)) {
+                                $id = $cortes['id_corte'];
+                                $nome = htmlspecialchars($cortes['nome_corte'], ENT_QUOTES);
+                                echo "<option value='$nome' data-id='$id'>$nome</option>";
+                            }
+                        } else {
+                            echo "<option value=''>Não existe categoria</option>";
+                        }
+                        ?>
+                    </select>
+                    <a>mensagem de erro</a>
                     </div>
+
                     <button type="button" id="btnAdicionar">Adicionar</button>
                 </section>
                 <section class="pedido">
 
                     <div class="form_content">
-                        <label for="horario"> horario de retirada</label>
+                        <label for="horario"> Horario de Retirada/Entrega</label>
                         <input type="text" id="horario" name="horario" placeholder="horario">
                         <a>mensagem de erro</a>
                     </div>

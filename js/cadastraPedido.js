@@ -193,7 +193,8 @@ function checa_form() {
             endereco: enderecoValue,
             cep: cepInput ? cepInput.value.trim() : '',
             numero: numeroInput ? String(numeroInput.value).trim() : '',
-            complemento: complementoInput ? String(complementoInput.value).trim() : ''
+            complemento: complementoInput ? String(complementoInput.value).trim() : '',
+            itens: JSON.stringify(itensPedido)
         },
         success: function (response) {
             response = (response || '').trim();
@@ -311,6 +312,54 @@ function escapeHtml(str) {
   return String(str || '').replace(/[&<>\"]/g, s => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[s]));
 }
 
+// Sugestões de produtos e detecção de tipo (UNIDADE/PESO)
+let produtosCadastrados = [];
+let tipoPorNome = {};
+let datalistEl = null;
+
+async function carregarProdutos() {
+  try {
+    const resp = await fetch('buscaProdutos.php');
+    if (!resp.ok) throw new Error('HTTP');
+    const data = await resp.json();
+    if (Array.isArray(data)) {
+      produtosCadastrados = data;
+      tipoPorNome = {};
+      data.forEach(p => {
+        const nome = String(p.nome || '').trim().toLowerCase();
+        if (nome) tipoPorNome[nome] = String(p.tipo || 'UNIDADE').toUpperCase();
+      });
+      datalistEl = document.getElementById('sugestoes-produtos');
+      if (!datalistEl) {
+        datalistEl = document.createElement('datalist');
+        datalistEl.id = 'sugestoes-produtos';
+        document.body.appendChild(datalistEl);
+      }
+      datalistEl.innerHTML = data.map(p => `<option value="${escapeHtml(p.nome)}"></option>`).join('');
+      if (produto) {
+        produto.setAttribute('list', 'sugestoes-produtos');
+      }
+    }
+  } catch (e) {
+    console.warn('Falha ao carregar produtos para sugestão.');
+  }
+}
+
+function getTipoProdutoByName(nome) {
+  const key = String(nome || '').trim().toLowerCase();
+  const t = tipoPorNome[key];
+  return t === 'PESO' ? 'PESO' : 'UNIDADE';
+}
+
+function formatQuantidadeDisplay(item) {
+  const tipo = getTipoProdutoByName(item.produto);
+  const q = String(item.quantidade || '').trim();
+  return tipo === 'PESO' ? `${escapeHtml(q)} Kg` : escapeHtml(q);
+}
+
+// carrega produtos para autocomplete ao iniciar
+carregarProdutos();
+
 function atualizarPainel() {
   if (!listaItensEl) return;
   if (contadorItensEl) contadorItensEl.textContent = String(itensPedido.length);
@@ -318,7 +367,7 @@ function atualizarPainel() {
     <li>
       <div class="item-info">
         <strong>${escapeHtml(it.produto)}</strong>
-        <span class="muted">Qtd: ${escapeHtml(it.quantidade)} • Corte: ${escapeHtml(it.corte)}</span>
+        <span class="muted">Qtd: ${formatQuantidadeDisplay(it)} • Corte: ${escapeHtml(it.corte)}</span>
       </div>
       <button type="button" class="btn-remover" data-index="${idx}" aria-label="Remover item">×</button>
     </li>
