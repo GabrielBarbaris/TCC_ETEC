@@ -11,6 +11,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $cliente = trim($_POST['cliente'] ?? '');
+    $clienteIdPost = isset($_POST['cliente_id']) ? (int)$_POST['cliente_id'] : 0;
     $horario = trim($_POST['horario'] ?? '');
     $receb = strtoupper(trim($_POST['recebimento'] ?? 'RETIRADA'));
     $tipoPedido = ($receb === 'ENTREGA') ? 'ENTREGA' : 'RETIRADA';
@@ -21,10 +22,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $horarioTime = (strlen($horario) === 5) ? ($horario . ':00') : $horario;
     }
 
-    // Encontrar usuário pelo nome ou usar fallback (admin = 1)
+    // Define o usuário do pedido: prioriza cliente_id; caso contrário tenta por nome; fallback = 1
     $codUsuario = 1;
 
-    if ($cliente !== '') {
+    if ($clienteIdPost > 0) {
+        if ($stmt = $conn->prepare('SELECT id_usuario FROM tbUsuario WHERE id_usuario = ? LIMIT 1')) {
+            $stmt->bind_param('i', $clienteIdPost);
+            if ($stmt->execute()) {
+                $stmt->bind_result($uid);
+                if ($stmt->fetch()) { $codUsuario = (int)$uid; }
+            }
+            $stmt->close();
+        }
+    } else if ($cliente !== '') {
         if ($stmt = $conn->prepare('SELECT id_usuario FROM tbUsuario WHERE nome = ? LIMIT 1')) {
             $stmt->bind_param('s', $cliente);
             if ($stmt->execute()) {

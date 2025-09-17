@@ -194,7 +194,8 @@ function checa_form() {
             cep: cepInput ? cepInput.value.trim() : '',
             numero: numeroInput ? String(numeroInput.value).trim() : '',
             complemento: complementoInput ? String(complementoInput.value).trim() : '',
-            itens: JSON.stringify(itensPedido)
+            itens: JSON.stringify(itensPedido),
+            cliente_id: getClienteIdFromInput(cliente.value.trim())
         },
         success: function (response) {
             response = (response || '').trim();
@@ -359,6 +360,48 @@ function formatQuantidadeDisplay(item) {
 
 // carrega produtos para autocomplete ao iniciar
 carregarProdutos();
+
+// Sugestões de clientes (autocomplete em #cliente)
+let clientesCadastrados = [];
+let idPorNomeCompleto = {};
+let datalistClientesEl = null;
+function getClienteIdFromInput(name) {
+  const key = String(name || '').trim().toLowerCase();
+  return idPorNomeCompleto[key] || 0;
+}
+async function carregarClientes() {
+  try {
+    const resp = await fetch('buscaClientes.php');
+    if (!resp.ok) throw new Error('HTTP');
+    const data = await resp.json();
+    if (Array.isArray(data)) {
+      clientesCadastrados = data;
+      datalistClientesEl = document.getElementById('sugestoes-clientes');
+      if (!datalistClientesEl) {
+        datalistClientesEl = document.createElement('datalist');
+        datalistClientesEl.id = 'sugestoes-clientes';
+        document.body.appendChild(datalistClientesEl);
+      }
+      idPorNomeCompleto = {};
+      const options = [];
+      data.forEach(c => {
+        const nomeComp = [c.nome, c.sobrenome].filter(Boolean).join(' ').trim();
+        if (nomeComp) {
+          idPorNomeCompleto[nomeComp.toLowerCase()] = parseInt(c.id, 10) || 0;
+          options.push(`<option value="${escapeHtml(nomeComp)}"></option>`);
+        }
+      });
+      datalistClientesEl.innerHTML = options.join('');
+      if (cliente) {
+        cliente.setAttribute('list', 'sugestoes-clientes');
+      }
+    }
+  } catch (e) {
+    console.warn('Falha ao carregar clientes para sugestão.');
+  }
+}
+
+carregarClientes();
 
 function atualizarPainel() {
   if (!listaItensEl) return;
