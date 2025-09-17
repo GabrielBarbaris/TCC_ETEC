@@ -21,6 +21,9 @@
                 <li class="nav_item">
                     <a href="cadastraPedido.php" class="nav_link">Pedidos</a>
                 </li>
+                <li class="nav_item">
+                    <a href="pedidosPendentes.php" class="nav_link">Pedidos pendentes</a>
+                </li>
             </ul>
         </div>
     </header>
