@@ -1,0 +1,245 @@
+/* Reset básico e consistência */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { height: 100%; }
+
+:root {
+  --bg: #f5f5f7;
+  --card: #ffffff;
+  --text: #1f2937;
+  --muted: #6b7280;
+  --accent: #800000; /* marrom vinho do projeto */
+  --accent-600: #6a0000;
+  --border: #e5e7eb;
+  --shadow: 0 6px 22px rgba(0,0,0,.06);
+}
+
+body { background: var(--bg); color: var(--text); }
+
+/*
+  Container principal do produto (id="produtoView")
+  - Duas colunas: imagem à esquerda, detalhes à direita
+  - Visual de cartão, responsivo
+*/
+#produtoView {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) 1.2fr;
+  grid-auto-rows: min-content;
+  gap: 18px 28px;
+  max-width: 1100px;
+  margin: 24px auto;
+  padding: 24px;
+  border-radius: 14px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: relative;
+}
+
+/* Por padrão, tudo vai pra coluna da direita; a imagem vai pra esquerda */
+#produtoView > * { grid-column: 2; }
+#prodImagem {
+  grid-column: 1 / 2;
+  grid-row: 1 / span 6;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: #fafafa;
+}
+
+/* Esconde elementos decorativos antigos da UI anterior */
+#produtoView .cor-de-fundo,
+#produtoView [class^="rectangle-"],
+#produtoView [class^="ellipse-"] {
+  display: none !important;
+}
+
+/* Título / nome do produto */
+#prodNome {
+  margin: 0;
+  font-family: Baloo, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 28px;
+  line-height: 1.2;
+}
+
+/* Preço unitário (ex.: R$ KG ou UN) */
+#precoKG {
+  margin-top: -4px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Descrição (se usar algum elemento de descrição dinâmico com id="prodDesc") */
+#prodDesc {
+  margin: 6px 0 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Texto auxiliar (variação de peso) */
+.o-pre-o-e-o-peso-pode-ter-uma-pequena-vari-o-podendo-ter-100-g-de-diferen-as {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+/* Cabeçalho da seção de cortes e obrigatoriedade */
+.como-sera-cortada-a-carne { font-weight: 600; }
+.escolha-1-op-o, .obrigatorio2, #corteCount { color: var(--muted); font-size: 12px; }
+
+/* Seção de cortes (substitui chips por "estilo" de rádio) */
+#cortes {
+  display: grid !important;
+  grid-template-columns: 1fr;
+  gap: 0 !important;
+  margin-top: 8px !important;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+#cortes label.radio-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+  transition: background-color .2s ease;
+}
+#cortes label.radio-item input[type="radio"] {
+  order: 2;
+  width: 20px;
+  height: 20px;
+  accent-color: var(--accent);
+}
+#cortes label.radio-item:hover { background: #fafafa; }
+#cortes label.radio-item span { order: 1; flex: 1; }
+#cortes label.radio-item:focus-within { outline: 2px solid rgba(128, 0, 0, 0.5); outline-offset: 2px; }
+#cortes label.radio-item:last-child { border-bottom: 0; }
+#cortes label.radio-item input[type="radio"]:checked + span { font-weight: 600; }
+
+/* Controles de quantidade (aproveita a estrutura atual: btn - , display, btn +) */
+#btnMenos, #btnMais {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f3f4f6;
+  color: var(--text);
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+#btnMenos:active, #btnMais:active { transform: translateY(1px); }
+
+#pesoAtual {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  height: 38px;
+  padding: 8px 12px;
+  margin: 0 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #fff;
+}
+
+/* Espaço vertical entre grupos de controles */
+#btnMenos, #pesoAtual, #btnMais { margin-top: 6px; }
+
+/* Observação: caixa de texto e contador */
+.observa-o2 { margin-top: 10px; font-weight: 600; }
+#obsText {
+  width: 100% !important; /* sobrepõe inline */
+  min-height: 120px !important;
+  height: auto !important;
+  padding: 12px !important;
+  background: #fff !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  resize: vertical !important;
+  color: var(--text) !important;
+  position: static !important; /* remove posicionamento absoluto anterior */
+}
+#obsText:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12) !important; outline: none; }
+
+#obsCount { text-align: right; color: var(--muted); font-size: 12px; margin-top: 4px; }
+
+/* Total e ação primária */
+#precoAtual { font-size: 18px; font-weight: 600; color: var(--accent); }
+#btnAdicionar {
+  background: var(--accent);
+  color: #fff;
+  font-family: Baloo, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  font-size: 16px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  border: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  cursor: pointer;
+  transition: background-color .2s ease, transform .06s ease, box-shadow .2s ease;
+}
+#btnAdicionar:hover { background: var(--accent-600); }
+#btnAdicionar:active { transform: translateY(1px); }
+#btnAdicionar:focus-visible { outline: 2px solid rgba(128, 0, 0, 0.5); outline-offset: 2px; }
+
+/* Barra inferior fixa similar ao exemplo */
+.footer {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #fff;
+  border-top: 1px solid var(--border);
+  padding: 12px;
+  margin-top: 8px;
+  z-index: 1;
+}
+#qtdResumo {
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: #f3f4f6;
+  min-width: 84px;
+  text-align: center;
+  font-weight: 600;
+}
+.footer .total {
+  margin-left: auto;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-weight: 700;
+}
+.footer .total strong { color: #fff; }
+
+/* Acessibilidade focos compartilhados */
+#btnMenos:focus-visible, #btnMais:focus-visible, #pesoAtual:focus-visible, #cortes > button:focus-visible {
+  outline: 2px solid rgba(128, 0, 0, 0.5);
+  outline-offset: 2px;
+}
+
+/* Texto mais discreto */
+.muted { color: var(--muted); font-size: 12px; }
+
+/* Responsividade */
+@media (max-width: 900px) {
+  #produtoView {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 16px;
+  }
+  #prodImagem {
+    grid-column: 1;
+    grid-row: auto;
+    aspect-ratio: 16 / 9;
+  }
+}

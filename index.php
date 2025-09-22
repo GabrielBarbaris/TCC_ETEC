@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="css/globals.css" />
   <link rel="stylesheet" href="css/index.css" />
+  <link rel="stylesheet" href="css/telaProduto.css" />
   <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
   <title>Casa de Carnes</title>
 </head>
@@ -77,7 +78,7 @@
                           <div class='text-wrapper-17'>$nome</div>
                           <p class='text-wrapper-7'>$descricao</p>
                           <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
-                          <div class='boto'>
+                          <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
                             <div class='overlap-group-2'>
                               <div class='rectangle-3'></div>
                               <div class='text-wrapper-9'>ADICIONAR</div>
@@ -501,6 +502,166 @@
   </div> <!-- .tela-inicial -->
 
   <script src="./js/index.js"></script>
+
+  <!-- Modal de Produto (conteúdo inline, sem iframe) -->
+  <dialog id="produtoDialog" style="position:fixed; inset:0; margin:auto; width:min(960px, 95vw); max-width:95vw; max-height:90vh; border:none; padding:0; border-radius:12px; overflow:auto;">
+    <button id="closeProdutoDialog" title="Fechar" style="position:absolute; top:8px; right:12px; z-index:2; background:#800000; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    <div id="produtoView" hidden>
+      <img id="prodImagem" class="produto-img" src="" alt="Produto" />
+      <section class="produto-right">
+        <h1 id="prodNome">Produto</h1>
+        <div id="precoKG">R$0,00 / Kg</div>
+        <p id="prodDesc"></p>
+
+        <div class="qty" aria-label="Controle de quantidade">
+          <button id="btnMenos" type="button" title="Diminuir">-</button>
+          <div id="pesoAtual" class="qtd-display" aria-live="polite">0</div>
+          <button id="btnMais" type="button" title="Aumentar">+</button>
+        </div>
+
+        <fieldset class="section">
+          <legend class="legend">Como será cortada a carne?</legend>
+          <div class="muted" style="display:flex; gap:8px; align-items:center;">
+            <span>Escolha 1 opção</span>
+            <span id="corteCount">0/1</span>
+          </div>
+          <div id="cortes" class="radio-group" role="radiogroup" aria-label="Opções de corte"></div>
+        </fieldset>
+
+        <section class="section obs-box">
+          <div class="legend">Observação</div>
+          <textarea id="obsText" maxlength="150" placeholder="Ex.: separar em 2 pacotes, ponto da carne, etc."></textarea>
+          <div class="obs-footer">
+            <span></span>
+            <span id="obsCount">0/150</span>
+          </div>
+        </section>
+
+        <div class="footer">
+          <div class="total">Total: <strong id="precoAtual">R$0,00</strong></div>
+          <div id="qtdResumo" aria-live="polite"></div>
+          <button id="btnAdicionar" type="button" class="btn-primary">Adicionar</button>
+        </div>
+      </section>
+    </div>
+  </dialog>
+
+  <style>
+    /* Centraliza o dialog e escurece o fundo */
+    #produtoDialog::backdrop { background: rgba(0,0,0,.45); }
+
+    /* Responsividade do modal */
+    @media (max-width: 900px) {
+      #produtoDialog {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+      }
+    }
+    @media (max-width: 480px) {
+      #produtoView { padding: 16px; }
+      #prodNome { font-size: 22px; }
+      #closeProdutoDialog { top: 8px; right: 8px; padding: 6px 10px; }
+    }
+  </style>
+
+  <script>
+    (function(){
+      const dlg = document.getElementById('produtoDialog');
+      const closeBtn = document.getElementById('closeProdutoDialog');
+      const view = document.getElementById('produtoView');
+
+      // Elementos do conteúdo
+      const img = document.getElementById('prodImagem');
+      const nome = document.getElementById('prodNome');
+      const precoKG = document.getElementById('precoKG');
+      const precoAtual = document.getElementById('precoAtual');
+      const pesoAtual = document.getElementById('pesoAtual');
+      const cortesWrap = document.getElementById('cortes');
+      const obs = document.getElementById('obsText');
+      const obsCount = document.getElementById('obsCount');
+      const corteCount = document.getElementById('corteCount');
+      const btnMais = document.getElementById('btnMais');
+      const btnMenos = document.getElementById('btnMenos');
+      const btnAdicionar = document.getElementById('btnAdicionar');
+      const qtdResumo = document.getElementById('qtdResumo');
+
+      let produto = null;
+      let corteSelecionado = null;
+      let quantidade = 0;
+
+      function formatBRL(v){ return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
+      function renderPesoQtd(){
+        if (!produto) return;
+        const txt = produto.tipo_quantidade === 'PESO' ? (quantidade.toFixed(2).replace('.', ',')) + ' Kg' : (quantidade + ' un');
+        pesoAtual.textContent = txt;
+        if (qtdResumo) qtdResumo.textContent = txt;
+      }
+      function renderPreco(){ if (!produto) return; const p = quantidade * produto.preco; precoAtual.textContent = formatBRL(p); precoKG.textContent = formatBRL(produto.preco) + (produto.tipo_quantidade === 'PESO' ? ' / Kg' : ' / Un'); }
+      function setQtd(q){ if (!produto) return; const min = produto.tipo_quantidade === 'PESO' ? produto.peso_minimo : 1; const step = produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1; q = Math.max(min, Math.round(q/step)*step); quantidade = parseFloat(q.toFixed(2)); renderPesoQtd(); renderPreco(); }
+
+      function criaRadioCorte(item){
+        const label = document.createElement('label');
+        label.className = 'radio-item';
+        const input = document.createElement('input');
+        input.type = 'radio'; input.name = 'corte'; input.value = String(item.id);
+        input.addEventListener('change', () => { if (input.checked){ corteSelecionado = item.id; corteCount.textContent = '1/1'; }});
+        const span = document.createElement('span'); span.textContent = item.nome;
+        label.appendChild(input); label.appendChild(span);
+        return label;
+      }
+
+      function resetProdutoUI(){
+        produto = null; corteSelecionado = null; quantidade = 0;
+        nome.textContent = 'Produto'; precoKG.textContent = 'R$0,00'; precoAtual.textContent = 'R$0,00'; pesoAtual.textContent = '0';
+        if (qtdResumo) qtdResumo.textContent = '';
+        img.src = ''; document.getElementById('prodDesc').textContent = '';
+        cortesWrap.innerHTML = ''; corteCount.textContent = '0/1'; obs.value=''; obsCount.textContent = '0/150';
+        view.hidden = true;
+      }
+
+      function openProduto(id){
+        resetProdutoUI();
+        if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','open');
+        fetch('produto_detalhe.php?id=' + encodeURIComponent(id))
+          .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(data => {
+            produto = data.produto; nome.textContent = produto.nome; img.src = produto.imagem_url || 'img/imagensIlustrativa.jpg';
+            document.getElementById('prodDesc').textContent = (produto.descricao || '').trim();
+            // Cortes
+            cortesWrap.innerHTML = '';
+            const lista = data.cortes || [];
+            if (lista.length > 0) { lista.forEach(c => cortesWrap.appendChild(criaRadioCorte(c))); corteCount.textContent = '0/1'; }
+            else { corteCount.textContent = '0/0'; }
+            // Quantidade
+            setQtd(produto.tipo_quantidade === 'PESO' ? produto.peso_minimo : 1);
+            view.hidden = false;
+          })
+          .catch(() => { view.hidden = false; nome.textContent = 'Erro ao carregar'; });
+      }
+
+      function closeProduto(){ if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); resetProdutoUI(); }
+
+      // Eventos UI
+      obs.addEventListener('input', () => { obsCount.textContent = obs.value.length + '/150'; });
+      btnMais.addEventListener('click', () => { const step = produto && produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1; setQtd(quantidade + step); });
+      btnMenos.addEventListener('click', () => { const step = produto && produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1; setQtd(quantidade - step); });
+      btnAdicionar.addEventListener('click', () => {
+        if (!produto) return; if (produto.tipo_quantidade === 'PESO' && cortesWrap.children.length > 0 && !corteSelecionado){ alert('Selecione um corte'); return; }
+        const item = { id: produto.id, nome: produto.nome, preco: produto.preco, tipo: produto.tipo_quantidade, quantidade, corte: corteSelecionado || null, observacao: obs.value || '' };
+        const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]'); carrinho.push(item); localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        closeProduto();
+      });
+
+      // Delegação: abre ao clicar em ADICIONAR
+      document.addEventListener('click', function(e){ const el = e.target.closest('.btn-add-prod'); if (el && el.dataset && el.dataset.prodId) { openProduto(el.dataset.prodId); } });
+
+      closeBtn && closeBtn.addEventListener('click', closeProduto);
+      dlg && dlg.addEventListener('cancel', function(ev){ ev.preventDefault(); closeProduto(); });
+    })();
+  </script>
 </body>
 
 </html>
