@@ -60,13 +60,18 @@
                     <a>mensagem de erro</a>
                     </div>
 
+                    <div class="form_content">
+                        <label for="observacao">Observações (opcional)</label>
+                        <input type="text" id="observacao" name="observacao" placeholder="Alguma observação sobre o item">
+                    </div>
+
                     <button type="button" id="btnAdicionar">Adicionar</button>
                 </section>
                 <section class="pedido">
 
                     <div class="form_content">
                         <label for="horario"> Horario de Retirada/Entrega</label>
-                        <input type="text" id="horario" name="horario" placeholder="horario">
+                        <input type="time" id="horario" name="horario" placeholder="horario">
                         <a>mensagem de erro</a>
                     </div>
                     <div class="form_content">

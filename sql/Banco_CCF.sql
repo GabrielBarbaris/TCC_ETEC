@@ -128,6 +128,7 @@ CREATE TABLE tbPedido (
     forma_pagamento VARCHAR(50) NOT NULL,
     preco_total DECIMAL(10,2) DEFAULT 0.00,
     notificado BOOLEAN DEFAULT FALSE,
+    endereco VARCHAR(120),
     FOREIGN KEY (cod_usuario) REFERENCES tbUsuario(id_usuario)
         ON DELETE CASCADE ON UPDATE CASCADE
 );

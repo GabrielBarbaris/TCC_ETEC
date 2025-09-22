@@ -16,6 +16,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $receb = strtoupper(trim($_POST['recebimento'] ?? 'RETIRADA'));
     $tipoPedido = ($receb === 'ENTREGA') ? 'ENTREGA' : 'RETIRADA';
 
+    // Campos de entrega recebidos (quando aplicável)
+    $enderecoTxt = trim($_POST['endereco'] ?? '');
+    $cepTxt = preg_replace('/\D/', '', (string)($_POST['cep'] ?? ''));
+    $numeroTxt = trim((string)($_POST['numero'] ?? ''));
+    $complTxt = trim((string)($_POST['complemento'] ?? ''));
+
+    // Monta uma string única de endereço para salvar em tbPedido.endereco
+    $enderecoPedido = '';
+    if ($tipoPedido === 'ENTREGA') {
+        $partes = [];
+        if ($enderecoTxt !== '') $partes[] = $enderecoTxt; // Rua, bairro, cidade - UF
+        if ($numeroTxt !== '') $partes[] = 'Nº ' . $numeroTxt;
+        if ($complTxt !== '') $partes[] = $complTxt;
+        $linha = implode(', ', $partes);
+        if ($cepTxt !== '') {
+            $linha .= ($linha ? ' — ' : '') . 'CEP ' . $cepTxt;
+        }
+        $enderecoPedido = $linha;
+    }
+
     // Converte horário para HH:MM:SS ou NULL
     $horarioTime = null;
     if (preg_match('/^\d{1,2}:\d{2}(:\d{2})?$/', $horario)) {
@@ -49,11 +69,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $conn->begin_transaction();
     try {
-        // Cria pedido com total 0 e forma_pagamento indefinida
+        // Cria pedido com total 0 e forma_pagamento indefinida, salvando o endereço diretamente em tbPedido
         $forma = 'A DEFINIR';
-        $stmtPed = $conn->prepare('INSERT INTO tbPedido (cod_usuario, tipo_pedido, horario_retirada, forma_pagamento, preco_total) VALUES (?, ?, ?, ?, 0.00)');
+        $stmtPed = $conn->prepare('INSERT INTO tbPedido (cod_usuario, tipo_pedido, horario_retirada, forma_pagamento, preco_total, endereco) VALUES (?, ?, ?, ?, 0.00, ?)');
         if (!$stmtPed) { throw new Exception('prepare pedido'); }
-        $stmtPed->bind_param('isss', $codUsuario, $tipoPedido, $horarioTime, $forma);
+        $stmtPed->bind_param('issss', $codUsuario, $tipoPedido, $horarioTime, $forma, $enderecoPedido);
         if (!$stmtPed->execute()) { throw new Exception('exec pedido'); }
         $pedidoId = $stmtPed->insert_id;
         $stmtPed->close();
@@ -79,21 +99,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pid = (int)$pid;
             $preco = (float)$preco;
+            $obs = isset($it['observacao']) ? trim((string)$it['observacao']) : '';
             if (!isset($agregados[$pid])) {
-                $agregados[$pid] = ['qtd' => 0.0, 'preco' => $preco];
+                $agregados[$pid] = ['qtd' => 0.0, 'preco' => $preco, 'obs' => []];
             }
             $agregados[$pid]['qtd'] += $qtd;
+            if ($obs !== '') { $agregados[$pid]['obs'][] = $obs; }
         }
 
         $totalPedido = 0.0;
-        $insItem = $conn->prepare('INSERT INTO tbPedidoProduto (cod_pedido, cod_produto, quantidade, preco_unitario, preco_total_prod) VALUES (?, ?, ?, ?, ?)');
+        $insItem = $conn->prepare('INSERT INTO tbPedidoProduto (cod_pedido, cod_produto, quantidade, preco_unitario, preco_total_prod, observacao) VALUES (?, ?, ?, ?, ?, ?)');
         if (!$insItem) { throw new Exception('prepare ins item'); }
         foreach ($agregados as $pid => $info) {
             $qtd = (float)$info['qtd'];
             $preco = (float)$info['preco'];
             $subtotal = $qtd * $preco;
             $totalPedido += $subtotal;
-            $insItem->bind_param('iiddd', $pedidoId, $pid, $qtd, $preco, $subtotal);
+            $obsStr = '';
+            if (isset($info['obs']) && is_array($info['obs'])) {
+                $uniq = [];
+                foreach ($info['obs'] as $o) {
+                    $t = trim((string)$o);
+                    if ($t !== '' && !in_array($t, $uniq, true)) { $uniq[] = $t; }
+                }
+                $obsStr = implode('; ', $uniq);
+            }
+            $insItem->bind_param('iiddds', $pedidoId, $pid, $qtd, $preco, $subtotal, $obsStr);
             if (!$insItem->execute()) { $insItem->close(); throw new Exception('exec ins item'); }
         }
         $insItem->close();

@@ -2,14 +2,20 @@
 require_once __DIR__ . '/conexao.php';
 
 // Busca todos os pedidos + dados do usuário
-$sqlPedidos = "SELECT ped.*, usu.*
+$sqlPedidos = "SELECT ped.*, usu.*, ped.endereco AS end_pedido
                FROM tbPedido ped
                JOIN tbUsuario usu ON usu.id_usuario = ped.cod_usuario
                ORDER BY ped.data_pedido DESC";
 $pedidos = $conn->query($sqlPedidos);
 
 function montarEnderecoUsuario(array $row): string {
-    // Tenta compor o endereço com campos comuns; ignora os que não existirem
+    // Prioriza o endereço salvo no próprio pedido (tbPedido.endereco, aliased como end_pedido)
+    $enderecoPedido = trim((string)($row['end_pedido'] ?? ''));
+    if ($enderecoPedido !== '') {
+        return $enderecoPedido;
+    }
+
+    // Fallback: tenta compor a partir do cadastro do usuário
     $partesLinha1 = [];
     foreach (['endereco', 'logradouro', 'rua'] as $k) {
         if (isset($row[$k]) && trim((string)$row[$k]) !== '') { $partesLinha1[] = trim((string)$row[$k]); break; }
@@ -152,6 +158,11 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
                   <div class="title"><?php echo htmlspecialchars(nomeProduto($item)); ?></div>
                   <div class="qtd"><?php echo htmlspecialchars((string)$item['quantidade']); ?>x</div>
                   <div class="price"><?php echo fmtPreco(isset($item['preco_total_prod']) ? $item['preco_total_prod'] : ($item['preco_unitario'] * $item['quantidade'])); ?></div>
+
+                  <?php $obsItem = isset($item['observacao']) ? trim((string)$item['observacao']) : ''; ?>
+                  <?php if ($obsItem !== ''): ?>
+                    <div class="obs">Obs: <?php echo htmlspecialchars($obsItem); ?></div>
+                  <?php endif; ?>
                 </div>
               <?php endforeach; ?>
             <?php else: ?>

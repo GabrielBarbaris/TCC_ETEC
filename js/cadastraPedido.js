@@ -8,6 +8,7 @@ const enderecoInput = document.getElementById('campo_endereco');
 const cepInput = document.getElementById('cep');
 const numeroInput = document.getElementById('numero_endereco');
 const complementoInput = document.getElementById('complemento_endereco');
+const observacao = document.getElementById('observacao');
 
 
 
@@ -204,6 +205,8 @@ function checa_form() {
                 $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
                 setTimeout(function () {
                     $('#form')[0].reset();
+                    itensPedido = [];
+                    atualizarPainel();
                     atualizarVisibilidadeEndereco();
                 }, 2500);
             } else {
@@ -411,6 +414,7 @@ function atualizarPainel() {
       <div class="item-info">
         <strong>${escapeHtml(it.produto)}</strong>
         <span class="muted">Qtd: ${formatQuantidadeDisplay(it)} • Corte: ${escapeHtml(it.corte)}</span>
+        ${it.observacao ? `<div class="obs muted">Obs: ${escapeHtml(it.observacao)}</div>` : ''}
       </div>
       <button type="button" class="btn-remover" data-index="${idx}" aria-label="Remover item">×</button>
     </li>
@@ -428,7 +432,8 @@ if (btnAdicionar) {
     itensPedido.push({
       produto: produto.value.trim(),
       quantidade: quantidade.value.trim(),
-      corte: corte.value.trim()
+      corte: corte.value.trim(),
+      observacao: observacao ? observacao.value.trim() : ''
     });
     atualizarPainel();
 
@@ -436,6 +441,7 @@ if (btnAdicionar) {
     produto.value = '';
     quantidade.value = '';
     corte.value = '';
+    if (observacao) observacao.value = '';
     produto.focus();
   });
 }
