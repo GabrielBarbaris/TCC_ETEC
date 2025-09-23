@@ -355,63 +355,7 @@
       </div>
     </footer>
 
-    <!-- =============================
-         MODAL / DIALOG "ADICIONAR"
-         - Mantive todas as classes (id="adicionar" e .produto)
-         - Use JS para abrir: document.getElementById('adicionar').showModal()
-         - Conteúdo foi mantido idêntico — as várias .rectangle-* e .ellipse-* são elementos de estilo.
-         ============================= -->
-    <dialog id="adicionar">
-      <div class="produto">
-        <div class="cor-de-fundo"></div>
-        <div class="rectangle-54"></div>
-        <div class="rectangle-55"></div>
-        <img class="fraldinha_ped" src="img/fraldinha.png" alt="Fraldinha" />
-        <div class="fraldinha2">FRALDINHA</div>
 
-        <div class="rectangle-57"></div>
-        <div class="rectangle-64"></div>
-        <div class="rectangle-56"></div>
-        <div class="rectangle-58"></div>
-
-        <div class="div">+</div>
-        <div class="div2">-</div>
-        <div class="_500-g">500g</div>
-        <div class="rectangle-59"></div>
-        <div class="adicionar">Adicionar</div>
-        <div class="r-22-50">R$22,50</div>
-        <div class="rectangle-60"></div>
-
-        <div class="observa-o2">observação:</div>
-        <div class="_0-150">0/150</div>
-        <div class="bife">bife</div>
-        <img class="ellipse-3" src="." alt="" />
-        <div class="rectangle-61"></div>
-        <div class="inteiro">Inteiro</div>
-        <img class="ellipse-32" src="ellipse-31.svg" alt="" />
-        <div class="rectangle-612"></div>
-        <div class="manta">Manta</div>
-        <img class="ellipse-33" src="ellipse-32.svg" alt="" />
-        <div class="rectangle-613"></div>
-
-        <div class="como-sera-cortada-a-carne">Como sera cortada a carne?</div>
-        <div class="r-43-99">R$43,99</div>
-        <div class="o-pre-o-e-o-peso-pode-ter-uma-pequena-vari-o-podendo-ter-100-g-de-diferen-as">
-          o preço e o peso pode ter uma pequena varição podendo ter 100g de diferenças
-        </div>
-
-        <div class="escolha-1-op-o">Escolha 1 opção</div>
-        <div
-          class="esta-uma-carne-otima-para-vc-assar-na-sua-casa-mesclando-muito-bem-a-macies-e-o-sabor-tendo-uma-camada-de-gordura-otima-e-muito-saborosa">
-          Esta é uma carne otima para vc assar na sua casa mesclando muito bem a macies e o sabor.
-        </div>
-
-        <div class="rectangle-62"></div>
-        <div class="obrigatorio2">OBRIGATORIO</div>
-        <div class="rectangle-63"></div>
-        <div class="_0-12">0/1</div>
-      </div>
-    </dialog>
 
     <!-- =============================
          HEADER / CATEGORIAS (FIXO)
@@ -506,10 +450,13 @@
   <!-- Modal de Produto (conteúdo inline, sem iframe) -->
   <dialog id="produtoDialog" style="position:fixed; inset:0; margin:auto; width:min(960px, 95vw); max-width:95vw; max-height:90vh; border:none; padding:0; border-radius:12px; overflow:auto;">
     <button id="closeProdutoDialog" title="Fechar" style="position:absolute; top:8px; right:12px; z-index:2; background:#800000; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    <header class="nome_produto">
+      <h1 id="prodNome">Produto</h1>
+    </header>
     <div id="produtoView" hidden>
       <img id="prodImagem" class="produto-img" src="" alt="Produto" />
       <section class="produto-right">
-        <h1 id="prodNome">Produto</h1>
+
         <div id="precoKG">R$0,00 / Kg</div>
         <p id="prodDesc"></p>
 
@@ -548,7 +495,9 @@
 
   <style>
     /* Centraliza o dialog e escurece o fundo */
-    #produtoDialog::backdrop { background: rgba(0,0,0,.45); }
+    #produtoDialog::backdrop {
+      background: rgba(0, 0, 0, .45);
+    }
 
     /* Responsividade do modal */
     @media (max-width: 900px) {
@@ -560,15 +509,26 @@
         border-radius: 0 !important;
       }
     }
+
     @media (max-width: 480px) {
-      #produtoView { padding: 16px; }
-      #prodNome { font-size: 22px; }
-      #closeProdutoDialog { top: 8px; right: 8px; padding: 6px 10px; }
+      #produtoView {
+        padding: 16px;
+      }
+
+      #prodNome {
+        font-size: 22px;
+      }
+
+      #closeProdutoDialog {
+        top: 8px;
+        right: 8px;
+        padding: 6px 10px;
+      }
     }
   </style>
 
   <script>
-    (function(){
+    (function() {
       const dlg = document.getElementById('produtoDialog');
       const closeBtn = document.getElementById('closeProdutoDialog');
       const view = document.getElementById('produtoView');
@@ -592,74 +552,160 @@
       let corteSelecionado = null;
       let quantidade = 0;
 
-      function formatBRL(v){ return v.toLocaleString('pt-BR', {style:'currency', currency:'BRL'}); }
-      function renderPesoQtd(){
+      function formatBRL(v) {
+        return v.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL'
+        });
+      }
+
+      function renderPesoQtd() {
         if (!produto) return;
         const txt = produto.tipo_quantidade === 'PESO' ? (quantidade.toFixed(2).replace('.', ',')) + ' Kg' : (quantidade + ' un');
         pesoAtual.textContent = txt;
         if (qtdResumo) qtdResumo.textContent = txt;
       }
-      function renderPreco(){ if (!produto) return; const p = quantidade * produto.preco; precoAtual.textContent = formatBRL(p); precoKG.textContent = formatBRL(produto.preco) + (produto.tipo_quantidade === 'PESO' ? ' / Kg' : ' / Un'); }
-      function setQtd(q){ if (!produto) return; const min = produto.tipo_quantidade === 'PESO' ? produto.peso_minimo : 1; const step = produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1; q = Math.max(min, Math.round(q/step)*step); quantidade = parseFloat(q.toFixed(2)); renderPesoQtd(); renderPreco(); }
 
-      function criaRadioCorte(item){
+      function renderPreco() {
+        if (!produto) return;
+        const p = quantidade * produto.preco;
+        precoAtual.textContent = formatBRL(p);
+        precoKG.textContent = formatBRL(produto.preco) + (produto.tipo_quantidade === 'PESO' ? ' / Kg' : ' / Un');
+      }
+
+      function setQtd(q) {
+        if (!produto) return;
+        const min = produto.tipo_quantidade === 'PESO' ? produto.peso_minimo : 1;
+        const step = produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1;
+        q = Math.max(min, Math.round(q / step) * step);
+        quantidade = parseFloat(q.toFixed(2));
+        renderPesoQtd();
+        renderPreco();
+      }
+
+      function criaRadioCorte(item) {
         const label = document.createElement('label');
         label.className = 'radio-item';
         const input = document.createElement('input');
-        input.type = 'radio'; input.name = 'corte'; input.value = String(item.id);
-        input.addEventListener('change', () => { if (input.checked){ corteSelecionado = item.id; corteCount.textContent = '1/1'; }});
-        const span = document.createElement('span'); span.textContent = item.nome;
-        label.appendChild(input); label.appendChild(span);
+        input.type = 'radio';
+        input.name = 'corte';
+        input.value = String(item.id);
+        input.addEventListener('change', () => {
+          if (input.checked) {
+            corteSelecionado = item.id;
+            corteCount.textContent = '1/1';
+          }
+        });
+        const span = document.createElement('span');
+        span.textContent = item.nome;
+        label.appendChild(input);
+        label.appendChild(span);
         return label;
       }
 
-      function resetProdutoUI(){
-        produto = null; corteSelecionado = null; quantidade = 0;
-        nome.textContent = 'Produto'; precoKG.textContent = 'R$0,00'; precoAtual.textContent = 'R$0,00'; pesoAtual.textContent = '0';
+      function resetProdutoUI() {
+        produto = null;
+        corteSelecionado = null;
+        quantidade = 0;
+        nome.textContent = 'Produto';
+        precoKG.textContent = 'R$0,00';
+        precoAtual.textContent = 'R$0,00';
+        pesoAtual.textContent = '0';
         if (qtdResumo) qtdResumo.textContent = '';
-        img.src = ''; document.getElementById('prodDesc').textContent = '';
-        cortesWrap.innerHTML = ''; corteCount.textContent = '0/1'; obs.value=''; obsCount.textContent = '0/150';
+        img.src = '';
+        document.getElementById('prodDesc').textContent = '';
+        cortesWrap.innerHTML = '';
+        corteCount.textContent = '0/1';
+        obs.value = '';
+        obsCount.textContent = '0/150';
         view.hidden = true;
       }
 
-      function openProduto(id){
+      function openProduto(id) {
         resetProdutoUI();
-        if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','open');
+        if (typeof dlg.showModal === 'function') dlg.showModal();
+        else dlg.setAttribute('open', 'open');
         fetch('produto_detalhe.php?id=' + encodeURIComponent(id))
-          .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+          .then(r => {
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            return r.json();
+          })
           .then(data => {
-            produto = data.produto; nome.textContent = produto.nome; img.src = produto.imagem_url || 'img/imagensIlustrativa.jpg';
+            produto = data.produto;
+            nome.textContent = produto.nome;
+            img.src = produto.imagem_url || 'img/imagensIlustrativa.jpg';
             document.getElementById('prodDesc').textContent = (produto.descricao || '').trim();
             // Cortes
             cortesWrap.innerHTML = '';
             const lista = data.cortes || [];
-            if (lista.length > 0) { lista.forEach(c => cortesWrap.appendChild(criaRadioCorte(c))); corteCount.textContent = '0/1'; }
-            else { corteCount.textContent = '0/0'; }
+            if (lista.length > 0) {
+              lista.forEach(c => cortesWrap.appendChild(criaRadioCorte(c)));
+              corteCount.textContent = '0/1';
+            } else {
+              corteCount.textContent = '0/0';
+            }
             // Quantidade
             setQtd(produto.tipo_quantidade === 'PESO' ? produto.peso_minimo : 1);
             view.hidden = false;
           })
-          .catch(() => { view.hidden = false; nome.textContent = 'Erro ao carregar'; });
+          .catch(() => {
+            view.hidden = false;
+            nome.textContent = 'Erro ao carregar';
+          });
       }
 
-      function closeProduto(){ if (typeof dlg.close === 'function') dlg.close(); else dlg.removeAttribute('open'); resetProdutoUI(); }
+      function closeProduto() {
+        if (typeof dlg.close === 'function') dlg.close();
+        else dlg.removeAttribute('open');
+        resetProdutoUI();
+      }
 
       // Eventos UI
-      obs.addEventListener('input', () => { obsCount.textContent = obs.value.length + '/150'; });
-      btnMais.addEventListener('click', () => { const step = produto && produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1; setQtd(quantidade + step); });
-      btnMenos.addEventListener('click', () => { const step = produto && produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1; setQtd(quantidade - step); });
+      obs.addEventListener('input', () => {
+        obsCount.textContent = obs.value.length + '/150';
+      });
+      btnMais.addEventListener('click', () => {
+        const step = produto && produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1;
+        setQtd(quantidade + step);
+      });
+      btnMenos.addEventListener('click', () => {
+        const step = produto && produto.tipo_quantidade === 'PESO' ? produto.intervalo_peso : 1;
+        setQtd(quantidade - step);
+      });
       btnAdicionar.addEventListener('click', () => {
-        if (!produto) return; if (produto.tipo_quantidade === 'PESO' && cortesWrap.children.length > 0 && !corteSelecionado){ alert('Selecione um corte'); return; }
-        const item = { id: produto.id, nome: produto.nome, preco: produto.preco, tipo: produto.tipo_quantidade, quantidade, corte: corteSelecionado || null, observacao: obs.value || '' };
-        const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]'); carrinho.push(item); localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        if (!produto) return;
+        if (produto.tipo_quantidade === 'PESO' && cortesWrap.children.length > 0 && !corteSelecionado) {
+          alert('Selecione um corte');
+          return;
+        }
+        const item = {
+          id: produto.id,
+          nome: produto.nome,
+          preco: produto.preco,
+          tipo: produto.tipo_quantidade,
+          quantidade,
+          corte: corteSelecionado || null,
+          observacao: obs.value || ''
+        };
+        const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
+        carrinho.push(item);
+        localStorage.setItem('carrinho', JSON.stringify(carrinho));
         closeProduto();
       });
 
       // Delegação: abre ao clicar em ADICIONAR
-      document.addEventListener('click', function(e){ const el = e.target.closest('.btn-add-prod'); if (el && el.dataset && el.dataset.prodId) { openProduto(el.dataset.prodId); } });
+      document.addEventListener('click', function(e) {
+        const el = e.target.closest('.btn-add-prod');
+        if (el && el.dataset && el.dataset.prodId) {
+          openProduto(el.dataset.prodId);
+        }
+      });
 
       closeBtn && closeBtn.addEventListener('click', closeProduto);
-      dlg && dlg.addEventListener('cancel', function(ev){ ev.preventDefault(); closeProduto(); });
+      dlg && dlg.addEventListener('cancel', function(ev) {
+        ev.preventDefault();
+        closeProduto();
+      });
     })();
   </script>
 </body>
