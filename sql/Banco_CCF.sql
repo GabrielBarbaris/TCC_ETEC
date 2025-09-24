@@ -9,16 +9,15 @@ CREATE TABLE tbUsuario (
     sobrenome VARCHAR(100) NOT NULL,
     senha VARCHAR(255) NOT NULL,
     tipo_usuario ENUM('cliente', 'admin') NOT NULL DEFAULT 'cliente',
-    endereco TEXT,
     telefone VARCHAR(15) NOT NULL
 );
 
 -- Inserts: Usuario
-INSERT INTO tbUsuario(nome, sobrenome, senha, tipo_usuario, endereco, telefone)
-VALUES ("Casa de Carnes", "Fernandes", "123", "admin", '', "(17) 99201-8283");
+INSERT INTO tbUsuario(nome, sobrenome, senha, tipo_usuario, telefone)
+VALUES ("Casa de Carnes", "Fernandes", "123", "admin", "(17) 99201-8283");
 
-INSERT INTO tbUsuario(nome, sobrenome, senha, tipo_usuario, endereco, telefone)
-VALUES ("teste", "teste", "123", "cliente", '', "(11) 11111-1111");
+INSERT INTO tbUsuario(nome, sobrenome, senha, tipo_usuario, telefone)
+VALUES ("teste", "teste", "123", "cliente", "(11) 11111-1111");
 -- -----------------------------------------------------------------------------------------
 
 -- Tabela: Categoria
@@ -128,7 +127,7 @@ CREATE TABLE tbPedido (
     forma_pagamento VARCHAR(50) NOT NULL,
     preco_total DECIMAL(10,2) DEFAULT 0.00,
     notificado BOOLEAN DEFAULT FALSE,
-    endereco VARCHAR(120),
+    endereco TEXT NOT NULL,
     FOREIGN KEY (cod_usuario) REFERENCES tbUsuario(id_usuario)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
