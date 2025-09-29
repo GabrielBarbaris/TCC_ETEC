@@ -459,13 +459,7 @@
 
         <div id="precoKG">R$0,00 / Kg</div>
         <p id="prodDesc"></p>
-
-        <div class="qty" aria-label="Controle de quantidade">
-          <button id="btnMenos" type="button" title="Diminuir">-</button>
-          <div id="pesoAtual" class="qtd-display" aria-live="polite">0</div>
-          <button id="btnMais" type="button" title="Aumentar">+</button>
-        </div>
-
+        
         <fieldset class="section">
           <legend class="legend">Como será cortada a carne?</legend>
           <div class="muted" style="display:flex; gap:8px; align-items:center;">
@@ -485,6 +479,11 @@
         </section>
 
         <div class="footer">
+          <div class="qty" aria-label="Controle de quantidade">
+            <button id="btnMenos" type="button" title="Diminuir">-</button>
+            <div id="pesoAtual" class="qtd-display" aria-live="polite">0</div>
+            <button id="btnMais" type="button" title="Aumentar">+</button>
+          </div>
           <div class="total">Total: <strong id="precoAtual">R$0,00</strong></div>
           <div id="qtdResumo" aria-live="polite"></div>
           <button id="btnAdicionar" type="button" class="btn-primary">Adicionar</button>

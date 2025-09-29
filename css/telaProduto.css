@@ -8,23 +8,35 @@
 }
 
 /* Reset básico e consistência */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { height: 100%; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
 
 :root {
   --bg: #f5f5f7;
   --card: #ffffff;
   --text: #1f2937;
   --muted: #6b7280;
-  --accent: #800000; /* marrom vinho do projeto */
+  --accent: #800000;
+  /* marrom vinho do projeto */
   --accent-600: #6a0000;
   --border: #e5e7eb;
-  --shadow: 0 6px 22px rgba(0,0,0,.06);
+  --shadow: 0 6px 22px rgba(0, 0, 0, .06);
 }
 
-body { background: var(--bg); color: var(--text); }
+body {
+  background: var(--bg);
+  color: var(--text);
+}
 
-.nome_produto{
+.nome_produto {
   width: 100%;
   padding: 10px;
   background-color: #6a0000;
@@ -48,7 +60,16 @@ body { background: var(--bg); color: var(--text); }
 }
 
 /* Por padrão, tudo vai pra coluna da direita; a imagem vai pra esquerda */
-#produtoView > * { grid-column: 2; }
+#produtoView>* {
+  grid-column: 2;
+}
+
+.produto-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
 #prodImagem {
   grid-column: 1 / 2;
   grid-row: 1 / span 6;
@@ -78,7 +99,6 @@ body { background: var(--bg); color: var(--text); }
 
 /* Preço unitário (ex.: R$ KG ou UN) */
 #precoKG {
-  margin-top: -4px;
   color: var(--muted);
   font-size: 14px;
 }
@@ -97,8 +117,16 @@ body { background: var(--bg); color: var(--text); }
 }
 
 /* Cabeçalho da seção de cortes e obrigatoriedade */
-.como-sera-cortada-a-carne { font-weight: 600; }
-.escolha-1-op-o, .obrigatorio2, #corteCount { color: var(--muted); font-size: 12px; }
+.como-sera-cortada-a-carne {
+  font-weight: 600;
+}
+
+.escolha-1-op-o,
+.obrigatorio2,
+#corteCount {
+  color: var(--muted);
+  font-size: 12px;
+}
 
 /* Seção de cortes (substitui chips por "estilo" de rádio) */
 #cortes {
@@ -111,6 +139,7 @@ body { background: var(--bg); color: var(--text); }
   border-radius: 10px;
   overflow: hidden;
 }
+
 #cortes label.radio-item {
   display: flex;
   align-items: center;
@@ -124,31 +153,65 @@ body { background: var(--bg); color: var(--text); }
   text-align: left;
   transition: background-color .2s ease;
 }
+
 #cortes label.radio-item input[type="radio"] {
   order: 2;
   width: 20px;
   height: 20px;
   accent-color: var(--accent);
 }
-#cortes label.radio-item:hover { background: #fafafa; }
-#cortes label.radio-item span { order: 1; flex: 1; }
-#cortes label.radio-item:focus-within { outline: 2px solid rgba(128, 0, 0, 0.5); outline-offset: 2px; }
-#cortes label.radio-item:last-child { border-bottom: 0; }
-#cortes label.radio-item input[type="radio"]:checked + span { font-weight: 600; }
+
+#cortes label.radio-item:hover {
+  background: #fafafa;
+}
+
+#cortes label.radio-item span {
+  order: 1;
+  flex: 1;
+}
+
+#cortes label.radio-item:focus-within {
+  outline: 2px solid rgba(128, 0, 0, 0.5);
+  outline-offset: 2px;
+}
+
+#cortes label.radio-item:last-child {
+  border-bottom: 0;
+}
+
+#cortes label.radio-item input[type="radio"]:checked+span {
+  font-weight: 600;
+}
 
 /* Controles de quantidade (aproveita a estrutura atual: btn - , display, btn +) */
-#btnMenos, #btnMais {
+.qty {
+  display: flex;
+}
+
+#btnMenos,
+#btnMais {
   width: 38px;
   height: 38px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #f3f4f6;
+  border: 0px solid var(--border);
+  background: #ededed;
   color: var(--text);
   font-size: 18px;
-  line-height: 1;
+  /* line-height: 1; */
   cursor: pointer;
 }
-#btnMenos:active, #btnMais:active { transform: translateY(1px); }
+
+#btnMenos {
+  border-radius: 10px 0 0 10px;
+}
+
+#btnMais {
+  border-radius: 0 10px 10px 0;
+}
+
+#btnMenos:active,
+#btnMais:active {
+  transform: translateY(1px);
+}
 
 #pesoAtual {
   display: inline-flex;
@@ -157,19 +220,26 @@ body { background: var(--bg); color: var(--text); }
   min-width: 120px;
   height: 38px;
   padding: 8px 12px;
-  margin: 0 8px;
-  border-radius: 10px;
-  border: 1px solid var(--border);
-  background: #fff;
+  /* border: 1px solid var(--border); */
+  background: #efefef;
 }
 
 /* Espaço vertical entre grupos de controles */
-#btnMenos, #pesoAtual, #btnMais { margin-top: 6px; }
+#btnMenos,
+#pesoAtual,
+#btnMais {
+  margin-top: 6px;
+}
 
 /* Observação: caixa de texto e contador */
-.observa-o2 { margin-top: 10px; font-weight: 600; }
+.observa-o2 {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
 #obsText {
-  width: 100% !important; /* sobrepõe inline */
+  width: 100% !important;
+  /* sobrepõe inline */
   min-height: 120px !important;
   height: auto !important;
   padding: 12px !important;
@@ -178,14 +248,30 @@ body { background: var(--bg); color: var(--text); }
   border-radius: 10px !important;
   resize: vertical !important;
   color: var(--text) !important;
-  position: static !important; /* remove posicionamento absoluto anterior */
+  position: static !important;
+  /* remove posicionamento absoluto anterior */
 }
-#obsText:focus { border-color: var(--accent) !important; box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12) !important; outline: none; }
 
-#obsCount { text-align: right; color: var(--muted); font-size: 12px; margin-top: 4px; }
+#obsText:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 3px rgba(128, 0, 0, 0.12) !important;
+  outline: none;
+}
+
+#obsCount {
+  text-align: right;
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
 
 /* Total e ação primária */
-#precoAtual { font-size: 18px; font-weight: 600; color: var(--accent); }
+#precoAtual {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
 #btnAdicionar {
   background: var(--accent);
   color: #fff;
@@ -194,13 +280,23 @@ body { background: var(--bg); color: var(--text); }
   padding: 12px 18px;
   border-radius: 10px;
   border: 0;
-  box-shadow: 0 2px 8px rgba(0,0,0,.15);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
   cursor: pointer;
   transition: background-color .2s ease, transform .06s ease, box-shadow .2s ease;
 }
-#btnAdicionar:hover { background: var(--accent-600); }
-#btnAdicionar:active { transform: translateY(1px); }
-#btnAdicionar:focus-visible { outline: 2px solid rgba(128, 0, 0, 0.5); outline-offset: 2px; }
+
+#btnAdicionar:hover {
+  background: var(--accent-600);
+}
+
+#btnAdicionar:active {
+  transform: translateY(1px);
+}
+
+#btnAdicionar:focus-visible {
+  outline: 2px solid rgba(128, 0, 0, 0.5);
+  outline-offset: 2px;
+}
 
 /* Barra inferior fixa similar ao exemplo */
 .footer {
@@ -215,6 +311,7 @@ body { background: var(--bg); color: var(--text); }
   margin-top: 8px;
   z-index: 1;
 }
+
 #qtdResumo {
   padding: 10px 14px;
   border-radius: 10px;
@@ -224,6 +321,7 @@ body { background: var(--bg); color: var(--text); }
   text-align: center;
   font-weight: 600;
 }
+
 .footer .total {
   margin-left: auto;
   background: var(--accent);
@@ -232,16 +330,25 @@ body { background: var(--bg); color: var(--text); }
   padding: 12px 16px;
   font-weight: 700;
 }
-.footer .total strong { color: #fff; }
+
+.footer .total strong {
+  color: #fff;
+}
 
 /* Acessibilidade focos compartilhados */
-#btnMenos:focus-visible, #btnMais:focus-visible, #pesoAtual:focus-visible, #cortes > button:focus-visible {
+#btnMenos:focus-visible,
+#btnMais:focus-visible,
+#pesoAtual:focus-visible,
+#cortes>button:focus-visible {
   outline: 2px solid rgba(128, 0, 0, 0.5);
   outline-offset: 2px;
 }
 
 /* Texto mais discreto */
-.muted { color: var(--muted); font-size: 12px; }
+.muted {
+  color: var(--muted);
+  font-size: 12px;
+}
 
 /* Responsividade */
 @media (max-width: 900px) {
@@ -250,9 +357,56 @@ body { background: var(--bg); color: var(--text); }
     gap: 12px;
     padding: 16px;
   }
+
   #prodImagem {
     grid-column: 1;
     grid-row: auto;
     aspect-ratio: 16 / 9;
+  }
+}
+
+/* Dialog backdrop */
+#produtoDialog::backdrop {
+  background: rgba(0, 0, 0, .45);
+}
+
+/* Close button styling */
+#closeProdutoDialog {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  z-index: 2;
+  background: #800000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+/* Dialog responsiveness */
+@media (max-width: 900px) {
+  #produtoDialog {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    border-radius: 0 !important;
+  }
+}
+
+@media (max-width: 480px) {
+  #produtoView {
+    padding: 16px;
+  }
+
+  #prodNome {
+    font-size: 22px;
+  }
+
+  #closeProdutoDialog {
+    top: 8px;
+    right: 8px;
+    padding: 6px 10px;
   }
 }
