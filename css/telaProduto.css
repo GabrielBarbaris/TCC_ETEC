@@ -49,9 +49,9 @@ body {
 */
 #produtoView {
   display: flex;
-  gap: 18px 28px;
-  max-width: 1100px;
+  gap: 24px;
   padding: 24px;
+  max-width: 1100px;
   border-radius: 14px;
   background: var(--card);
   border: 1px solid var(--border);
@@ -64,10 +64,22 @@ body {
   grid-column: 2;
 }
 
+.descricao {
+  height: 90px;
+  border: 1px solid var(--border);
+}
+
+.opcoes {
+  height: 330px;
+ overflow: auto;
+}
+
 .produto-right {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  flex: 1;
+  min-width: 0;
 }
 
 #prodImagem {
@@ -75,10 +87,12 @@ body {
   grid-row: 1 / span 6;
   width: 100%;
   aspect-ratio: 1 / 1;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 12px;
   border: 1px solid var(--border);
   background: #fafafa;
+  padding: 16px;
+  /* padding no desktop */
 }
 
 /* Esconde elementos decorativos antigos da UI anterior */
@@ -298,6 +312,25 @@ body {
   outline-offset: 2px;
 }
 
+/* Botão combinado (Adicionar + Total) */
+#btnAdicionar {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+  /* empurra para a direita no footer */
+}
+
+#btnAdicionar .label {
+  font-weight: 700;
+}
+
+#btnAdicionar #precoAtual {
+  color: #fff;
+  /* sobrescreve a cor padrão do precoAtual */
+  font-size: 18px;
+}
+
 /* Barra inferior fixa similar ao exemplo */
 .footer {
   position: sticky;
@@ -351,9 +384,19 @@ body {
 }
 
 /* Responsividade */
+/* Desktop refinements */
+@media (min-width: 901px) {
+  #prodImagem {
+    flex: 0 0 420px;
+    width: 420px;
+    height: auto;
+    object-position: center;
+    display: block;
+  }
+}
 @media (max-width: 900px) {
   #produtoView {
-    grid-template-columns: 1fr;
+    flex-direction: column;
     gap: 12px;
     padding: 16px;
   }
@@ -362,6 +405,8 @@ body {
     grid-column: 1;
     grid-row: auto;
     aspect-ratio: 16 / 9;
+    padding: 0;
+    /* remove padding no mobile */
   }
 }
 

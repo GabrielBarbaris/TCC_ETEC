@@ -456,37 +456,39 @@
     <div id="produtoView" hidden>
       <img id="prodImagem" class="produto-img" src="" alt="Produto" />
       <section class="produto-right">
+        <div class="descricao">
+          <div id="precoKG">R$0,00 / Kg</div>
+          <p id="prodDesc"></p>
+        </div>
+        <div class="opcoes">
+          <fieldset class="section">
+            <legend class="legend">Como será cortada a carne?</legend>
+            <div class="muted" style="display:flex; gap:8px; align-items:center;">
+              <span>Escolha 1 opção</span>
+              <span id="corteCount">0/1</span>
+            </div>
+            <div id="cortes" class="radio-group" role="radiogroup" aria-label="Opções de corte"></div>
+          </fieldset>
 
-        <div id="precoKG">R$0,00 / Kg</div>
-        <p id="prodDesc"></p>
-        
-        <fieldset class="section">
-          <legend class="legend">Como será cortada a carne?</legend>
-          <div class="muted" style="display:flex; gap:8px; align-items:center;">
-            <span>Escolha 1 opção</span>
-            <span id="corteCount">0/1</span>
-          </div>
-          <div id="cortes" class="radio-group" role="radiogroup" aria-label="Opções de corte"></div>
-        </fieldset>
-
-        <section class="section obs-box">
-          <div class="legend">Observação</div>
-          <textarea id="obsText" maxlength="150" placeholder="Ex.: separar em 2 pacotes, ponto da carne, etc."></textarea>
-          <div class="obs-footer">
-            <span></span>
-            <span id="obsCount">0/150</span>
-          </div>
-        </section>
-
+          <section class="section obs-box">
+            <div class="legend">Observação</div>
+            <textarea id="obsText" maxlength="150" placeholder="Ex.: separar em 2 pacotes, ponto da carne, etc."></textarea>
+            <div class="obs-footer">
+              <span></span>
+              <span id="obsCount">0/150</span>
+            </div>
+          </section>
+        </div>
         <div class="footer">
           <div class="qty" aria-label="Controle de quantidade">
             <button id="btnMenos" type="button" title="Diminuir">-</button>
             <div id="pesoAtual" class="qtd-display" aria-live="polite">0</div>
             <button id="btnMais" type="button" title="Aumentar">+</button>
           </div>
-          <div class="total">Total: <strong id="precoAtual">R$0,00</strong></div>
-          <div id="qtdResumo" aria-live="polite"></div>
-          <button id="btnAdicionar" type="button" class="btn-primary">Adicionar</button>
+          <button id="btnAdicionar" type="button" class="btn-primary">
+            <span class="label">Adicionar</span>
+            <strong id="precoAtual">R$0,00</strong>
+          </button>
         </div>
       </section>
     </div>
