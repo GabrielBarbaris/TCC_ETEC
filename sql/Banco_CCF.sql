@@ -140,6 +140,7 @@ CREATE TABLE tbPedidoProduto (
     quantidade DECIMAL(10,2) NOT NULL,
     preco_unitario DECIMAL(10,2) NOT NULL,
     preco_total_prod DECIMAL(10,2) DEFAULT 0.00,
+    observacao VARCHAR(120),
     PRIMARY KEY (cod_pedido, cod_produto),
     FOREIGN KEY (cod_pedido) REFERENCES tbPedido(id_pedido)
         ON DELETE CASCADE ON UPDATE CASCADE,

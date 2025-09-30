@@ -57,6 +57,12 @@ function checa_produto() {
         error_imput(produto, "Preencha qual é o produto");
         return false;
     }
+    // valida se produto existe nos cadastrados (autocomplete)
+    if (!produtoExiste(valor)) {
+        error_imput(produto, "Este produto ainda não está cadastrado. Escolha um da lista de sugestões.");
+        $('#mensagem').html('Produto não encontrado no cadastro. Selecione um produto sugerido.').fadeIn(300).delay(2000).fadeOut(400);
+        return false;
+    }
     const form_item = produto.parentElement;
     form_item.className = "form_content";
     return true;
@@ -145,6 +151,12 @@ function checa_endereco_texto() {
 function checa_itens() {
     if (!Array.isArray(itensPedido) || itensPedido.length === 0) {
         $('#mensagem').html('Adicione ao menos um item ao pedido.').fadeIn(300).delay(2000).fadeOut(400);
+        return false;
+    }
+    // garante que todos os produtos dos itens existem no cadastro
+    const invalido = itensPedido.find(it => !produtoExiste(it.produto));
+    if (invalido) {
+        $('#mensagem').html('Há item com produto não cadastrado. Remova-o e escolha um produto sugerido.').fadeIn(300).delay(2500).fadeOut(400);
         return false;
     }
     return true;
@@ -353,6 +365,15 @@ function getTipoProdutoByName(nome) {
   const key = String(nome || '').trim().toLowerCase();
   const t = tipoPorNome[key];
   return t === 'PESO' ? 'PESO' : 'UNIDADE';
+}
+
+function produtoExiste(nome) {
+  const key = String(nome || '').trim().toLowerCase();
+  // Se ainda não carregou o mapa, tenta carregar e orienta o usuário via validação
+  if (!tipoPorNome || Object.keys(tipoPorNome).length === 0) {
+    try { carregarProdutos(); } catch (_) {}
+  }
+  return Boolean(tipoPorNome[key]);
 }
 
 function formatQuantidadeDisplay(item) {

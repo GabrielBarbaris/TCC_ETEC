@@ -58,7 +58,7 @@
                         ?>
                     </select>
                     <a>mensagem de erro</a>
-                    </div>
+                    </div> 
 
                     <div class="form_content">
                         <label for="observacao">Observações (opcional)</label>
