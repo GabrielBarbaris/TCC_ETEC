@@ -41,21 +41,6 @@
                     <label for="corte">Corte</label>
                     <select id="corte" name="corte">
                         <option value="">Escolha o corte</option>
-                        <?php
-                        require_once 'conexao.php';
-                        $comandoSql = 'SELECT * FROM tbcorte;';
-                        $result = mysqli_query($conn, $comandoSql);
-
-                        if ($result && mysqli_num_rows($result) > 0) {
-                            while ($cortes = mysqli_fetch_assoc($result)) {
-                                $id = $cortes['id_corte'];
-                                $nome = htmlspecialchars($cortes['nome_corte'], ENT_QUOTES);
-                                echo "<option value='$nome' data-id='$id'>$nome</option>";
-                            }
-                        } else {
-                            echo "<option value=''>Não existe categoria</option>";
-                        }
-                        ?>
                     </select>
                     <a>mensagem de erro</a>
                     </div> 

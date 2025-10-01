@@ -12,6 +12,50 @@ const observacao = document.getElementById('observacao');
 
 
 
+// Controle de cortes dinâmicos por produto
+let corteObrigatorio = false;
+let cortesCarregados = [];
+
+function resetCorteSelect(placeholder) {
+  if (!corte) return;
+  const texto = placeholder || 'Escolha o corte';
+  corte.innerHTML = `<option value="">${texto}</option>`;
+  corte.value = '';
+}
+
+async function carregarCortesParaProduto(nomeProduto) {
+  if (!corte || !nomeProduto) return;
+  resetCorteSelect('Carregando cortes...');
+  corteObrigatorio = false;
+  cortesCarregados = [];
+  try {
+    const resp = await fetch('buscaCortes.php?produto=' + encodeURIComponent(nomeProduto));
+    if (!resp.ok) throw new Error('HTTP');
+    const data = await resp.json();
+    if (Array.isArray(data) && data.length > 0) {
+      cortesCarregados = data;
+      corte.innerHTML = `<option value="">Escolha o corte</option>` + data.map(c => `<option value="${escapeHtml(c.nome)}" data-id="${String(c.id)}">${escapeHtml(c.nome)}</option>`).join('');
+      corteObrigatorio = true;
+    } else {
+      resetCorteSelect('Este produto não possui cortes');
+      corteObrigatorio = false;
+      $('#mensagem').html('Este produto não possui cortes específicos. Você pode adicionar sem escolher um corte.').fadeIn(250).delay(1500).fadeOut(400);
+    }
+  } catch (e) {
+    console.warn('Falha ao carregar cortes', e);
+    resetCorteSelect('Escolha o corte');
+    corteObrigatorio = false;
+  }
+}
+
+// Sempre que o texto do produto muda, zera o select de corte
+if (produto) {
+  produto.addEventListener('input', () => {
+    resetCorteSelect('Escolha o corte');
+    corteObrigatorio = false;
+  });
+}
+
 $('#mensagem').fadeOut(0);
 
 
@@ -21,8 +65,13 @@ form.addEventListener("submit", (event) => {
     checa_form();
 })
 
-produto.addEventListener("blur",() =>{
-    checa_produto();
+produto.addEventListener("blur", async () =>{
+    if (checa_produto()) {
+        await carregarCortesParaProduto(produto.value.trim());
+    } else {
+        resetCorteSelect('Escolha o corte');
+        corteObrigatorio = false;
+    }
 })
 quantidade.addEventListener("blur",() =>{
     checa_quantidade();
@@ -81,13 +130,15 @@ function checa_quantidade() {
 }
 
 function checa_corte() {
+    if (!corte) return true;
     const valor = corte.value.trim();
-    if (!valor) {
-        error_imput(corte, "Preencha qual é o tipo de corte");
+    // Se o produto tem cortes associados, exigir seleção; caso contrário, permitir vazio
+    if (corteObrigatorio && !valor) {
+        error_imput(corte, 'Escolha um corte para este produto');
         return false;
     }
     const form_item = corte.parentElement;
-    form_item.className = "form_content";
+    form_item.className = 'form_content';
     return true;
 }
 
@@ -434,7 +485,7 @@ function atualizarPainel() {
     <li>
       <div class="item-info">
         <strong>${escapeHtml(it.produto)}</strong>
-        <span class="muted">Qtd: ${formatQuantidadeDisplay(it)} • Corte: ${escapeHtml(it.corte)}</span>
+        <span class="muted">Qtd: ${formatQuantidadeDisplay(it)} • Corte: ${it.corte ? escapeHtml(it.corte) : 'Sem corte'}</span>
         ${it.observacao ? `<div class="obs muted">Obs: ${escapeHtml(it.observacao)}</div>` : ''}
       </div>
       <button type="button" class="btn-remover" data-index="${idx}" aria-label="Remover item">×</button>
