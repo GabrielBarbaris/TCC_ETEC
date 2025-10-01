@@ -973,12 +973,27 @@
   left: 24px;
 }
 
-.tela-inicial .item-contra {
+/* Lista dinâmica de itens da sacola */
+#carrinhoLista {
   position: absolute;
+  left: 16px;
+  top: 107px;
+  width: 360px;
+  max-height: 380px; /* Mantém espaço para totais e botão finalizar */
+  overflow-y: auto;
+  padding-right: 4px;
+}
+#carrinhoLista::-webkit-scrollbar { width: 6px; }
+#carrinhoLista::-webkit-scrollbar-thumb { background: #ccc; border-radius: 6px; }
+#carrinhoLista::-webkit-scrollbar-track { background: transparent; }
+
+.tela-inicial .item-contra {
+  position: relative; /* Permite empilhamento vertical */
   width: 360px;
   height: 132px;
-  top: 107px;
-  left: 16px;
+  top: 0;
+  left: 0;
+  margin-bottom: 12px; /* Espaço entre os cards */
 }
 
 .tela-inicial .overlap-9 {
@@ -1167,6 +1182,15 @@
   line-height: normal;
   white-space: nowrap;
 }
+
+/* Ações do item (Editar / Remover) */
+.tela-inicial .text-wrapper-31,
+.tela-inicial .text-wrapper-32 {
+  cursor: pointer;
+  user-select: none;
+}
+.tela-inicial .text-wrapper-31:hover { color: #8d1010; }
+.tela-inicial .text-wrapper-32:hover { color: #7d7d7d; }
 
 .tela-inicial .contra-file-2 {
   position: absolute;

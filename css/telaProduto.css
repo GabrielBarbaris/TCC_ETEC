@@ -76,6 +76,9 @@ body {
   position: relative;
   height: 90px;
   border: 1px solid var(--border);
+  border: 1px solid #C6C6C6;
+background: #FFF;
+box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
 }
 
 .opcoes {

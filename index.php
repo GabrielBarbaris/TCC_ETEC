@@ -256,54 +256,18 @@
             </div>
           </div>
           <div class="text-wrapper-28">Sua sacola</div>
-          <div class="text-wrapper-29">Limpar</div>
+          <div class="text-wrapper-29" id="btnLimparCarrinho">Limpar</div>
           <div class="text-wrapper-30">Calcular tempo de entrega</div>
           <img class="line-7" src="img/Line7.png" />
           <img class="vector" src="img/localizacao.png" />
-          <div class="item-contra">
-            <div class="overlap-9">
-              <div class="rectangle-6"></div>
-              <div class="text-wrapper-31">Editar</div>
-              <div class="text-wrapper-32">Remover</div>
-              <div class="text-wrapper-33">Contra file</div>
-              <div class="text-wrapper-34">RS$90,00</div>
-              <div class="text-wrapper-35">Peso:</div>
-              <div class="text-wrapper-36">Tipo:</div>
-              <p class="observa-o">
-                <span class="text-wrapper-37">Observação:</span> <span class="text-wrapper-38">&nbsp;</span>
-              </p>
-              <div class="text-wrapper-39">dividir em 2 pacotes</div>
-              <div class="text-wrapper-40">manta</div>
-              <div class="text-wrapper-41">2 Kg</div>
-              <img class="contra-file-2" src="img/contraFile.png" />
-            </div>
-          </div>
+          <div id="carrinhoLista"></div>
           <div class="text-wrapper-42">Subtotal:</div>
-          <div class="text-wrapper-43">R$135,00</div>
-          <div class="text-wrapper-44">R$5,00</div>
+          <div class="text-wrapper-43" id="subtotalValor">R$0,00</div>
+          <div class="text-wrapper-44" id="freteValor">R$0,00</div>
           <div class="text-wrapper-45">Frete:</div>
           <p class="total"><span class="text-wrapper-46">Total</span> <span class="text-wrapper-47">:</span></p>
-          <div class="text-wrapper-48">R$140,00</div>
-          <div class="item-contra-2">
-            <div class="overlap-9">
-              <div class="rectangle-6"></div>
-              <div class="text-wrapper-31">Editar</div>
-              <div class="text-wrapper-32">Remover</div>
-              <div class="text-wrapper-33">Fraldinha</div>
-              <div class="text-wrapper-34">RS$44,99</div>
-              <div class="text-wrapper-35">Peso:</div>
-              <div class="text-wrapper-36">Tipo:</div>
-              <p class="observa-o">
-                <span class="text-wrapper-37">Observação:</span> <span class="text-wrapper-38">&nbsp;</span>
-              </p>
-              <div class="text-wrapper-40">manta</div>
-              <div class="text-wrapper-41">1Kg</div>
-              <img class="fraldinha-2" src="img/fraldinha.png" />
-
-            </div>
-            <img class="line-8" src="img/line-8.svg" />
-          </div>
-        </div>
+          <div class="text-wrapper-48" id="totalValor">R$0,00</div>
+                  </div>
       </div>
 
     </div> <!-- .corpo -->
@@ -552,6 +516,9 @@
       let produto = null;
       let corteSelecionado = null;
       let quantidade = 0;
+      let cortesLista = [];
+      let editIndex = null;
+      let editPayload = null;
 
       function formatBRL(v) {
         return v.toLocaleString('pt-BR', {
@@ -608,6 +575,8 @@
         produto = null;
         corteSelecionado = null;
         quantidade = 0;
+        editIndex = null;
+        editPayload = null;
         nome.textContent = 'Produto';
         precoKG.textContent = 'R$0,00';
         precoAtual.textContent = 'R$0,00';
@@ -622,10 +591,80 @@
         view.hidden = true;
       }
 
-      function openProduto(id) {
+      function openProduto(id, payload) {
         resetProdutoUI();
+        // Modo edição (opcional)
+        if (payload && typeof payload === 'object') {
+          editPayload = payload;
+          if (typeof payload.editIndex === 'number') editIndex = payload.editIndex;
+        }
         if (typeof dlg.showModal === 'function') dlg.showModal();
         else dlg.setAttribute('open', 'open');
+
+        // Se vier payload de produto/cortes, evita buscar no banco
+        if (payload && payload.produto) {
+          produto = payload.produto;
+          nome.textContent = produto.nome || 'Produto';
+          img.src = produto.imagem_url || 'img/imagensIlustrativa.jpg';
+          document.getElementById('prodDesc').textContent = (produto.descricao || '').trim();
+          cortesWrap.innerHTML = '';
+          cortesLista = payload.cortes || [];
+          const lista = cortesLista;
+          if (lista.length > 0) {
+            lista.forEach(c => cortesWrap.appendChild(criaRadioCorte(c)));
+            corteCount.textContent = '0/1';
+          } else {
+            corteCount.textContent = '0/0';
+          }
+          setQtd(produto.tipo_quantidade === 'PESO' ? (produto.peso_minimo || 0.5) : 1);
+
+          // Pré-preencher se for edição
+          if (editPayload) {
+            if (typeof editPayload.quantidade !== 'undefined') {
+              setQtd(Number(editPayload.quantidade));
+            }
+            if (editPayload.observacao) {
+              obs.value = editPayload.observacao;
+              obsCount.textContent = obs.value.length + '/150';
+            }
+            if (editPayload.corte) {
+              const sel = cortesWrap.querySelector('input[name="corte"][value="' + String(editPayload.corte) + '"]');
+              if (sel) {
+                sel.checked = true;
+                corteSelecionado = editPayload.corte;
+                corteCount.textContent = '1/1';
+              }
+            }
+          }
+          // Se a lista de cortes estiver incompleta, tenta obter a lista completa do servidor
+          if (!Array.isArray(cortesLista) || cortesLista.length < 2) {
+            fetch('produto_detalhe.php?id=' + encodeURIComponent(id))
+              .then(r => (r && r.ok) ? r.json() : null)
+              .then(dataFull => {
+                if (!dataFull || !Array.isArray(dataFull.cortes)) return;
+                cortesLista = dataFull.cortes;
+                cortesWrap.innerHTML = '';
+                cortesLista.forEach(c => cortesWrap.appendChild(criaRadioCorte(c)));
+                // Reseleciona o corte anterior se houver
+                if (editPayload && editPayload.corte) {
+                  const sel = cortesWrap.querySelector('input[name="corte"][value="' + String(editPayload.corte) + '"]');
+                  if (sel) {
+                    sel.checked = true;
+                    corteSelecionado = editPayload.corte;
+                    corteCount.textContent = '1/1';
+                  }
+                } else {
+                  corteCount.textContent = '0/1';
+                }
+              })
+              .catch(() => {});
+          }
+
+          view.hidden = false;
+          return; // não buscar no servidor
+        }
+
+        // Fallback: buscar no servidor
         fetch('produto_detalhe.php?id=' + encodeURIComponent(id))
           .then(r => {
             if (!r.ok) throw new Error('HTTP ' + r.status);
@@ -636,17 +675,34 @@
             nome.textContent = produto.nome;
             img.src = produto.imagem_url || 'img/imagensIlustrativa.jpg';
             document.getElementById('prodDesc').textContent = (produto.descricao || '').trim();
-            // Cortes
             cortesWrap.innerHTML = '';
-            const lista = data.cortes || [];
+            cortesLista = data.cortes || [];
+            const lista = cortesLista;
             if (lista.length > 0) {
               lista.forEach(c => cortesWrap.appendChild(criaRadioCorte(c)));
               corteCount.textContent = '0/1';
             } else {
               corteCount.textContent = '0/0';
             }
-            // Quantidade
             setQtd(produto.tipo_quantidade === 'PESO' ? produto.peso_minimo : 1);
+
+            if (editPayload) {
+              if (typeof editPayload.quantidade !== 'undefined') {
+                setQtd(Number(editPayload.quantidade));
+              }
+              if (editPayload.observacao) {
+                obs.value = editPayload.observacao;
+                obsCount.textContent = obs.value.length + '/150';
+              }
+              if (editPayload.corte) {
+                const sel = cortesWrap.querySelector('input[name="corte"][value="' + String(editPayload.corte) + '"]');
+                if (sel) {
+                  sel.checked = true;
+                  corteSelecionado = editPayload.corte;
+                  corteCount.textContent = '1/1';
+                }
+              }
+            }
             view.hidden = false;
           })
           .catch(() => {
@@ -679,6 +735,11 @@
           alert('Selecione um corte');
           return;
         }
+        let corteNome = null;
+        if (corteSelecionado && Array.isArray(cortesLista) && cortesLista.length) {
+          const c = cortesLista.find(x => String(x.id) === String(corteSelecionado));
+          if (c) corteNome = c.nome;
+        }
         const item = {
           id: produto.id,
           nome: produto.nome,
@@ -686,10 +747,21 @@
           tipo: produto.tipo_quantidade,
           quantidade,
           corte: corteSelecionado || null,
-          observacao: obs.value || ''
+          corte_nome: corteNome,
+          imagem_url: produto.imagem_url || '',
+          observacao: obs.value || '',
+          // Guardar metadados para edição sem depender do BD
+          peso_minimo: produto.peso_minimo || (produto.tipo_quantidade === 'PESO' ? 0.5 : 1),
+          intervalo_peso: produto.intervalo_peso || (produto.tipo_quantidade === 'PESO' ? 0.5 : 1),
+          descricao: produto.descricao || '',
+          cortes_lista: (cortesLista || []).map(c => ({ id: c.id, nome: c.nome }))
         };
         const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
-        carrinho.push(item);
+        if (editIndex !== null && editIndex >= 0 && editIndex < carrinho.length) {
+          carrinho[editIndex] = item;
+        } else {
+          carrinho.push(item);
+        }
         localStorage.setItem('carrinho', JSON.stringify(carrinho));
         closeProduto();
       });
@@ -701,6 +773,8 @@
           openProduto(el.dataset.prodId);
         }
       });
+      // expõe para edição vinda da sacola
+      window.openProduto = openProduto;
 
       closeBtn && closeBtn.addEventListener('click', closeProduto);
       dlg && dlg.addEventListener('cancel', function(ev) {
