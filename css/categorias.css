@@ -1,0 +1,128 @@
+/*
+  CSS reutilizável para páginas de categorias
+  - Grid responsivo para os cards
+  - Estilização compatível com a marcação usada no index (picanha/overlap-4/img-3 etc.)
+  - Pode ser usado por todas as páginas de categorias
+*/
+
+/* Container principal da seção de listagem */
+.churrasco_qualidade {
+  max-width: 1200px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+/* Linha do título ocupa a largura toda */
+.churrasco_qualidade > .separao {
+  grid-column: 1 / -1;
+  margin-bottom: 8px;
+}
+
+/* Cartão do produto */
+.churrasco_qualidade .picanha .overlap-4 {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+  overflow: hidden;
+  min-height: 100%;
+  transition: all .2s ease;
+}
+
+/* Efeito hover suave */
+.churrasco_qualidade .picanha .overlap-4:hover {
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Imagem do produto (força ajuste em grid) */
+.churrasco_qualidade .picanha .img-3,
+.churrasco_qualidade .picanha .img-2,
+.churrasco_qualidade .picanha .img-4 {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+}
+
+/* Oculta elementos decorativos que atrapalham o layout em grid */
+.churrasco_qualidade .picanha .rectangle-5,
+.churrasco_qualidade .picanha .rectangle-2,
+.churrasco_qualidade .picanha .rectangle-4 {
+  display: none !important;
+}
+
+/* Título do produto */
+.churrasco_qualidade .picanha .text-wrapper-17,
+.churrasco_qualidade .picanha .text-wrapper-6,
+.churrasco_qualidade .picanha .text-wrapper-10,
+.churrasco_qualidade .picanha .text-wrapper-11,
+.churrasco_qualidade .picanha .text-wrapper-12 {
+  position: static !important;
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #222;
+  margin: 12px 12px 4px;
+  text-transform: capitalize;
+}
+
+/* Descrição do produto */
+.churrasco_qualidade .picanha .text-wrapper-7,
+.churrasco_qualidade .picanha .text-wrapper-13 {
+  position: static !important;
+  display: block;
+  font-size: .9rem;
+  color: #555;
+  margin: 0 12px 8px;
+  line-height: 1.4;
+  min-height: 40px; /* mantém altura para alinhamento dos cards */
+}
+
+/* Preço */
+.churrasco_qualidade .picanha .r-KG,
+.churrasco_qualidade .picanha .r-KG-2 {
+  position: static !important;
+  display: block;
+  margin: 0 12px 12px;
+  font-weight: 700;
+  color: #800000;
+}
+
+/* Botão adicionar */
+.churrasco_qualidade .picanha .boto {
+  margin: auto 12px 12px;
+  cursor: pointer;
+}
+
+.churrasco_qualidade .picanha .boto .overlap-group-2 {
+  background: #800000;
+  color: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+}
+
+.churrasco_qualidade .picanha .text-wrapper-9 {
+  color: #fff !important;
+  font-weight: 700;
+  letter-spacing: .5px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .churrasco_qualidade {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .churrasco_qualidade .picanha .img-3,
+  .churrasco_qualidade .picanha .img-2,
+  .churrasco_qualidade .picanha .img-4 {
+    height: 160px;
+  }
+}
