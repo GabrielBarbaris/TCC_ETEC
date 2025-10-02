@@ -978,7 +978,6 @@
   position: absolute;
   left: 16px;
   top: 107px;
-  width: 360px;
   max-height: 380px; /* Mantém espaço para totais e botão finalizar */
   overflow-y: auto;
   padding-right: 4px;
@@ -989,7 +988,6 @@
 
 .tela-inicial .item-contra {
   position: relative; /* Permite empilhamento vertical */
-  width: 360px;
   height: 132px;
   top: 0;
   left: 0;
@@ -1750,12 +1748,37 @@
 }
 
 .churrasco_qualidade {
-  width: 70vw;
+  width: 100%;
+  max-width: 1400px;
   margin: auto;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
+  align-items: stretch;
   margin-block: 50px;
-  flex-wrap: wrap;
+  gap: 20px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 10px 8px 14px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Cards dentro da seção "churrasco de qualidade" */
+.churrasco_qualidade > .picanha {
+  flex: 0 0 331px;
+}
+
+/* Barra de rolagem horizontal */
+.churrasco_qualidade::-webkit-scrollbar {
+  height: 8px;
+}
+.churrasco_qualidade::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 10px;
+}
+.churrasco_qualidade::-webkit-scrollbar-track {
+  background: transparent;
 }
 
 .kit_fernandes {

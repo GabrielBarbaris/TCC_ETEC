@@ -115,7 +115,8 @@ function checa_form(){
                             window.location.href = "cadastraPedido.php?id="+id;
                         }else if( tipo == "cliente"){
                         //window.location.href = "principal.php?id="+id+"&nome="+nome+"&tipo="+tipo;
-                        window.location.href = "index.php?id="+id;
+                        try { localStorage.setItem('clienteId', id); } catch(e){}
+                        window.location.href = "index.php";
                         }
                     }else{
                          $('#mensagem').html("Algun doscampos esta incorreto");

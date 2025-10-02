@@ -1,3 +1,7 @@
+<?php
+session_start();
+$clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']) || isset($_SESSION['id_usuario']) || isset($_SESSION['usuario']) || isset($_SESSION['cliente']);
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 
@@ -251,13 +255,14 @@
           <img class="line-6" src="img/Line6.png" />
 
           <div class="boto-finalizar">
-            <div class="div-wrapper">
+            <div class="div-wrapper" id="btnFinalizarPedido" role="button" tabindex="0" aria-disabled="true" style="cursor:pointer;">
               <div class="text-wrapper-27">FINALIZAR PEDIDO</div>
             </div>
           </div>
           <div class="text-wrapper-28">Sua sacola</div>
           <div class="text-wrapper-29" id="btnLimparCarrinho">Limpar</div>
-          <div class="text-wrapper-30">Calcular tempo de entrega</div>
+          <div class="text-wrapper-30" id="btnTempoEntrega" role="button" style="cursor:pointer;">Calcular tempo de entrega</div>
+          <div id="enderecoResumo" style="position:absolute; top:48px; left:60px; width:270px; font-family: 'Calibri-Regular', Helvetica; font-size:14px; color:#5f5f5f;"></div>
           <img class="line-7" src="img/Line7.png" />
           <img class="vector" src="img/localizacao.png" />
           <div id="carrinhoLista"></div>
@@ -267,7 +272,7 @@
           <div class="text-wrapper-45">Frete:</div>
           <p class="total"><span class="text-wrapper-46">Total</span> <span class="text-wrapper-47">:</span></p>
           <div class="text-wrapper-48" id="totalValor">R$0,00</div>
-                  </div>
+        </div>
       </div>
 
     </div> <!-- .corpo -->
@@ -455,6 +460,67 @@
           </button>
         </div>
       </section>
+    </div>
+  </dialog>
+
+  <!-- Dialog Entrega/Retirada -->
+  <dialog id="entregaDialog" style="position:fixed; inset:0; margin:auto; width:min(520px,95vw); max-height:90vh; border:none; padding:0; border-radius:12px; overflow:auto;">
+    <div style="position:sticky; top:0; background:#800000; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+      <strong>Entrega ou Retirada</strong>
+      <button type="button" id="closeEntregaDialog" style="background:#5f0d0d; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    </div>
+    <div class="dlg-body" style="padding:16px;">
+      <div class="radio-group" style="display:flex; gap:12px; margin-bottom:12px;">
+        <label class="radio-item" style="display:flex; align-items:center; gap:6px;">
+          <input type="radio" name="tipoEnvio" value="ENTREGA" checked>
+          <span>Entrega</span>
+        </label>
+        <label class="radio-item" style="display:flex; align-items:center; gap:6px;">
+          <input type="radio" name="tipoEnvio" value="RETIRADA">
+          <span>Retirada</span>
+        </label>
+      </div>
+
+      <div id="enderecoForm" style="display:block;">
+        <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+          <label for="cepInput">CEP</label>
+          <input id="cepInput" type="text" placeholder="00000-000" inputmode="numeric">
+        </div>
+        <div style="display:grid; grid-template-columns: 2fr 1fr; gap:12px;">
+          <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+            <label for="ruaInput">Endereço</label>
+            <input id="ruaInput" type="text" placeholder="Rua / Avenida">
+          </div>
+          <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+            <label for="numeroInput">Número</label>
+            <input id="numeroInput" type="text" placeholder="Nº">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+            <label for="bairroInput">Bairro</label>
+            <input id="bairroInput" type="text" placeholder="Bairro">
+          </div>
+          <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+            <label for="cidadeInput">Cidade</label>
+            <input id="cidadeInput" type="text" placeholder="Cidade">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+          <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+            <label for="ufInput">UF</label>
+            <input id="ufInput" type="text" placeholder="UF" maxlength="2" style="text-transform:uppercase;">
+          </div>
+          <div class="form_content" style="display:flex; flex-direction:column; margin-bottom:12px;">
+            <label for="compInput">Complemento</label>
+            <input id="compInput" type="text" placeholder="Bloco / Referência (opcional)">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer" style="display:flex; justify-content:flex-end; gap:8px; padding:12px 16px; border-top:1px solid #eee;">
+      <button type="button" id="cancelEntrega" style="background:#999; color:#fff; border:none; border-radius:6px; padding:8px 12px; cursor:pointer;">Cancelar</button>
+      <button type="button" id="saveEntrega" style="background:#8d1010; color:#fff; border:none; border-radius:6px; padding:8px 12px; cursor:pointer;">Confirmar</button>
     </div>
   </dialog>
 
@@ -754,7 +820,10 @@
           peso_minimo: produto.peso_minimo || (produto.tipo_quantidade === 'PESO' ? 0.5 : 1),
           intervalo_peso: produto.intervalo_peso || (produto.tipo_quantidade === 'PESO' ? 0.5 : 1),
           descricao: produto.descricao || '',
-          cortes_lista: (cortesLista || []).map(c => ({ id: c.id, nome: c.nome }))
+          cortes_lista: (cortesLista || []).map(c => ({
+            id: c.id,
+            nome: c.nome
+          }))
         };
         const carrinho = JSON.parse(localStorage.getItem('carrinho') || '[]');
         if (editIndex !== null && editIndex >= 0 && editIndex < carrinho.length) {
@@ -763,6 +832,7 @@
           carrinho.push(item);
         }
         localStorage.setItem('carrinho', JSON.stringify(carrinho));
+        window.dispatchEvent(new Event('carrinho:change'));
         closeProduto();
       });
 
@@ -781,6 +851,192 @@
         ev.preventDefault();
         closeProduto();
       });
+    })();
+  </script>
+  <script>
+    (function(){
+      const lojaEndereco = 'Rua Alvorada, 123 Selina Dalu - Mirassol - SP';
+      const btnTempo = document.getElementById('btnTempoEntrega');
+      const dlg = document.getElementById('entregaDialog');
+      const closeBtn = document.getElementById('closeEntregaDialog');
+      const cancelBtn = document.getElementById('cancelEntrega');
+      const saveBtn = document.getElementById('saveEntrega');
+      const enderecoForm = document.getElementById('enderecoForm');
+      const resumo = document.getElementById('enderecoResumo');
+
+      const freteEl = document.getElementById('freteValor');
+      const subtotalEl = document.getElementById('subtotalValor');
+      const totalEl = document.getElementById('totalValor');
+
+      // Campos de endereço (CEP auto-preenchimento)
+      const cepEl = document.getElementById('cepInput');
+      const ruaEl = document.getElementById('ruaInput');
+      const numeroEl = document.getElementById('numeroInput');
+      const bairroEl = document.getElementById('bairroInput');
+      const cidadeEl = document.getElementById('cidadeInput');
+      const ufEl = document.getElementById('ufInput');
+      const compEl = document.getElementById('compInput');
+
+      function digitsOnly(s){ return (s||'').replace(/\D/g,''); }
+      function maskCEP(s){ const d = digitsOnly(s).slice(0,8); return d.length>5 ? d.slice(0,5)+'-'+d.slice(5) : d; }
+      async function buscaCEP(cep){
+        const d = digitsOnly(cep);
+        if (d.length !== 8) return;
+        try {
+          const r = await fetch('https://viacep.com.br/ws/'+d+'/json/');
+          if (!r.ok) throw new Error('HTTP '+r.status);
+          const data = await r.json();
+          if (data && !data.erro) {
+            if (ruaEl && !ruaEl.value) ruaEl.value = data.logradouro || '';
+            if (bairroEl && !bairroEl.value) bairroEl.value = data.bairro || '';
+            if (cidadeEl && !cidadeEl.value) cidadeEl.value = data.localidade || '';
+            if (ufEl && !ufEl.value) ufEl.value = data.uf || '';
+            if (compEl && !compEl.value) compEl.value = data.complemento || '';
+          } else {
+            alert('CEP não encontrado.');
+          }
+        } catch(e){ console.warn('Erro ao buscar CEP', e); }
+      }
+      if (cepEl){
+        cepEl.addEventListener('input', function(){
+          cepEl.value = maskCEP(cepEl.value);
+          const d = digitsOnly(cepEl.value);
+          if (d.length === 8) buscaCEP(d);
+        });
+        cepEl.addEventListener('blur', function(){
+          const d = digitsOnly(cepEl.value);
+          if (d.length === 8) buscaCEP(d);
+        });
+      }
+
+      function formatBRL(num){ return num.toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+      function parseBRL(str){ if(!str) return 0; return Number(str.replace(/[R$\.\s]/g,'').replace(',','.'))||0; }
+      function openDlg(){ if (typeof dlg.showModal==='function') dlg.showModal(); else dlg.setAttribute('open','open'); }
+      function closeDlg(){ if (typeof dlg.close==='function') dlg.close(); else dlg.removeAttribute('open'); }
+
+      btnTempo && btnTempo.addEventListener('click', openDlg);
+      closeBtn && closeBtn.addEventListener('click', closeDlg);
+      cancelBtn && cancelBtn.addEventListener('click', closeDlg);
+      dlg && dlg.addEventListener('cancel', function(e){ e.preventDefault(); closeDlg(); });
+
+      // alterna exibição do formulário conforme tipo
+      dlg && dlg.addEventListener('change', function(ev){
+        if (ev.target && ev.target.name === 'tipoEnvio') {
+          enderecoForm.style.display = ev.target.value === 'ENTREGA' ? 'block' : 'none';
+        }
+      });
+
+      function getEnderecoDigitado(){
+        const cep = (document.getElementById('cepInput').value||'').trim();
+        const rua = (document.getElementById('ruaInput').value||'').trim();
+        const num = (document.getElementById('numeroInput').value||'').trim();
+        const bairro = (document.getElementById('bairroInput').value||'').trim();
+        const cidade = (document.getElementById('cidadeInput').value||'').trim();
+        const uf = (document.getElementById('ufInput').value||'').trim().toUpperCase();
+        const comp = (document.getElementById('compInput').value||'').trim();
+        if (!rua || !num || !bairro || !cidade || !uf) return null;
+        let s = rua + ', ' + num + ' - ' + bairro + ', ' + cidade + ' - ' + uf;
+        if (cep) s = cep + ' • ' + s;
+        if (comp) s += ' (' + comp + ')';
+        return s;
+      }
+
+      function atualizaTotais(){
+        const subtotal = parseBRL(subtotalEl.textContent);
+        const frete = 0; // frete grátis, origem loja
+        freteEl.textContent = formatBRL(frete);
+        totalEl.textContent = formatBRL(subtotal + frete);
+      }
+
+      saveBtn && saveBtn.addEventListener('click', function(){
+        const sel = dlg.querySelector('input[name="tipoEnvio"]:checked');
+        const tipo = sel ? sel.value : 'ENTREGA';
+        let textoResumo = '';
+        if (tipo === 'ENTREGA') {
+          const end = getEnderecoDigitado();
+          if (!end) { alert('Preencha endereço completo: Endereço, Número, Bairro, Cidade e UF.'); return; }
+          textoResumo = 'Entrega para: ' + end;
+          // frete grátis; origem: endereço da loja
+        } else {
+          textoResumo = 'Retirada na loja: ' + lojaEndereco;
+        }
+        resumo.textContent = textoResumo;
+        try { localStorage.setItem('pedidoEntrega', JSON.stringify({ tipo: tipo, resumo: textoResumo })); } catch(e){}
+        window.dispatchEvent(new Event('pedidoEntrega:change'));
+        atualizaTotais();
+        closeDlg();
+      });
+
+      // restaura resumo salvo
+      try {
+        const saved = JSON.parse(localStorage.getItem('pedidoEntrega')||'null');
+        if (saved && saved.resumo) resumo.textContent = saved.resumo;
+      } catch(e){}
+    })();
+  </script>
+  <script>
+    // Expor status de login do PHP para o JS
+    window.CLIENTE_LOGADO = <?php echo $clienteLogado ? 'true' : 'false'; ?>;
+
+    (function(){
+      var btn = document.getElementById('btnFinalizarPedido');
+      var resumo = document.getElementById('enderecoResumo');
+
+      function getCarrinho(){ try { return JSON.parse(localStorage.getItem('carrinho')||'[]'); } catch(e){ return []; } }
+      function temItens(){ return getCarrinho().length > 0; }
+      function entregaInformada(){ try { var x = JSON.parse(localStorage.getItem('pedidoEntrega')||'null'); return x && x.tipo; } catch(e){ return false; } }
+
+      function setDisabled(dis){
+        if (!btn) return;
+        btn.setAttribute('aria-disabled', dis ? 'true' : 'false');
+        btn.style.opacity = dis ? '0.6' : '1';
+      }
+
+      function isLogged(){
+        try { return window.CLIENTE_LOGADO === true || !!localStorage.getItem('clienteId'); }
+        catch(e){ return !!window.CLIENTE_LOGADO; }
+      }
+      function canFinalize(){
+        return isLogged() && temItens() && entregaInformada();
+      }
+
+      function updateFinalizeState(){ setDisabled(!canFinalize()); }
+      window.updateFinalizeState = updateFinalizeState;
+
+      // Eventos que podem mudar o estado
+      window.addEventListener('carrinho:change', updateFinalizeState);
+      window.addEventListener('pedidoEntrega:change', updateFinalizeState);
+      var btnLimpar = document.getElementById('btnLimparCarrinho');
+      if (btnLimpar) btnLimpar.addEventListener('click', function(){ setTimeout(function(){ window.dispatchEvent(new Event('carrinho:change')); }, 50); });
+      document.addEventListener('DOMContentLoaded', updateFinalizeState);
+      // reage a mudanças de login no localStorage
+      window.addEventListener('storage', function(e){ if (e.key === 'clienteId') // chama novamente ao final para garantir estado correto
+      updateFinalizeState(); });
+
+      // Clique Finalizar
+      if (btn) btn.addEventListener('click', function(){
+        if (!isLogged()){
+          alert('Faça login para finalizar seu pedido.');
+          window.location.href = 'login.php';
+          return;
+        }
+        if (!temItens()){
+          alert('Adicione pelo menos um item à sacola antes de finalizar.');
+          return;
+        }
+        if (!entregaInformada()){
+          alert('Informe se será Entrega ou Retirada.');
+          var dlg = document.getElementById('entregaDialog');
+          if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
+          else if (dlg) dlg.setAttribute('open','open');
+          return;
+        }
+        // Tudo OK: seguir para finalizar
+        window.location.href = 'finalizaPedido.php';
+      });
+      if (btn) btn.addEventListener('keydown', function(e){ if ((e.key==='Enter'||e.key===' ') && btn.getAttribute('aria-disabled')!=='true'){ btn.click(); }});
+
+      updateFinalizeState();
     })();
   </script>
 </body>
