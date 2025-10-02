@@ -13,7 +13,7 @@ form.addEventListener("submit", (event) => {
     event.preventDefault();
 
     checa_form();
-})
+});
 
 telefone.addEventListener("input", function () {
     let valor = telefone.value;
@@ -137,39 +137,34 @@ function checa_form(){
         return item.className === "form_content"
     });
 
-    if(validado){
-       $(document).ready(function () {
-            nomes=$('#nome').val();
-            sobrenomes=$('#sobrenome').val();
-            telefones=$('#telefone').val();
-            senhas=$('#senha').val();
-            
-            $.ajax({
-                url: 'cadastraLogin.php',
-                type: 'POST',
-                data: { nome: nomes, sobrenome: sobrenomes, telefone: telefones, senha: senhas },
-                success: function (response) {
-                    response = response.trim();
-                    if (response != "erro") {
-                        $('#mensagem').html("Cadastrado com sucesso");
-                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
-                        setTimeout(function(){
-                            $('#form')[0].reset(); // Limpa o formulário após 2.5 segundos
-                        }, 2500);
-                        
-                    } else {
-                        console.log("Erro no servidor ao cadastrar.");
-                         $('#mensagem').html("essa conta ja existe");
-                        $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
-                        setTimeout(function(){
-                            $('#form')[0].reset(); // Limpa o formulário após 2.5 segundos
-                        }, 2500);
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.log("Erro na requisição: ", error);
+    if (validado) {
+        const nomes = $('#nome').val();
+        const sobrenomes = $('#sobrenome').val();
+        const telefones = $('#telefone').val();
+        const senhas = $('#senha').val();
+
+        $.ajax({
+            url: 'cadastraLogin.php',
+            method: 'POST',
+            data: { nome: nomes, sobrenome: sobrenomes, telefone: telefones, senha: senhas },
+            success: function (response) {
+                const resp = (response || '').toString().trim();
+                if (resp === 'ok') {
+                    $('#mensagem').html('Cadastrado com sucesso');
+                    $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+                    setTimeout(function () {
+                        $('#form')[0].reset();
+                    }, 2500);
+                } else {
+                    $('#mensagem').html('Essa conta já existe ou ocorreu um erro');
+                    $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
                 }
-            });
+            },
+            error: function (xhr, status, error) {
+                console.log('Erro na requisição: ', error);
+                $('#mensagem').html('Falha na comunicação com o servidor');
+                $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);
+            }
         });
     }
 

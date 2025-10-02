@@ -1,4 +1,4 @@
-<?php
+a<?php
 session_start();
 $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']) || isset($_SESSION['id_usuario']) || isset($_SESSION['usuario']) || isset($_SESSION['cliente']);
 ?>
@@ -524,6 +524,88 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
     </div>
   </dialog>
 
+  <!-- Dialog Confirmação do Pedido -->
+  <dialog id="confirmPedidoDialog" style="position:fixed; inset:0; margin:auto; width:min(720px,95vw); max-height:92vh; border:none; padding:0; border-radius:12px; overflow:auto;">
+    <div style="position:sticky; top:0; background:#800000; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
+      <strong>Confirmar Pedido</strong>
+      <button type="button" id="closeConfirmPedido" style="background:#5f0d0d; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    </div>
+    <div style="padding:16px; display:flex; flex-direction:column; gap:12px;">
+      <section style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+        <div style="display:flex; flex-direction:column;">
+          <label for="confNome">Cliente</label>
+          <input id="confNome" type="text" readonly placeholder="Nome do cliente">
+        </div>
+        <div style="display:flex; flex-direction:column;">
+          <label for="confTelefone">Telefone</label>
+          <input id="confTelefone" type="text" readonly placeholder="(00) 00000-0000">
+        </div>
+      </section>
+
+      <div style="display:flex; gap:16px; align-items:center;">
+        <label style="display:flex; align-items:center; gap:6px;"><input type="radio" name="confTipoEnvio" value="ENTREGA" checked> Entrega</label>
+        <label style="display:flex; align-items:center; gap:6px;"><input type="radio" name="confTipoEnvio" value="RETIRADA"> Retirada</label>
+      </div>
+
+      <div id="confEnderecoWrap" style="display:block;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div style="display:flex; flex-direction:column;">
+            <label for="confCEP">CEP</label>
+            <input id="confCEP" type="text" placeholder="00000-000" inputmode="numeric">
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <label for="confNumero">Número</label>
+            <input id="confNumero" type="text" placeholder="Nº">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:2fr 1fr; gap:12px;">
+          <div style="display:flex; flex-direction:column;">
+            <label for="confRua">Endereço</label>
+            <input id="confRua" type="text" placeholder="Rua / Avenida">
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <label for="confBairro">Bairro</label>
+            <input id="confBairro" type="text" placeholder="Bairro">
+          </div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px;">
+          <div style="display:flex; flex-direction:column;">
+            <label for="confCidade">Cidade</label>
+            <input id="confCidade" type="text" placeholder="Cidade">
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <label for="confUF">UF</label>
+            <input id="confUF" type="text" placeholder="UF" maxlength="2" style="text-transform:uppercase;">
+          </div>
+          <div style="display:flex; flex-direction:column;">
+            <label for="confComp">Complemento</label>
+            <input id="confComp" type="text" placeholder="Bloco / Referência (opcional)">
+          </div>
+        </div>
+      </div>
+
+      <div id="confRetiradaWrap" style="display:none;">
+        <div style="display:flex; flex-direction:column; max-width:200px;">
+          <label for="confHorario">Horário desejado</label>
+          <input id="confHorario" type="time">
+        </div>
+      </div>
+
+      <div style="border-top:1px solid #eee; padding-top:8px;">
+        <div style="margin-bottom:8px; font-weight:600;">Itens do pedido</div>
+        <div id="confItensLista" style="max-height:220px; overflow:auto; display:flex; flex-direction:column; gap:6px;"></div>
+        <div style="display:flex; justify-content:flex-end; gap:12px; margin-top:8px;">
+          <span style="font-weight:600;">Total:</span>
+          <span id="confTotalValor" style="font-weight:700;">R$0,00</span>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex; justify-content:flex-end; gap:8px; padding:12px 16px; border-top:1px solid #eee;">
+      <button type="button" id="cancelConfirmPedido" style="background:#999; color:#fff; border:none; border-radius:6px; padding:8px 12px; cursor:pointer;">Cancelar</button>
+      <button type="button" id="saveConfirmPedido" style="background:#8d1010; color:#fff; border:none; border-radius:6px; padding:8px 12px; cursor:pointer;">Confirmar Pedido</button>
+    </div>
+  </dialog>
+
   <style>
     /* Centraliza o dialog e escurece o fundo */
     #produtoDialog::backdrop {
@@ -997,11 +1079,196 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
         catch(e){ return !!window.CLIENTE_LOGADO; }
       }
       function canFinalize(){
-        return isLogged() && temItens() && entregaInformada();
+        return isLogged() && temItens();
       }
 
       function updateFinalizeState(){ setDisabled(!canFinalize()); }
       window.updateFinalizeState = updateFinalizeState;
+
+      // Utilitário
+      function formatBRL(num){ return Number(num||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}); }
+      function digitsOnly(s){ return (s||'').replace(/\D/g,''); }
+
+      // Modal de confirmação de pedido
+      function openConfirmPedido(){
+        var dlg = document.getElementById('confirmPedidoDialog');
+        var closeBtn = document.getElementById('closeConfirmPedido');
+        var cancelBtn = document.getElementById('cancelConfirmPedido');
+        var saveBtn = document.getElementById('saveConfirmPedido');
+        var nomeEl = document.getElementById('confNome');
+        var telEl = document.getElementById('confTelefone');
+        var itensWrap = document.getElementById('confItensLista');
+        var totalEl = document.getElementById('confTotalValor');
+        var endWrap = document.getElementById('confEnderecoWrap');
+        var retWrap = document.getElementById('confRetiradaWrap');
+        var horarioEl = document.getElementById('confHorario');
+
+        // Endereço fields
+        var cepEl = document.getElementById('confCEP');
+        var ruaEl = document.getElementById('confRua');
+        var numEl = document.getElementById('confNumero');
+        var bairroEl = document.getElementById('confBairro');
+        var cidadeEl = document.getElementById('confCidade');
+        var ufEl = document.getElementById('confUF');
+        var compEl = document.getElementById('confComp');
+
+        function maskCEP(s){ var d = digitsOnly(s).slice(0,8); return d.length>5 ? d.slice(0,5)+'-'+d.slice(5) : d; }
+
+        // CEP máscara
+        if (cepEl && !cepEl._bound){
+          cepEl.addEventListener('input', function(){ cepEl.value = maskCEP(cepEl.value); });
+          cepEl._bound = true;
+        }
+
+        // Alterna tipo envio
+        Array.from(document.getElementsByName('confTipoEnvio')).forEach(function(r){
+          if (!r._bound){
+            r.addEventListener('change', function(){
+              var tipo = this.value;
+              endWrap.style.display = (tipo==='ENTREGA') ? 'block' : 'none';
+              retWrap.style.display = (tipo==='RETIRADA') ? 'block' : 'none';
+            });
+            r._bound = true;
+          }
+        });
+
+        // Preenche cliente
+        (function(){
+          var nome = '';
+          var tel = '';
+          try {
+            var id = parseInt(localStorage.getItem('clienteId')||'0', 10);
+            if (id>0){
+              fetch('getCliente.php?id='+encodeURIComponent(id))
+                .then(function(r){ return r.ok ? r.json() : null; })
+                .then(function(d){
+                  if (d){
+                    nomeEl.value = (d.nome||'') + (d.sobrenome ? (' ' + d.sobrenome) : '');
+                    telEl.value = d.telefone || '';
+                    // Preencher endereço com valor salvo anteriormente, se existir
+                    try {
+                      var saved = JSON.parse(localStorage.getItem('pedidoEntrega')||'null');
+                      if (saved && saved.tipo === 'ENTREGA'){ /* resumo é texto, campos permanecem em branco */ }
+                    } catch(e){}
+                  }
+                })
+                .catch(function(){});
+            }
+          } catch(e){}
+          nomeEl.value = nomeEl.value || nome;
+          telEl.value = telEl.value || tel;
+        })();
+
+        // Preenche itens e total
+        (function(){
+          var itens = [];
+          try { itens = JSON.parse(localStorage.getItem('carrinho')||'[]'); } catch(e){ itens=[]; }
+          itensWrap.innerHTML = '';
+          var subtotal = 0;
+          itens.forEach(function(it){
+            var qtd = Number(it.quantidade||0);
+            var preco = Number(it.preco||0);
+            var isPeso = (String(it.tipo||'').toUpperCase()==='PESO');
+            var qtdTxt = isPeso ? (qtd.toFixed(2).replace('.',','))+' Kg' : (qtd+' un');
+            var linha = document.createElement('div');
+            linha.style.display = 'grid';
+            linha.style.gridTemplateColumns = '1fr auto auto';
+            linha.style.gap = '8px';
+            linha.style.alignItems = 'center';
+            linha.innerHTML = '<div>'+ (it.nome||'') + (it.corte_nome? ' — <small>'+it.corte_nome+'</small>':'') + (it.observacao? '<br><small>Obs: '+it.observacao+'</small>':'' ) + '</div>' +
+                              '<div style="opacity:.8;">'+qtdTxt+'</div>' +
+                              '<div style="font-weight:600;">'+formatBRL(qtd*preco)+'</div>';
+            itensWrap.appendChild(linha);
+            subtotal += qtd * preco;
+          });
+          totalEl.textContent = formatBRL(subtotal);
+        })();
+
+        // Tipo envio padrão baseado no que foi salvo
+        (function(){
+          var tipo = 'ENTREGA';
+          try { var s = JSON.parse(localStorage.getItem('pedidoEntrega')||'null'); if (s && s.tipo) tipo = s.tipo; } catch(e){}
+          var radios = document.getElementsByName('confTipoEnvio');
+          Array.from(radios).forEach(function(r){ r.checked = (r.value === tipo); });
+          endWrap.style.display = (tipo==='ENTREGA') ? 'block' : 'none';
+          retWrap.style.display = (tipo==='RETIRADA') ? 'block' : 'none';
+        })();
+
+        function open(){ if (typeof dlg.showModal==='function') dlg.showModal(); else dlg.setAttribute('open','open'); }
+        function close(){ if (typeof dlg.close==='function') dlg.close(); else dlg.removeAttribute('open'); }
+
+        if (closeBtn && !closeBtn._bound){ closeBtn.addEventListener('click', close); closeBtn._bound = true; }
+        if (cancelBtn && !cancelBtn._bound){ cancelBtn.addEventListener('click', close); cancelBtn._bound = true; }
+        if (dlg && !dlg._bound){ dlg.addEventListener('cancel', function(e){ e.preventDefault(); close(); }); dlg._bound = true; }
+
+        if (saveBtn && !saveBtn._bound){
+          saveBtn.addEventListener('click', function(){
+            // Monta payload
+            var tipoEl = Array.from(document.getElementsByName('confTipoEnvio')).find(function(r){ return r.checked; });
+            var tipo = tipoEl ? tipoEl.value : 'ENTREGA';
+            var horario = (horarioEl && horarioEl.value) ? horarioEl.value : '';
+
+            var itens = [];
+            try { itens = JSON.parse(localStorage.getItem('carrinho')||'[]'); } catch(e){}
+            if (!Array.isArray(itens) || itens.length===0){ alert('Sua sacola está vazia.'); return; }
+
+            var payloadItens = itens.map(function(it){ return { produto: it.nome, quantidade: it.quantidade, observacao: it.observacao||'' }; });
+
+            var clienteId = 0; try { clienteId = parseInt(localStorage.getItem('clienteId')||'0',10)||0; } catch(e){}
+
+            // Endereço (ENTREGA)
+            var enderecoTxt = '';
+            var cepTxt = '';
+            var numTxt = '';
+            var compTxt = '';
+            if (tipo === 'ENTREGA'){
+              var rua = (ruaEl.value||'').trim();
+              var bairro = (bairroEl.value||'').trim();
+              var cidade = (cidadeEl.value||'').trim();
+              var uf = (ufEl.value||'').trim();
+              numTxt = (numEl.value||'').trim();
+              cepTxt = digitsOnly(cepEl.value||'');
+              compTxt = (compEl.value||'').trim();
+              if (!rua || !numTxt || !bairro || !cidade || !uf){
+                alert('Preencha o endereço completo para entrega.');
+                return;
+              }
+              enderecoTxt = rua + ', ' + numTxt + ' - ' + bairro + ', ' + cidade + ' - ' + uf;
+              if (compTxt) enderecoTxt += ' (' + compTxt + ')';
+            }
+
+            var params = new URLSearchParams();
+            params.set('cliente_id', String(clienteId));
+            params.set('recebimento', tipo);
+            if (horario) params.set('horario', horario);
+            params.set('itens', JSON.stringify(payloadItens));
+            if (tipo === 'ENTREGA'){
+              params.set('endereco', enderecoTxt);
+              if (cepTxt) params.set('cep', cepTxt);
+              if (numTxt) params.set('numero', numTxt);
+              if (compTxt) params.set('complemento', compTxt);
+            }
+
+            fetch('cadastraPedidoBD.php', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }, body: params.toString() })
+              .then(function(r){ return r.text(); })
+              .then(function(txt){
+                txt = (txt||'').trim();
+                if (txt === 'ok'){
+                  alert('Pedido enviado com sucesso!');
+                  try { localStorage.removeItem('carrinho'); } catch(e){}
+                  window.dispatchEvent(new Event('carrinho:change'));
+                  close();
+                } else {
+                  alert('Falha ao enviar o pedido.');
+                }
+              })
+              .catch(function(){ alert('Falha de comunicação com o servidor.'); });
+          });
+          saveBtn._bound = true;
+        }
+
+        open();
+      }
 
       // Eventos que podem mudar o estado
       window.addEventListener('carrinho:change', updateFinalizeState);
@@ -1024,15 +1291,8 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           alert('Adicione pelo menos um item à sacola antes de finalizar.');
           return;
         }
-        if (!entregaInformada()){
-          alert('Informe se será Entrega ou Retirada.');
-          var dlg = document.getElementById('entregaDialog');
-          if (dlg && typeof dlg.showModal === 'function') dlg.showModal();
-          else if (dlg) dlg.setAttribute('open','open');
-          return;
-        }
-        // Tudo OK: seguir para finalizar
-        window.location.href = 'finalizaPedido.php';
+                // Tudo OK: abrir modal de confirmação
+        openConfirmPedido();
       });
       if (btn) btn.addEventListener('keydown', function(e){ if ((e.key==='Enter'||e.key===' ') && btn.getAttribute('aria-disabled')!=='true'){ btn.click(); }});
 
