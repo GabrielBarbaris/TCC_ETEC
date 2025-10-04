@@ -1,4 +1,4 @@
-a<?php
+<?php
 session_start();
 $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']) || isset($_SESSION['id_usuario']) || isset($_SESSION['usuario']) || isset($_SESSION['cliente']);
 ?>
@@ -261,7 +261,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
           <div class="text-wrapper-28">Sua sacola</div>
           <div class="text-wrapper-29" id="btnLimparCarrinho">Limpar</div>
-          <div class="text-wrapper-30" id="btnTempoEntrega" role="button" style="cursor:pointer;">Calcular tempo de entrega</div>
+          <div class="text-wrapper-30" id="btnTempoEntrega" role="button" style="cursor:pointer;">Forma de receber</div>
           <div id="enderecoResumo" style="position:absolute; top:48px; left:60px; width:270px; font-family: 'Calibri-Regular', Helvetica; font-size:14px; color:#5f5f5f;"></div>
           <img class="line-7" src="img/Line7.png" />
           <img class="vector" src="img/localizacao.png" />
@@ -466,7 +466,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
   <!-- Dialog Entrega/Retirada -->
   <dialog id="entregaDialog" style="position:fixed; inset:0; margin:auto; width:min(520px,95vw); max-height:90vh; border:none; padding:0; border-radius:12px; overflow:auto;">
     <div style="position:sticky; top:0; background:#800000; color:#fff; padding:10px 16px; display:flex; justify-content:space-between; align-items:center;">
-      <strong>Entrega ou Retirada</strong>
+      <strong>Forma de receber</strong>
       <button type="button" id="closeEntregaDialog" style="background:#5f0d0d; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
     </div>
     <div class="dlg-body" style="padding:16px;">
@@ -959,6 +959,10 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       const ufEl = document.getElementById('ufInput');
       const compEl = document.getElementById('compInput');
 
+      // Reinicia o pedido ao recarregar a página: limpa carrinho e endereço salvo
+      try { localStorage.removeItem('carrinho'); localStorage.removeItem('pedidoEntrega'); } catch(e){}
+      if (resumo) resumo.textContent = '';
+
       function digitsOnly(s){ return (s||'').replace(/\D/g,''); }
       function maskCEP(s){ const d = digitsOnly(s).slice(0,8); return d.length>5 ? d.slice(0,5)+'-'+d.slice(5) : d; }
       async function buscaCEP(cep){
@@ -1043,7 +1047,19 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           textoResumo = 'Retirada na loja: ' + lojaEndereco;
         }
         resumo.textContent = textoResumo;
-        try { localStorage.setItem('pedidoEntrega', JSON.stringify({ tipo: tipo, resumo: textoResumo })); } catch(e){}
+        try {
+          var saved = { tipo: tipo, resumo: textoResumo };
+          if (tipo === 'ENTREGA') {
+            saved.cep = digitsOnly(cepEl.value||'');
+            saved.rua = (ruaEl.value||'').trim();
+            saved.numero = (numeroEl.value||'').trim();
+            saved.bairro = (bairroEl.value||'').trim();
+            saved.cidade = (cidadeEl.value||'').trim();
+            saved.uf = ((ufEl.value||'').trim()||'').toUpperCase();
+            saved.complemento = (compEl.value||'').trim();
+          }
+          localStorage.setItem('pedidoEntrega', JSON.stringify(saved));
+        } catch(e){}
         window.dispatchEvent(new Event('pedidoEntrega:change'));
         atualizaTotais();
         closeDlg();
@@ -1059,6 +1075,32 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
   <script>
     // Expor status de login do PHP para o JS
     window.CLIENTE_LOGADO = <?php echo $clienteLogado ? 'true' : 'false'; ?>;
+    // Expor dados básicos do cliente (nome/telefone) direto do servidor para pré-preencher o modal
+    window.CLIENTE_DADOS = <?php
+      $cli = ['nome' => '', 'telefone' => ''];
+      try {
+        $uid = 0;
+        if (isset($_SESSION['id_usuario'])) { $uid = (int)$_SESSION['id_usuario']; }
+        elseif (isset($_SESSION['id_cliente'])) { $uid = (int)$_SESSION['id_cliente']; }
+        elseif (isset($_SESSION['cliente_id'])) { $uid = (int)$_SESSION['cliente_id']; }
+        if ($uid > 0) {
+          require_once __DIR__ . '/conexao.php';
+          if ($stmt = $conn->prepare('SELECT nome, sobrenome, telefone FROM tbUsuario WHERE id_usuario = ? LIMIT 1')) {
+            $stmt->bind_param('i', $uid);
+            if ($stmt->execute()) {
+              $res = $stmt->get_result();
+              if ($row = $res->fetch_assoc()) {
+                $nome = trim((string)($row['nome'] ?? '') . ' ' . (string)($row['sobrenome'] ?? ''));
+                $cli['nome'] = $nome;
+                $cli['telefone'] = (string)($row['telefone'] ?? '');
+              }
+            }
+            $stmt->close();
+          }
+        }
+      } catch (Throwable $e) {}
+      echo json_encode($cli, JSON_UNESCAPED_UNICODE);
+    ?>;
 
     (function(){
       var btn = document.getElementById('btnFinalizarPedido');
@@ -1079,7 +1121,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
         catch(e){ return !!window.CLIENTE_LOGADO; }
       }
       function canFinalize(){
-        return isLogged() && temItens();
+        return isLogged() && temItens() && entregaInformada();
       }
 
       function updateFinalizeState(){ setDisabled(!canFinalize()); }
@@ -1134,29 +1176,38 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
 
         // Preenche cliente
         (function(){
-          var nome = '';
-          var tel = '';
+          var idLocal = 0;
+          try { idLocal = parseInt(localStorage.getItem('clienteId')||'0',10)||0; } catch(e){}
+
+          function fillCliente(d){
+            if (!d) return;
+            nomeEl.value = ((d.nome||'') + (d.sobrenome ? (' ' + d.sobrenome) : '')).trim();
+            telEl.value = d.telefone || '';
+          }
+          function fetchBySession(){
+            return fetch('getCliente.php').then(function(r){ return r.ok ? r.json() : null; });
+          }
+          function fetchById(id){
+            return fetch('getCliente.php?id='+encodeURIComponent(id)).then(function(r){ return r.ok ? r.json() : null; });
+          }
+
+          // Pré-preenche a partir dos dados injetados pelo servidor (sessão)
           try {
-            var id = parseInt(localStorage.getItem('clienteId')||'0', 10);
-            if (id>0){
-              fetch('getCliente.php?id='+encodeURIComponent(id))
-                .then(function(r){ return r.ok ? r.json() : null; })
-                .then(function(d){
-                  if (d){
-                    nomeEl.value = (d.nome||'') + (d.sobrenome ? (' ' + d.sobrenome) : '');
-                    telEl.value = d.telefone || '';
-                    // Preencher endereço com valor salvo anteriormente, se existir
-                    try {
-                      var saved = JSON.parse(localStorage.getItem('pedidoEntrega')||'null');
-                      if (saved && saved.tipo === 'ENTREGA'){ /* resumo é texto, campos permanecem em branco */ }
-                    } catch(e){}
-                  }
-                })
-                .catch(function(){});
+            if (window.CLIENTE_DADOS) {
+              if (!nomeEl.value && window.CLIENTE_DADOS.nome) nomeEl.value = String(window.CLIENTE_DADOS.nome);
+              if (!telEl.value && window.CLIENTE_DADOS.telefone) telEl.value = String(window.CLIENTE_DADOS.telefone);
             }
-          } catch(e){}
-          nomeEl.value = nomeEl.value || nome;
-          telEl.value = telEl.value || tel;
+          } catch(e) {}
+
+          // Tenta primeiro por sessão (usuário logado no PHP). Se falhar, tenta pelo localStorage.
+          fetchBySession()
+            .then(function(d){
+              if (d && !d.erro){ fillCliente(d); return; }
+              if (idLocal>0){ return fetchById(idLocal).then(fillCliente); }
+            })
+            .catch(function(){
+              if (idLocal>0){ fetchById(idLocal).then(fillCliente).catch(function(){}); }
+            });
         })();
 
         // Preenche itens e total
@@ -1192,6 +1243,20 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           Array.from(radios).forEach(function(r){ r.checked = (r.value === tipo); });
           endWrap.style.display = (tipo==='ENTREGA') ? 'block' : 'none';
           retWrap.style.display = (tipo==='RETIRADA') ? 'block' : 'none';
+
+          // Preenche os campos de endereço com o que foi informado em "Calcular tempo de entrega"
+          try {
+            var saved = JSON.parse(localStorage.getItem('pedidoEntrega')||'null');
+            if (saved && saved.tipo === 'ENTREGA') {
+              if (cepEl && saved.cep) cepEl.value = maskCEP(String(saved.cep));
+              if (ruaEl && saved.rua) ruaEl.value = saved.rua;
+              if (numEl && saved.numero) numEl.value = saved.numero;
+              if (bairroEl && saved.bairro) bairroEl.value = saved.bairro;
+              if (cidadeEl && saved.cidade) cidadeEl.value = saved.cidade;
+              if (ufEl && saved.uf) ufEl.value = saved.uf;
+              if (compEl && saved.complemento) compEl.value = saved.complemento;
+            }
+          } catch(e){}
         })();
 
         function open(){ if (typeof dlg.showModal==='function') dlg.showModal(); else dlg.setAttribute('open','open'); }
@@ -1255,9 +1320,12 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                 txt = (txt||'').trim();
                 if (txt === 'ok'){
                   alert('Pedido enviado com sucesso!');
-                  try { localStorage.removeItem('carrinho'); } catch(e){}
+                  try { localStorage.removeItem('carrinho'); localStorage.removeItem('pedidoEntrega'); } catch(e){}
                   window.dispatchEvent(new Event('carrinho:change'));
+                  try { var r = document.getElementById('enderecoResumo'); if (r) r.textContent = ''; } catch(e){}
                   close();
+                  // Recarrega para garantir UI limpa (sacola e totais resetados)
+                  location.reload();
                 } else {
                   alert('Falha ao enviar o pedido.');
                 }
@@ -1291,7 +1359,13 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           alert('Adicione pelo menos um item à sacola antes de finalizar.');
           return;
         }
-                // Tudo OK: abrir modal de confirmação
+        if (!entregaInformada()){
+          alert('Informe a forma de receber antes de finalizar o pedido.');
+          var d = document.getElementById('entregaDialog');
+          if (d){ if (typeof d.showModal==='function') d.showModal(); else d.setAttribute('open','open'); }
+          return;
+        }
+        // Tudo OK: abrir modal de confirmação
         openConfirmPedido();
       });
       if (btn) btn.addEventListener('keydown', function(e){ if ((e.key==='Enter'||e.key===' ') && btn.getAttribute('aria-disabled')!=='true'){ btn.click(); }});
