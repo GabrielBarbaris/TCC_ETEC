@@ -1,5 +1,17 @@
 <?php
 session_start();
+if (isset($_GET['logout'])) {
+  try {
+    $_SESSION = [];
+    if (ini_get('session.use_cookies')) {
+      $params = session_get_cookie_params();
+      setcookie(session_name(), '', time() - 42000, $params['path'], $params['domain'], $params['secure'], $params['httponly']);
+    }
+    session_destroy();
+  } catch (Throwable $e) {}
+  header('Location: index.php');
+  exit;
+}
 $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']) || isset($_SESSION['id_usuario']) || isset($_SESSION['usuario']) || isset($_SESSION['cliente']);
 ?>
 <!DOCTYPE html>
@@ -335,7 +347,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       <div class="overlap-17">
         <div class="CATEGORIAS">
           <div class="CHURRASCO">
-            <div class="overlap-group-3">
+            <div class="overlap-group-3" onclick="window.location.href='categorias.php?nome=Churrasco'" role="button" style="cursor:pointer;">
               <img class="rectangle-7" src="img/bordaCategoria.png" alt="">
               <div class="text-wrapper-57">CHURRASCO</div>
               <img class="weber" src="img/churrasco.png" alt="">
@@ -343,7 +355,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
 
           <div class="KITS">
-            <div class="overlap-11">
+            <div class="overlap-11" onclick="window.location.href='categorias.php?nome=Kits'" role="button" style="cursor:pointer;">
               <div class="text-wrapper-58">KITS</div>
               <img class="rectangle-7" src="img/bordaCategoria.png" alt="">
               <img class="shopping-basket" src="img/kits.png" alt="">
@@ -351,7 +363,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
 
           <div class="AVES">
-            <div class="overlap-12">
+            <div class="overlap-12" onclick="window.location.href='categorias.php?nome=Aves'" role="button" style="cursor:pointer;">
               <img class="rectangle-7" src="img/bordaCategoria.png" alt="">
               <div class="text-wrapper-59">AVES</div>
               <img class="poultry-leg" src="img/aves.png" alt="">
@@ -359,7 +371,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
 
           <div class="EMBUTIDOS">
-            <div class="overlap-13">
+            <div class="overlap-13" onclick="window.location.href='categorias.php?nome=Embutidos'" role="button" style="cursor:pointer;">
               <div class="text-wrapper-60">EMBUTIDOS</div>
               <img class="rectangle-7" src="img/bordaCategoria.png" alt="">
               <img class="salami" src="img/embutido.png" alt="">
@@ -367,7 +379,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
 
           <div class="SUNOS">
-            <div class="overlap-14">
+            <div class="overlap-14" onclick="window.location.href='categorias.php?nome=Suinos'" role="button" style="cursor:pointer;">
               <img class="rectangle-8" src="img/bordaCategoria.png" alt="">
               <div class="text-wrapper-61">SUiNOS</div>
               <img class="bacon" src="img/suino.png" alt="">
@@ -375,7 +387,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
 
           <div class="LINGUIAS">
-            <div class="overlap-15">
+            <div class="overlap-15" onclick="window.location.href='categorias.php?nome=Linguicas'" role="button" style="cursor:pointer;">
               <img class="rectangle-7" src="img/bordaCategoria.png" alt="">
               <div class="text-wrapper-62">LINGUICAS</div>
               <img class="vector-2" src="img/linguica.png" alt="">
@@ -383,7 +395,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           </div>
 
           <div class="BOVINOS">
-            <div class="overlap-16">
+            <div class="overlap-16" onclick="window.location.href='categorias.php?nome=Bovinos'" role="button" style="cursor:pointer;">
               <img class="rectangle-9" src="img/bordaCategoria.png" alt="">
               <div class="text-wrapper-63">BOVINOS</div>
               <img class="barbecue" src="img/bovinos.png" alt="">
@@ -400,8 +412,8 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             <input type="text" id="searchInput" placeholder="pesquisar">
           </div>
 
-          <button onclick="cadastrar_cliente()">
-            <a href="cadastra.php"><img class="user-user" src="img/login.png" alt="login" /></a>
+          <button id="btnOpenLogin" title="Entrar" type="button" style="background:none; border:none; cursor:pointer;">
+            <img class="user-user" src="img/login.png" alt="login" />
           </button>
 
           <button title="Ver sacola">
@@ -606,7 +618,146 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
     </div>
   </dialog>
 
+  <!-- Dialog Login -->
+  <dialog id="loginDialog" style="position:fixed; inset:0; margin:auto; width:min(400px,67vw); border:none; padding:0; border-radius:16px; overflow:hidden;">
+    <button id="closeLoginDialog" title="Fechar" style="position:absolute; top:8px; right:12px; z-index:2; background:#800000; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    <div class="container">
+      <section class="header">
+        <h2>Login</h2>
+      </section>
+      <form id="form" class="form">
+        <div class="form_content">
+          <span id="mensagem">Menssagem</span>
+        </div>
+        <div class="form_content">
+          <label for="telefone">Telefone</label>
+          <input type="text" id="telefone" name="telefone" placeholder="Digite seu Telefone">
+          <a>mensagen de erro</a>
+        </div>
+        <div class="form_content">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" name="senha" placeholder="Digite sua senha">
+          <a>mensagen de erro</a>
+        </div>
+        <a href="#" id="openCadastroLink">Cadastrar</a>
+        <button type="submit" id="cadastrar">Logar</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Dialog Cadastro -->
+  <dialog id="cadastroDialog" style="position:fixed; inset:0; margin:auto; width:min(400px,67vw); border:none; padding:0; border-radius:16px; overflow:hidden;">
+    <button id="closeCadastroDialog" title="Fechar" style="position:absolute; top:8px; right:12px; z-index:2; background:#800000; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    <div class="container">
+      <section class="header">
+        <h2>Nova Conta</h2>
+      </section>
+      <form id="cadForm" class="form">
+        <div class="form_content">
+          <span id="cadMensagem">Menssagem</span>
+        </div>
+        <div class="form_content">
+          <label for="cadNome">Nome</label>
+          <input type="text" id="cadNome" name="nome" placeholder="Digite seu nome">
+          <a>mensagen de erro</a>
+        </div>
+        <div class="form_content">
+          <label for="cadSobrenome">Sobrenome</label>
+          <input type="text" id="cadSobrenome" name="sobrenome" placeholder="Digite seu sobrenome">
+          <a>mensagen de erro</a>
+        </div>
+        <div class="form_content">
+          <label for="cadTelefone">Telefone</label>
+          <input type="text" id="cadTelefone" name="telefone" placeholder="Digite seu Telefone">
+          <a>mensagen de erro</a>
+        </div>
+        <div class="form_content">
+          <label for="cadSenha">Senha</label>
+          <input type="password" id="cadSenha" name="senha" placeholder="Digite sua senha">
+          <a>mensagen de erro</a>
+        </div>
+        <div class="form_content">
+          <label for="cadSenhaConf">Confirmacao de Senha</label>
+          <input type="password" id="cadSenhaConf" placeholder="Digite sua senha">
+          <a>mensagen de erro</a>
+        </div>
+        <a href="#" id="openLoginFromCadastro">Já tenho conta</a>
+        <button type="submit" id="btnCadastrar">Cadastrar</button>
+      </form>
+    </div>
+  </dialog>
+
+  <!-- Dialog Perfil (Informações do Usuário) -->
+  <dialog id="perfilDialog" style="position:fixed; inset:0; margin:auto; width:min(760px, 90vw); border:none; padding:0; border-radius:16px; overflow:hidden;">
+    <button id="closePerfilDialog" title="Fechar" style="position:absolute; top:8px; right:12px; z-index:2; background:#800000; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
+    <div class="container" style="min-height:auto; background:#F8F8F8;">
+      <section class="header" style="background: linear-gradient(120deg, #600E0E, #440D0D); padding: 16px; text-align:center; color:#fff;">
+        <h2 style="margin:0; font-family: Baloo;">Minha conta</h2>
+      </section>
+      <form id="perfilForm" class="form" style="max-width:680px; margin:24px auto; grid-template-columns: repeat(2, minmax(0, 1fr)); gap:20px;">
+        <div class="form_content">
+          <label for="perfilNome">Nome</label>
+          <input type="text" id="perfilNome" readonly>
+          <a></a>
+        </div>
+        <div class="form_content">
+          <label for="perfilSobrenome">Sobrenome</label>
+          <input type="text" id="perfilSobrenome" readonly>
+          <a></a>
+        </div>
+        <div class="form_content">
+          <label for="perfilTelefone">Telefone</label>
+          <input type="text" id="perfilTelefone" readonly>
+          <a></a>
+        </div>
+                <div class="form_content" style="grid-column: span 2; display:flex; gap:12px; justify-content:flex-end;">
+          <button type="button" id="btnEditarPerfil" style="background:#5c4444; color:#fff; border:none; border-radius:10px; padding:10px 16px; font-family: Baloo; font-size:16px; cursor:pointer;">Editar</button>
+          <button type="submit" id="btnSalvarPerfil" style="background:#006b1b; color:#fff; border:none; border-radius:10px; padding:10px 16px; font-family: Baloo; font-size:16px; cursor:pointer; display:none;">Salvar</button>
+          <button type="button" id="btnCancelarPerfil" style="background:#9c2a2a; color:#fff; border:none; border-radius:10px; padding:10px 16px; font-family: Baloo; font-size:16px; cursor:pointer; display:none;">Cancelar</button>
+          <button type="button" id="btnLogout" style="background:#800000; color:#fff; border:none; border-radius:10px; padding:10px 16px; font-family: Baloo; font-size:16px; cursor:pointer;">Sair da conta</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
+
   <style>
+    /* Estilos do modal de Login (baseado em css/login.css, escopado) */
+    #loginDialog::backdrop { background: rgba(0, 0, 0, .45); }
+    #loginDialog .container { background-color: #efefef; border-radius: 16px; max-width: 400px; width: 100%; box-shadow: 0 3px 5px rgba(0,0,0,0.5); overflow: hidden; }
+    #loginDialog .header { background: linear-gradient(120deg, #600E0E, #440D0D); padding: 20px; font-family: "Shaimus Clean-Regular"; text-align: center; color: #ffffff; font-size: 30px; }
+    #loginDialog .form { padding: 18px; }
+    #loginDialog .form_content { margin-bottom: 8px; padding-bottom: 18px; position: relative; font-family: "Calibre"; color: #807a75; }
+    #loginDialog .form_content label { display: inline-block; margin-bottom: 0px; }
+    #loginDialog .form_content input { display: block; width: 100%; border-radius: 3px; padding: 10px; border: 2px solid #dfdfdf; }
+    #loginDialog .form_content a { position: absolute; bottom: 0px; left: 0; visibility: hidden; }
+    #loginDialog .form button { background-color: #600E0E; color: #ffffff; width: 100%; border: 0; border-radius: 10px; padding: 8px; font-family: Baloo; font-size: 16px; cursor: pointer; margin-top: 14px; }
+    #loginDialog .form_content.error input { border-color: #fc5e5e; }
+    #loginDialog .form_content span { display: block; text-align: center; padding: 10px; color: #ffffff; border: 3px solid rgba(243, 4, 4, 0.156); background-color: rgba(105, 23, 23, 0.593); border-radius: 13px; }
+    #loginDialog .form_content.error a { color: #fc5e5e; visibility: visible; }
+
+    /* Estilos do modal de Cadastro (mesma base do login.css, escopado) */
+    #cadastroDialog::backdrop { background: rgba(0, 0, 0, .45); }
+    #cadastroDialog .container { background-color: #efefef; border-radius: 16px; max-width: 400px; width: 100%; box-shadow: 0 3px 5px rgba(0,0,0,0.5); overflow: hidden; }
+    #cadastroDialog .header { background: linear-gradient(120deg, #600E0E, #440D0D); padding: 20px; font-family: "Shaimus Clean-Regular"; text-align: center; color: #ffffff; font-size: 30px; }
+    #cadastroDialog .form { padding: 18px; }
+    #cadastroDialog .form_content { margin-bottom: 8px; padding-bottom: 18px; position: relative; font-family: "Calibre"; color: #807a75; }
+    #cadastroDialog .form_content label { display: inline-block; margin-bottom: 0px; }
+    #cadastroDialog .form_content input { display: block; width: 100%; border-radius: 3px; padding: 10px; border: 2px solid #dfdfdf; }
+    #cadastroDialog .form_content a { position: absolute; bottom: 0px; left: 0; visibility: hidden; }
+    #cadastroDialog .form button { background-color: #600E0E; color: #ffffff; width: 100%; border: 0; border-radius: 10px; padding: 8px; font-family: Baloo; font-size: 16px; cursor: pointer; margin-top: 14px; }
+    #cadastroDialog .form_content.error input { border-color: #fc5e5e; }
+    #cadastroDialog .form_content span { display: block; text-align: center; padding: 10px; color: #ffffff; border: 3px solid rgba(243, 4, 4, 0.156); background-color: rgba(105, 23, 23, 0.593); border-radius: 13px; }
+    #cadastroDialog .form_content.error a { color: #fc5e5e; visibility: visible; }
+
+    /* Modal Perfil (estética baseada em cadastroProduto.css) */
+    #perfilDialog::backdrop { background: rgba(0,0,0,.45); }
+    #perfilDialog .form { width:100%; max-width:680px; display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:20px; }
+    #perfilDialog .form_content { display:flex; flex-direction:column; gap:6px; }
+    #perfilDialog label { font-family: Arial, Helvetica, sans-serif; color: #00000097; }
+    #perfilDialog input { width:100%; padding:14px; border-radius:8px; border:1px solid #dddddd; background:#fff; color:#222; font-size:14px; outline:none; }
+    #perfilDialog input[readonly] { background:#fafafa; color:#333; }
+    #perfilDialog .error input { border:1px solid #fc5e5e; box-shadow: 0 0 0 3px rgba(252,94,94,.12); }
+
     /* Centraliza o dialog e escurece o fundo */
     #produtoDialog::backdrop {
       background: rgba(0, 0, 0, .45);
@@ -1371,6 +1522,241 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       if (btn) btn.addEventListener('keydown', function(e){ if ((e.key==='Enter'||e.key===' ') && btn.getAttribute('aria-disabled')!=='true'){ btn.click(); }});
 
       updateFinalizeState();
+    })();
+  </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script>
+    (function(){
+      const loginDlg = document.getElementById('loginDialog');
+      const btn = document.getElementById('btnOpenLogin');
+      const closeLoginBtn = document.getElementById('closeLoginDialog');
+
+      const perfilDlg = document.getElementById('perfilDialog');
+      const closePerfilBtn = document.getElementById('closePerfilDialog');
+      const btnLogout = document.getElementById('btnLogout');
+      const btnEdit = document.getElementById('btnEditarPerfil');
+      const btnSave = document.getElementById('btnSalvarPerfil');
+      const btnCancel = document.getElementById('btnCancelarPerfil');
+
+      function openLogin(){ if (loginDlg && typeof loginDlg.showModal==='function') loginDlg.showModal(); else if (loginDlg) loginDlg.setAttribute('open','open'); }
+      function closeLogin(){ if (loginDlg && typeof loginDlg.close==='function') loginDlg.close(); else if (loginDlg) loginDlg.removeAttribute('open'); }
+      function openPerfil(){ if (perfilDlg && typeof perfilDlg.showModal==='function') perfilDlg.showModal(); else if (perfilDlg) perfilDlg.setAttribute('open','open'); preencherPerfil(); }
+      function closePerfil(){ if (perfilDlg && typeof perfilDlg.close==='function') perfilDlg.close(); else if (perfilDlg) perfilDlg.removeAttribute('open'); }
+
+      function preencherPerfil(){
+        const nomeEl = document.getElementById('perfilNome');
+        const sobrenomeEl = document.getElementById('perfilSobrenome');
+        const telefoneEl = document.getElementById('perfilTelefone');
+        // Limpa antes de preencher
+        if (nomeEl) { nomeEl.value = ''; nomeEl.readOnly = true; }
+        if (sobrenomeEl) { sobrenomeEl.value = ''; sobrenomeEl.readOnly = true; }
+        if (telefoneEl) { telefoneEl.value = ''; telefoneEl.readOnly = true; }
+        toggleEdit(false);
+
+        let idLocal = 0;
+        try { idLocal = parseInt(localStorage.getItem('clienteId')||'0',10)||0; } catch(e){}
+        const url = idLocal > 0 ? ('getCliente.php?id=' + encodeURIComponent(idLocal)) : 'getCliente.php';
+
+        fetch(url)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (d && !d.erro) {
+              if (nomeEl) nomeEl.value = String(d.nome||'');
+              if (sobrenomeEl) sobrenomeEl.value = String(d.sobrenome||'');
+              if (telefoneEl) telefoneEl.value = String(d.telefone||'');
+              return;
+            }
+            // Fallback: usa dados injetados pelo servidor
+            try {
+              const cd = window.CLIENTE_DADOS || {};
+              const full = String(cd.nome||'').trim();
+              if (full) {
+                const parts = full.split(/\s+/);
+                const primeiro = parts.shift() || '';
+                const resto = parts.join(' ');
+                if (nomeEl) nomeEl.value = primeiro;
+                if (sobrenomeEl) sobrenomeEl.value = resto;
+              }
+              if (telefoneEl && cd.telefone) telefoneEl.value = String(cd.telefone);
+            } catch(e) {}
+          })
+          .catch(() => {
+            // Fallback em caso de erro na rede
+            try {
+              const cd = window.CLIENTE_DADOS || {};
+              const full = String(cd.nome||'').trim();
+              if (full) {
+                const parts = full.split(/\s+/);
+                const primeiro = parts.shift() || '';
+                const resto = parts.join(' ');
+                if (nomeEl) nomeEl.value = primeiro;
+                if (sobrenomeEl) sobrenomeEl.value = resto;
+              }
+              if (telefoneEl && cd.telefone) telefoneEl.value = String(cd.telefone);
+            } catch(e) {}
+          });
+      }
+
+      function handleIconClick(){
+        if (window.CLIENTE_LOGADO === true || localStorage.getItem('clienteId')) openPerfil();
+        else openLogin();
+      }
+
+      btn && btn.addEventListener('click', handleIconClick);
+      closeLoginBtn && closeLoginBtn.addEventListener('click', closeLogin);
+      loginDlg && loginDlg.addEventListener('cancel', function(e){ e.preventDefault(); closeLogin(); });
+
+      closePerfilBtn && closePerfilBtn.addEventListener('click', closePerfil);
+      perfilDlg && perfilDlg.addEventListener('cancel', function(e){ e.preventDefault(); closePerfil(); });
+
+      function toggleEdit(on){
+        const nomeEl = document.getElementById('perfilNome');
+        const sobrenomeEl = document.getElementById('perfilSobrenome');
+        const telefoneEl = document.getElementById('perfilTelefone');
+        if (nomeEl) nomeEl.readOnly = !on;
+        if (sobrenomeEl) sobrenomeEl.readOnly = !on;
+        if (telefoneEl) telefoneEl.readOnly = !on;
+        if (btnEdit) btnEdit.style.display = on ? 'none' : '';
+        if (btnSave) btnSave.style.display = on ? '' : 'none';
+        if (btnCancel) btnCancel.style.display = on ? '' : 'none';
+        if (on) {
+          // mover placeholder para value para edição
+          if (nomeEl) { nomeEl.value = nomeEl.placeholder || ''; }
+          if (sobrenomeEl) { sobrenomeEl.value = sobrenomeEl.placeholder || ''; }
+          if (telefoneEl) { telefoneEl.value = telefoneEl.placeholder || ''; }
+        } else {
+          // volta para o placeholder
+          if (nomeEl) { nomeEl.placeholder = nomeEl.value || nomeEl.placeholder || ''; nomeEl.value = ''; }
+          if (sobrenomeEl) { sobrenomeEl.placeholder = sobrenomeEl.value || sobrenomeEl.placeholder || ''; sobrenomeEl.value = ''; }
+          if (telefoneEl) { telefoneEl.placeholder = telefoneEl.value || telefoneEl.placeholder || ''; telefoneEl.value = ''; }
+        }
+      }
+
+      function maskTel(v){ v = (v||'').replace(/\D/g,''); if (v.length>0) v='('+v; if (v.length>3) v=v.slice(0,3)+') '+v.slice(3); if (v.length>10) v=v.slice(0,10)+'-'+v.slice(10); if (v.length>15) v=v.slice(0,15); return v; }
+
+      telefoneEl = document.getElementById('perfilTelefone');
+      if (telefoneEl){
+        telefoneEl.addEventListener('input', function(){ if (!telefoneEl.readOnly) telefoneEl.value = maskTel(telefoneEl.value); });
+      }
+
+      btnEdit && btnEdit.addEventListener('click', function(){ toggleEdit(true); });
+      btnCancel && btnCancel.addEventListener('click', function(){ toggleEdit(false); });
+
+      // Salvar
+      const perfilForm = document.getElementById('perfilForm');
+      perfilForm && perfilForm.addEventListener('submit', function(e){
+        e.preventDefault();
+        const nomeEl = document.getElementById('perfilNome');
+        const sobrenomeEl = document.getElementById('perfilSobrenome');
+        const telefoneEl = document.getElementById('perfilTelefone');
+        const nome = (nomeEl && nomeEl.value||'').trim();
+        const sobrenome = (sobrenomeEl && sobrenomeEl.value||'').trim();
+        const telefone = (telefoneEl && telefoneEl.value||'').trim();
+        // validações simples
+        let ok = true;
+        function setErr(el, on){ const p = el && el.parentElement; if (p) p.className = on ? 'form_content error' : 'form_content'; }
+        if (!nome) { ok=false; setErr(nomeEl,true); } else setErr(nomeEl,false);
+        if (!sobrenome) { ok=false; setErr(sobrenomeEl,true); } else setErr(sobrenomeEl,false);
+        if (!telefone || telefone.length !== 15) { ok=false; setErr(telefoneEl,true); } else setErr(telefoneEl,false);
+        if (!ok) return;
+        // monta payload
+        let idLocal = 0; try { idLocal = parseInt(localStorage.getItem('clienteId')||'0',10)||0; } catch(e){}
+        const data = new URLSearchParams();
+        if (idLocal>0) data.set('id', String(idLocal));
+        data.set('nome', nome);
+        data.set('sobrenome', sobrenome);
+        data.set('telefone', telefone);
+        fetch('updateCliente.php', { method:'POST', headers:{ 'Content-Type':'application/x-www-form-urlencoded; charset=UTF-8' }, body: data.toString() })
+          .then(r => r.ok ? r.json() : null)
+          .then(resp => {
+            if (resp && resp.ok){
+              // atualiza placeholders e recarrega para refletir alterações
+              try {
+                if (nomeEl){ nomeEl.placeholder = nome; }
+                if (sobrenomeEl){ sobrenomeEl.placeholder = sobrenome; }
+                if (telefoneEl){ telefoneEl.placeholder = telefone; }
+              } catch(e){}
+              if (typeof perfilDlg?.close === 'function') try{ perfilDlg.close(); }catch(e){}
+              location.reload();
+              return;
+            } else {
+              alert('Falha ao salvar alterações.');
+            }
+          })
+          .catch(() => alert('Erro de comunicação com o servidor.'));
+      });
+
+      btnLogout && btnLogout.addEventListener('click', function(){
+        try { localStorage.removeItem('clienteId'); } catch(e){}
+        window.location.href = 'index.php?logout=1';
+      });
+    })();
+  </script>
+  <script src="./js/login.js"></script>
+  <script>
+    // Abrir/fechar cadastro via links e ícones
+    (function(){
+      const loginDlg = document.getElementById('loginDialog');
+      const cadDlg = document.getElementById('cadastroDialog');
+      const openCadLink = document.getElementById('openCadastroLink');
+      const openLoginLink = document.getElementById('openLoginFromCadastro');
+      const closeCadBtn = document.getElementById('closeCadastroDialog');
+
+      function openLogin(){ if (loginDlg && typeof loginDlg.showModal==='function') loginDlg.showModal(); else if(loginDlg) loginDlg.setAttribute('open','open'); }
+      function closeLogin(){ if (loginDlg && typeof loginDlg.close==='function') loginDlg.close(); else if(loginDlg) loginDlg.removeAttribute('open'); }
+      function openCad(){ if (cadDlg && typeof cadDlg.showModal==='function') cadDlg.showModal(); else if(cadDlg) cadDlg.setAttribute('open','open'); }
+      function closeCad(){ if (cadDlg && typeof cadDlg.close==='function') cadDlg.close(); else if(cadDlg) cadDlg.removeAttribute('open'); }
+
+      openCadLink && openCadLink.addEventListener('click', function(e){ e.preventDefault(); closeLogin(); openCad(); });
+      openLoginLink && openLoginLink.addEventListener('click', function(e){ e.preventDefault(); closeCad(); openLogin(); });
+      closeCadBtn && closeCadBtn.addEventListener('click', closeCad);
+      cadDlg && cadDlg.addEventListener('cancel', function(e){ e.preventDefault(); closeCad(); });
+    })();
+  </script>
+  <script>
+    // Lógica do formulário de cadastro (equivalente a js/cadastra.js, porém escopada ao modal)
+    (function(){
+      const dlg = document.getElementById('cadastroDialog');
+      if (!dlg) return;
+      const form = dlg.querySelector('#cadForm');
+      const nome = dlg.querySelector('#cadNome');
+      const sobrenome = dlg.querySelector('#cadSobrenome');
+      const telefone = dlg.querySelector('#cadTelefone');
+      const senha = dlg.querySelector('#cadSenha');
+      const senhaConf = dlg.querySelector('#cadSenhaConf');
+      const msg = dlg.querySelector('#cadMensagem');
+      if (msg) { try { $(msg).fadeOut(0); } catch(e) { msg.style.display='none'; } }
+
+      function setOk(el){ const it = el.parentElement; if (it) it.className='form_content'; }
+      function setErr(el, m){ const it = el.parentElement; if (!it) return; const a = it.querySelector('a'); if (a) a.innerText = m; it.className='form_content error'; }
+
+      function maskTel(v){ v = (v||'').replace(/\D/g,''); if (v.length>0) v='('+v; if (v.length>3) v=v.slice(0,3)+') '+v.slice(3); if (v.length>10) v=v.slice(0,10)+'-'+v.slice(10); if (v.length>15) v=v.slice(0,15); return v; }
+
+      telefone && telefone.addEventListener('input', function(){ telefone.value = maskTel(telefone.value); });
+      nome && nome.addEventListener('blur', function(){ if (!nome.value.trim()) setErr(nome,'preencha um nome de usuario'); else setOk(nome); });
+      sobrenome && sobrenome.addEventListener('blur', function(){ if (!sobrenome.value.trim()) setErr(sobrenome,'preencha seu sobrenome'); else setOk(sobrenome); });
+      telefone && telefone.addEventListener('blur', function(){ const v=telefone.value; if (!v) setErr(telefone,'preencha seu telefone'); else if (v.length!==15) setErr(telefone,'preencha seu numero completo'); else setOk(telefone); });
+      senha && senha.addEventListener('blur', function(){ const v=senha.value; if (!v) setErr(senha,'digite uma senha'); else if (v.length<8) setErr(senha,'minimo de 8 caracteres'); else setOk(senha); });
+      senhaConf && senhaConf.addEventListener('blur', function(){ const v=senhaConf.value; if (!v) setErr(senhaConf,'repita sua senha'); else if (v!==senha.value) setErr(senhaConf,'sua senha não esta igual'); else setOk(senhaConf); });
+
+      function isValid(){
+        nome.dispatchEvent(new Event('blur')); sobrenome.dispatchEvent(new Event('blur'));
+        telefone.dispatchEvent(new Event('blur')); senha.dispatchEvent(new Event('blur')); senhaConf.dispatchEvent(new Event('blur'));
+        const items = form.querySelectorAll('.form_content');
+        return Array.from(items).every(it => it.className==='form_content');
+      }
+
+      form && form.addEventListener('submit', function(e){
+        e.preventDefault();
+        if (!isValid()) return;
+        const payload = { nome: nome.value.trim(), sobrenome: sobrenome.value.trim(), telefone: telefone.value.trim(), senha: senha.value };
+        $.ajax({
+          url: 'cadastraLogin.php', method:'POST', data: payload,
+          success: function(response){ const resp = (response||'').toString().trim(); if (resp==='ok'){ $(msg).html('Cadastrado com sucesso'); $(msg).fadeIn(300).delay(2000).fadeOut(400); setTimeout(function(){ form.reset(); }, 2500); } else { $(msg).html('Essa conta já existe ou ocorreu um erro'); $(msg).fadeIn(300).delay(2000).fadeOut(400); } },
+          error: function(){ $(msg).html('Falha na comunicação com o servidor'); $(msg).fadeIn(300).delay(2000).fadeOut(400); }
+        });
+      });
     })();
   </script>
 </body>
