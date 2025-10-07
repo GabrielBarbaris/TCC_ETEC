@@ -224,4 +224,20 @@
       }
     };
   });
+// Busca: redireciona para categorias.php ao pressionar Enter
+  document.addEventListener('DOMContentLoaded', function() {
+    var input = document.getElementById('searchInput');
+    if (!input) return;
+
+    input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        var q = input.value.trim();
+        if (q) {
+          e.preventDefault();
+          window.location.href = 'categorias.php?busca=' + encodeURIComponent(q);
+        }
+      }
+    });
+  });
+
 })();

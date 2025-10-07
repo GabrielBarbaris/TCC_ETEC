@@ -24,6 +24,12 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             <?php
             require 'conexao.php';
 
+            // Parametro de busca (texto livre)
+            $busca = '';
+            if (isset($_GET['busca'])) { $busca = trim((string)$_GET['busca']); }
+            elseif (isset($_GET['q'])) { $busca = trim((string)$_GET['q']); }
+            $modoBusca = ($busca !== '');
+
             // Determina a categoria pelo código (preferencial) ou nome
             $catId = 0;
             if (isset($_GET['id'])) { $catId = (int)$_GET['id']; }
@@ -64,11 +70,52 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               }
             }
             ?>
-            <p class="p"><span class="text-wrapper"><?php echo $categoriaTitulo ? $categoriaTitulo : 'categoria'; ?></span></p>
+            <p class="p"><span class="text-wrapper"><?php echo ($modoBusca ? ('resultados para ' . htmlspecialchars($busca, ENT_QUOTES)) : ($categoriaTitulo ? $categoriaTitulo : 'categoria')); ?></span></p>
           </div>
 
           <?php
-          if ($categoriaValida && $catId > 0) {
+          if ($modoBusca) {
+            // Busca por texto nos produtos (nome ou descrição)
+            if ($stmt = $conn->prepare('SELECT p.* FROM tbProduto p WHERE p.nome_produto LIKE ? OR p.descricao LIKE ? ORDER BY p.nome_produto')) {
+              $like = '%' . $busca . '%';
+              $stmt->bind_param('ss', $like, $like);
+              if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                if ($result && $result->num_rows > 0) {
+                  while ($produto = $result->fetch_assoc()) {
+                    $id = (int)$produto['id_produto'];
+                    $nome = htmlspecialchars((string)$produto['nome_produto'], ENT_QUOTES);
+                    $descricao = htmlspecialchars((string)$produto['descricao'], ENT_QUOTES);
+                    $preco = number_format((float)$produto['preco'], 2, ',', '.');
+                    $url = htmlspecialchars((string)$produto['imagem_url'], ENT_QUOTES);
+
+                    echo "<div class='picanha'>
+                            <div class='overlap-4'>
+                              <img class='img-3' src='$url' alt='$nome' />
+                              <div class='rectangle-5'></div>
+                              <div class='text-wrapper-17'>$nome</div>
+                              <p class='text-wrapper-7'>$descricao</p>
+                              <p class='r-KG'><span class='text-wrapper'>R$preco </span> <span class='text-wrapper-8'>KG</span></p>
+                              <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
+                                <div class='overlap-group-2'>
+                                  <div class='rectangle-3'></div>
+                                  <div class='text-wrapper-9'>ADICIONAR</div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>";
+                  }
+                } else {
+                  echo '<p>Nenhum produto encontrado para sua busca.</p>';
+                }
+              } else {
+                echo '<p>Falha ao buscar produtos.</p>';
+              }
+              $stmt->close();
+            } else {
+              echo '<p>Falha ao preparar consulta de busca.</p>';
+            }
+          } elseif ($categoriaValida && $catId > 0) {
             // Lista produtos da categoria informada
             if ($stmt = $conn->prepare('SELECT p.* FROM tbProduto p WHERE p.cod_categoria = ? ORDER BY p.nome_produto')) {
               $stmt->bind_param('i', $catId);
@@ -88,7 +135,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                               <div class='rectangle-5'></div>
                               <div class='text-wrapper-17'>$nome</div>
                               <p class='text-wrapper-7'>$descricao</p>
-                              <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
+                              <p class='r-KG'><span class='text-wrapper'>R$preco </span> <span class='text-wrapper-8'>KG</span></p>
                               <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
                                 <div class='overlap-group-2'>
                                   <div class='rectangle-3'></div>
