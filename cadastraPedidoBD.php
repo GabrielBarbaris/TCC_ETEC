@@ -78,7 +78,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $pedidoId = $stmtPed->insert_id;
         $stmtPed->close();
 
-        // Agregar itens por produto para evitar PK duplicada (mesmo produto várias linhas)
+        // Agregar itens por produto + corte para permitir cortes diferentes no mesmo pedido
         $agregados = [];
         foreach ($itens as $it) {
             $nomeProd = isset($it['produto']) ? trim((string)$it['produto']) : '';
@@ -99,18 +99,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $pid = (int)$pid;
             $preco = (float)$preco;
-            $obs = isset($it['observacao']) ? trim((string)$it['observacao']) : '';
-            if (!isset($agregados[$pid])) {
-                $agregados[$pid] = ['qtd' => 0.0, 'preco' => $preco, 'obs' => []];
+
+            // Corte (opcional)
+            $corteId = null;
+            if (isset($it['corte'])) {
+                $corteIdTmp = (int)$it['corte'];
+                if ($corteIdTmp > 0) { $corteId = $corteIdTmp; }
             }
-            $agregados[$pid]['qtd'] += $qtd;
-            if ($obs !== '') { $agregados[$pid]['obs'][] = $obs; }
+
+            $obs = isset($it['observacao']) ? trim((string)$it['observacao']) : '';
+
+            $key = $pid . '|' . ($corteId ?? 'NULL');
+            if (!isset($agregados[$key])) {
+                $agregados[$key] = ['pid' => $pid, 'corte' => $corteId, 'qtd' => 0.0, 'preco' => $preco, 'obs' => []];
+            }
+            $agregados[$key]['qtd'] += $qtd;
+            if ($obs !== '') { $agregados[$key]['obs'][] = $obs; }
         }
 
         $totalPedido = 0.0;
-        $insItem = $conn->prepare('INSERT INTO tbPedidoProduto (cod_pedido, cod_produto, quantidade, preco_unitario, preco_total_prod, observacao) VALUES (?, ?, ?, ?, ?, ?)');
+        $insItem = $conn->prepare('INSERT INTO tbPedidoProduto (cod_pedido, cod_produto, cod_corte, quantidade, preco_unitario, preco_total_prod, observacao) VALUES (?, ?, ?, ?, ?, ?, ?)');
         if (!$insItem) { throw new Exception('prepare ins item'); }
-        foreach ($agregados as $pid => $info) {
+        foreach ($agregados as $key => $info) {
+            $pid = (int)$info['pid'];
+            $corteId = isset($info['corte']) ? $info['corte'] : null;
+            if ($corteId !== null) { $corteId = (int)$corteId; }
             $qtd = (float)$info['qtd'];
             $preco = (float)$info['preco'];
             $subtotal = $qtd * $preco;
@@ -124,7 +137,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $obsStr = implode('; ', $uniq);
             }
-            $insItem->bind_param('iiddds', $pedidoId, $pid, $qtd, $preco, $subtotal, $obsStr);
+            $insItem->bind_param('iiiddds', $pedidoId, $pid, $corteId, $qtd, $preco, $subtotal, $obsStr);
             if (!$insItem->execute()) { $insItem->close(); throw new Exception('exec ins item'); }
         }
         $insItem->close();

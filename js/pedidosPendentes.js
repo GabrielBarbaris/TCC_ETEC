@@ -46,9 +46,17 @@ function marcarComoPronto(card, btn){
     badge.classList.remove('status-pendente');
     badge.classList.add('status-pronto');
   }
-  btn.textContent = 'Pronto';
-  btn.disabled = true;
+  if (btn){
+    btn.textContent = 'Pronto';
+    btn.disabled = true;
+  }
+  card.classList.remove('is-pendente');
   card.classList.add('is-pronto');
+  card.setAttribute('data-status', 'PRONTO');
+  // injeta o botão de entregar
+  ensureEntregarButton(card);
+  // re-aplica filtro atual, se existir
+  try { if (window.__activeFilter) aplicarFiltro(window.__activeFilter); } catch(e){}
 }
 
 function removerCard(card){
@@ -56,4 +64,113 @@ function removerCard(card){
   card.style.opacity = '0';
   card.style.transform = 'scale(0.98)';
   setTimeout(() => card.remove(), 220);
+}
+
+// Injeta o botão "Marcar como Entregue" quando o pedido está PRONTO
+function ensureEntregarButton(card){
+  const actions = card.querySelector('.actions');
+  if (!actions) return;
+  let btnEntregar = actions.querySelector('[data-action="entregar"]');
+  if (btnEntregar) return;
+  btnEntregar = document.createElement('button');
+  btnEntregar.className = 'btn';
+  btnEntregar.setAttribute('data-action', 'entregar');
+  btnEntregar.textContent = 'Marcar como Entregue';
+  btnEntregar.addEventListener('click', async function(){ await entregarPedido(btnEntregar); });
+  actions.appendChild(btnEntregar);
+}
+
+async function entregarPedido(btn){
+  const card = btn.closest('.pedido');
+  const id = card.getAttribute('data-id');
+  if (!id) return;
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Entregando...';
+  try{
+    const resp = await fetch('finalizaPedido.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: new URLSearchParams({ id })
+    });
+    const data = await resp.json();
+    if (data && data.success && String(data.status || '').toUpperCase() === 'ENTREGUE'){
+      marcarComoEntregue(card, btn);
+    } else {
+      const msg = (data && (data.message || data.error)) || 'Falha ao entregar';
+      if (msg.toLowerCase().includes('entregue')){
+        marcarComoEntregue(card, btn);
+      } else {
+        throw new Error(msg);
+      }
+    }
+  } catch(e){
+    alert('Erro ao marcar como entregue: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+}
+
+function marcarComoEntregue(card, btn){
+  const badge = card.querySelector('.status-badge');
+  if (badge){
+    badge.textContent = 'Entregue';
+    badge.classList.remove('status-pendente');
+    badge.classList.add('status-pronto');
+  }
+  if (btn){
+    btn.textContent = 'Entregue';
+    btn.disabled = true;
+  }
+  // também desabilita o botão original de finalizar, se existir
+  const btnFinal = card.querySelector('.actions .btn:not(.secondary):not([data-action])');
+  if (btnFinal) { btnFinal.disabled = true; btnFinal.textContent = 'Entregue'; }
+
+  card.classList.remove('is-pendente');
+  card.classList.remove('is-pronto');
+  card.classList.add('is-entregue');
+  card.setAttribute('data-status', 'ENTREGUE');
+  try { if (window.__activeFilter) aplicarFiltro(window.__activeFilter); } catch(e){}
+}
+
+// Filtros de pedidos
+function aplicarFiltro(filtro){
+  window.__activeFilter = filtro; // memoriza filtro atual
+  const cards = document.querySelectorAll('.lista-pedidos .pedido');
+  cards.forEach(card => {
+    const st = (card.getAttribute('data-status') || '').toUpperCase();
+    let vis = true;
+    if (filtro && filtro !== 'ALL') {
+      vis = (st === filtro);
+    }
+    card.style.display = vis ? '' : 'none';
+  });
+}
+
+function inicializarFiltros(){
+  const barra = document.querySelector('.filtros-pedidos');
+  if (!barra) return;
+  const botoes = barra.querySelectorAll('.filtro-btn');
+  botoes.forEach(btn => {
+    btn.addEventListener('click', () => {
+      botoes.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filtro = btn.getAttribute('data-filter') || 'ALL';
+      aplicarFiltro(filtro.toUpperCase());
+    });
+  });
+  // aplica filtro inicial (Todos)
+  aplicarFiltro('ALL');
+  // prepara cards já PRONTO ao carregar
+  document.querySelectorAll('.pedido[data-status="PRONTO"]').forEach(card => {
+    const btnFinal = card.querySelector('.actions .btn:not(.secondary):not([data-action])');
+    if (btnFinal){ btnFinal.disabled = true; btnFinal.textContent = 'Pronto'; }
+    ensureEntregarButton(card);
+  });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', inicializarFiltros);
+} else {
+  inicializarFiltros();
 }

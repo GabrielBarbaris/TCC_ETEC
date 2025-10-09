@@ -133,17 +133,59 @@ CREATE TABLE tbPedido (
 );
 -- -------------------------------------------------------------------------------------------
 
--- Tabela: PedidoProduto (associação N:N)
+-- Tabela: PedidoProduto (itens do pedido)
 CREATE TABLE tbPedidoProduto (
+    id_pedido_produto INT AUTO_INCREMENT PRIMARY KEY,
     cod_pedido INT NOT NULL,
     cod_produto INT NOT NULL,
+    cod_corte INT NULL,
     quantidade DECIMAL(10,2) NOT NULL,
     preco_unitario DECIMAL(10,2) NOT NULL,
     preco_total_prod DECIMAL(10,2) DEFAULT 0.00,
     observacao VARCHAR(120),
-    PRIMARY KEY (cod_pedido, cod_produto),
-    FOREIGN KEY (cod_pedido) REFERENCES tbPedido(id_pedido)
+    INDEX idx_tbPedidoProduto_pedido (cod_pedido),
+    INDEX idx_tbPedidoProduto_produto (cod_produto),
+    INDEX idx_tbPedidoProduto_corte (cod_corte),
+    CONSTRAINT fk_tbPedidoProduto_pedido FOREIGN KEY (cod_pedido) REFERENCES tbPedido(id_pedido)
         ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (cod_produto) REFERENCES tbProduto(id_produto)
-        ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_tbPedidoProduto_produto FOREIGN KEY (cod_produto) REFERENCES tbProduto(id_produto)
+        ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_tbPedidoProduto_corte FOREIGN KEY (cod_corte) REFERENCES tbcorte(id_corte)
+        ON DELETE SET NULL ON UPDATE CASCADE
 );
+
+-- Produto 1: Kit Mistura
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(1, 1),  -- manta
+(1, 3),  -- panela
+(1, 4);  -- moida
+
+-- Produto 2: Contra Filé
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(2, 2),  -- bife
+(2, 5),  -- peça
+(2, 7);  -- tirinha
+
+-- Produto 3: Carne Moída Bovina
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(3, 4),  -- moida
+(3, 3),  -- panela
+(3, 1);  -- manta
+
+-- Produto 4: Pão de Hambúrguer
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(4, 8),  -- medalhão
+(4, 9),  -- espetinho
+(4, 7);  -- tirinha
+
+-- Produto 5: Fraldinha Bovina
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(5, 2),  -- bife
+(5, 5),  -- peça
+(5, 1);  -- manta
+
+-- Produto 6: Hambúrguer Bovino Artesanal
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(6, 8),  -- medalhão
+(6, 7),  -- tirinha
+(6, 9);  -- espetinho

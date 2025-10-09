@@ -54,9 +54,10 @@ function montarEnderecoUsuario(array $row): string {
 
 function buscarItensPedido(mysqli $conn, int $idPedido): array {
     $itens = [];
-    $sql = "SELECT pp.*, pr.*
+    $sql = "SELECT pp.*, pr.*, c.nome_corte AS corte_nome
             FROM tbPedidoProduto pp
             JOIN tbProduto pr ON pr.id_produto = pp.cod_produto
+            LEFT JOIN tbcorte c ON c.id_corte = pp.cod_corte
             WHERE pp.cod_pedido = ?";
     if ($stmt = $conn->prepare($sql)) {
         $stmt->bind_param('i', $idPedido);
@@ -91,6 +92,13 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
 </head>
 <body>
   <?php include 'menuAdm.php'; ?>
+
+  <div class="filtros-pedidos">
+    <button type="button" class="filtro-btn active" data-filter="ALL">Todos</button>
+    <button type="button" class="filtro-btn" data-filter="PENDENTE">Pendentes</button>
+    <button type="button" class="filtro-btn" data-filter="PRONTO">Prontos</button>
+    <button type="button" class="filtro-btn" data-filter="ENTREGUE">Entregue</button>
+  </div>
 
   <div class="lista-pedidos">
     <?php if ($pedidos && $pedidos->num_rows > 0): ?>
@@ -142,7 +150,7 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
               $btnText = $status === 'PENDENTE' ? 'Finalizar' : $statusText;
           }
         ?>
-        <div class="pedido" data-id="<?php echo $idPedido; ?>">
+        <div class="pedido <?php echo 'is-' . strtolower($status ?: 'PENDENTE'); ?>" data-id="<?php echo $idPedido; ?>" data-status="<?php echo htmlspecialchars($status ?: 'PENDENTE'); ?>">
           <header>
             <div class="client">
               <div class="name"><?php echo htmlspecialchars($nomeCliente); ?></div>
@@ -158,6 +166,11 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
                   <div class="title"><?php echo htmlspecialchars(nomeProduto($item)); ?></div>
                   <div class="qtd"><?php echo htmlspecialchars((string)$item['quantidade']); ?>x</div>
                   <div class="price"><?php echo fmtPreco(isset($item['preco_total_prod']) ? $item['preco_total_prod'] : ($item['preco_unitario'] * $item['quantidade'])); ?></div>
+
+                  <?php $corteItem = isset($item['corte_nome']) ? trim((string)$item['corte_nome']) : ''; ?>
+                  <?php if ($corteItem !== ''): ?>
+                    <div class="corte">Corte: <?php echo htmlspecialchars($corteItem); ?></div>
+                  <?php endif; ?>
 
                   <?php $obsItem = isset($item['observacao']) ? trim((string)$item['observacao']) : ''; ?>
                   <?php if ($obsItem !== ''): ?>

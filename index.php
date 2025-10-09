@@ -1743,7 +1743,8 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               return {
                 produto: it.nome,
                 quantidade: it.quantidade,
-                observacao: it.observacao || ''
+                observacao: it.observacao || '',
+                corte: (typeof it.corte !== 'undefined' && it.corte !== null && it.corte !== '' ? it.corte : null)
               };
             });
 
@@ -1891,6 +1892,8 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       const btnSave = document.getElementById('btnSalvarPerfil');
       const btnCancel = document.getElementById('btnCancelarPerfil');
 
+      let editSnapshot = null;
+
       function openLogin() {
         if (loginDlg && typeof loginDlg.showModal === 'function') loginDlg.showModal();
         else if (loginDlg) loginDlg.setAttribute('open', 'open');
@@ -1999,37 +2002,26 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
         const nomeEl = document.getElementById('perfilNome');
         const sobrenomeEl = document.getElementById('perfilSobrenome');
         const telefoneEl = document.getElementById('perfilTelefone');
+
+        if (on) {
+          // guarda os valores atuais para permitir cancelamento
+          editSnapshot = {
+            nome: nomeEl ? nomeEl.value : '',
+            sobrenome: sobrenomeEl ? sobrenomeEl.value : '',
+            telefone: telefoneEl ? telefoneEl.value : ''
+          };
+        }
+
         if (nomeEl) nomeEl.readOnly = !on;
         if (sobrenomeEl) sobrenomeEl.readOnly = !on;
         if (telefoneEl) telefoneEl.readOnly = !on;
         if (btnEdit) btnEdit.style.display = on ? 'none' : '';
         if (btnSave) btnSave.style.display = on ? '' : 'none';
         if (btnCancel) btnCancel.style.display = on ? '' : 'none';
-        if (on) {
-          // mover placeholder para value para edição
-          if (nomeEl) {
-            nomeEl.value = nomeEl.placeholder || '';
-          }
-          if (sobrenomeEl) {
-            sobrenomeEl.value = sobrenomeEl.placeholder || '';
-          }
-          if (telefoneEl) {
-            telefoneEl.value = telefoneEl.placeholder || '';
-          }
-        } else {
-          // volta para o placeholder
-          if (nomeEl) {
-            nomeEl.placeholder = nomeEl.value || nomeEl.placeholder || '';
-            nomeEl.value = '';
-          }
-          if (sobrenomeEl) {
-            sobrenomeEl.placeholder = sobrenomeEl.value || sobrenomeEl.placeholder || '';
-            sobrenomeEl.value = '';
-          }
-          if (telefoneEl) {
-            telefoneEl.placeholder = telefoneEl.value || telefoneEl.placeholder || '';
-            telefoneEl.value = '';
-          }
+
+        if (!on) {
+          // saindo do modo edição, limpa o snapshot
+          editSnapshot = null;
         }
       }
 
@@ -2053,6 +2045,15 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
         toggleEdit(true);
       });
       btnCancel && btnCancel.addEventListener('click', function() {
+        const nomeEl = document.getElementById('perfilNome');
+        const sobrenomeEl = document.getElementById('perfilSobrenome');
+        const telefoneEl = document.getElementById('perfilTelefone');
+        // restaura valores originais ao cancelar
+        if (editSnapshot) {
+          if (nomeEl) nomeEl.value = editSnapshot.nome || '';
+          if (sobrenomeEl) sobrenomeEl.value = editSnapshot.sobrenome || '';
+          if (telefoneEl) telefoneEl.value = editSnapshot.telefone || '';
+        }
         toggleEdit(false);
       });
 
