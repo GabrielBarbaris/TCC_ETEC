@@ -597,10 +597,10 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
         </div>
       </div>
 
-      <div id="confRetiradaWrap" style="display:none;">
+      <div id="confRetiradaWrap" style="display:block;">
         <div style="display:flex; flex-direction:column; max-width:200px;">
           <label for="confHorario">Horário desejado</label>
-          <input id="confHorario" type="time">
+          <input id="confHorario" type="time" required>
         </div>
       </div>
 
@@ -1566,10 +1566,36 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           return d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d;
         }
 
-        // CEP máscara
+        // CEP máscara + auto-preenchimento via ViaCEP
+        async function buscaCEPConfirm(cep) {
+          var d = digitsOnly(cep);
+          if (d.length !== 8) return;
+          try {
+            var r = await fetch('https://viacep.com.br/ws/' + d + '/json/');
+            if (!r.ok) throw new Error('HTTP ' + r.status);
+            var data = await r.json();
+            if (data && !data.erro) {
+              if (ruaEl && !ruaEl.value) ruaEl.value = data.logradouro || '';
+              if (bairroEl && !bairroEl.value) bairroEl.value = data.bairro || '';
+              if (cidadeEl && !cidadeEl.value) cidadeEl.value = data.localidade || '';
+              if (ufEl && !ufEl.value) ufEl.value = (data.uf || '').toUpperCase();
+              if (compEl && !compEl.value) compEl.value = data.complemento || '';
+            } else {
+              alert('CEP não encontrado.');
+            }
+          } catch (e) {
+            console.warn('Erro ao buscar CEP', e);
+          }
+        }
         if (cepEl && !cepEl._bound) {
           cepEl.addEventListener('input', function() {
             cepEl.value = maskCEP(cepEl.value);
+            var d = digitsOnly(cepEl.value);
+            if (d.length === 8) buscaCEPConfirm(d);
+          });
+          cepEl.addEventListener('blur', function() {
+            var d = digitsOnly(cepEl.value);
+            if (d.length === 8) buscaCEPConfirm(d);
           });
           cepEl._bound = true;
         }
@@ -1580,7 +1606,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             r.addEventListener('change', function() {
               var tipo = this.value;
               endWrap.style.display = (tipo === 'ENTREGA') ? 'block' : 'none';
-              retWrap.style.display = (tipo === 'RETIRADA') ? 'block' : 'none';
+              retWrap.style.display = 'block';
             });
             r._bound = true;
           }
@@ -1678,7 +1704,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             r.checked = (r.value === tipo);
           });
           endWrap.style.display = (tipo === 'ENTREGA') ? 'block' : 'none';
-          retWrap.style.display = (tipo === 'RETIRADA') ? 'block' : 'none';
+          retWrap.style.display = 'block';
 
           // Preenche os campos de endereço com o que foi informado em "Calcular tempo de entrega"
           try {
@@ -1729,6 +1755,11 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             });
             var tipo = tipoEl ? tipoEl.value : 'ENTREGA';
             var horario = (horarioEl && horarioEl.value) ? horarioEl.value : '';
+            if (!horario) {
+              alert('Informe o horário desejado.');
+              try { horarioEl && horarioEl.focus(); } catch (e) {}
+              return;
+            }
 
             var itens = [];
             try {
@@ -1762,14 +1793,18 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               var rua = (ruaEl.value || '').trim();
               var bairro = (bairroEl.value || '').trim();
               var cidade = (cidadeEl.value || '').trim();
-              var uf = (ufEl.value || '').trim();
+              var uf = (ufEl.value || '').trim().toUpperCase();
               numTxt = (numEl.value || '').trim();
               cepTxt = digitsOnly(cepEl.value || '');
               compTxt = (compEl.value || '').trim();
-              if (!rua || !numTxt || !bairro || !cidade || !uf) {
-                alert('Preencha o endereço completo para entrega.');
-                return;
-              }
+
+              if (!rua) { alert('Preencha o endereço (Rua/Avenida).'); try { ruaEl && ruaEl.focus(); } catch (e) {} return; }
+              if (!numTxt) { alert('Informe o número.'); try { numEl && numEl.focus(); } catch (e) {} return; }
+              if (!bairro) { alert('Informe o bairro.'); try { bairroEl && bairroEl.focus(); } catch (e) {} return; }
+              if (!cidade) { alert('Informe a cidade.'); try { cidadeEl && cidadeEl.focus(); } catch (e) {} return; }
+              if (!uf || uf.length !== 2) { alert('Informe a UF com 2 letras.'); try { ufEl && ufEl.focus(); } catch (e) {} return; }
+              if (cepTxt && cepTxt.length !== 8) { alert('CEP inválido (use 8 dígitos).'); try { cepEl && cepEl.focus(); } catch (e) {} return; }
+
               enderecoTxt = rua + ', ' + numTxt + ' - ' + bairro + ', ' + cidade + ' - ' + uf;
               if (compTxt) enderecoTxt += ' (' + compTxt + ')';
             }
@@ -1777,7 +1812,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             var params = new URLSearchParams();
             params.set('cliente_id', String(clienteId));
             params.set('recebimento', tipo);
-            if (horario) params.set('horario', horario);
+            params.set('horario', horario);
             params.set('itens', JSON.stringify(payloadItens));
             if (tipo === 'ENTREGA') {
               params.set('endereco', enderecoTxt);

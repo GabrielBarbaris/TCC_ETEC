@@ -430,8 +430,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (radiosMedida.length) {
-        radiosMedida.forEach(r => r.addEventListener("change", setPesoVisibility));
+        radiosMedida.forEach(r => r.addEventListener("change", function(){
+            setPesoVisibility();
+            checa_tipo(); // revalida/remover erro do "tipo" quando a medida mudar
+        }));
         setPesoVisibility(); // estado inicial
+        checa_tipo(); // sincroniza validação do "tipo" com a medida atual
     }
 
     // Garantir required para validação nativa
@@ -542,6 +546,16 @@ function checa_tipo() {
     const checkboxes = tipo.querySelectorAll("input[type='checkbox']");
     const errorMessage = tipo.querySelector("a"); // Seleciona o elemento para exibir a mensagem de erro
     const ref = checkboxes[0]; // referência para integrarmos com a validade nativa
+
+    // Se medida for UNIDADE ou todos os checkboxes estiverem desabilitados, não validar "tipo"
+    const isUnidade = !!document.querySelector("input[name='medida'][value='UNIDADE']")?.checked;
+    const allDisabled = Array.from(checkboxes).every(cb => cb.disabled);
+    if (isUnidade || allDisabled) {
+        if (errorMessage) errorMessage.innerText = "";
+        tipo.classList.remove("error");
+        if (ref && typeof ref.setCustomValidity === 'function') ref.setCustomValidity("");
+        return;
+    }
 
     // Verifica se pelo menos um checkbox está selecionado
     const isChecked = Array.from(checkboxes).some(checkbox => checkbox.checked);

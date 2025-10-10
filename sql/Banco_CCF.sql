@@ -103,6 +103,18 @@ VALUES
 
 
 -- --------------------------------------------------------------------------------------------
+-- Tabela: EstoqueProduto
+CREATE TABLE tbEstoqueProduto (
+    id_estoque INT AUTO_INCREMENT PRIMARY KEY,
+    cod_produto INT NOT NULL,
+    tipo_movimentacao ENUM('ENTRADA', 'SAIDA') NOT NULL,
+    quantidade DECIMAL(10,2) NOT NULL,
+    data_movimentacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    observacao VARCHAR(255),
+    FOREIGN KEY (cod_produto) REFERENCES tbProduto(id_produto)
+        ON DELETE CASCADE ON UPDATE CASCADE
+);
+-- ---------------------------------------------------------------------------------------------
 
 -- Tabela: quantidade de corte do produto------------------------------------------------------
 CREATE TABLE tbQuantidadeCorte(

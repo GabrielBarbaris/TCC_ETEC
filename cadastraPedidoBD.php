@@ -42,8 +42,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $horarioTime = (strlen($horario) === 5) ? ($horario . ':00') : $horario;
     }
 
-    // Define o usuário do pedido: prioriza cliente_id; caso contrário tenta por nome; fallback = 1
-    $codUsuario = 1;
+    // Define o usuário do pedido: prioriza cliente_id; caso contrário tenta por nome; sem fallback: exige cliente existente
+    $codUsuario = 0;
 
     if ($clienteIdPost > 0) {
         if ($stmt = $conn->prepare('SELECT id_usuario FROM tbUsuario WHERE id_usuario = ? LIMIT 1')) {
@@ -65,6 +65,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $stmt->close();
         }
+    }
+
+    // Se não encontrou cliente válido, retorna erro específico para o frontend abrir o modal de cadastro
+    if ($codUsuario <= 0) {
+        echo 'cliente_invalido';
+        exit;
     }
 
     $conn->begin_transaction();

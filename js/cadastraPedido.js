@@ -10,6 +10,15 @@ const numeroInput = document.getElementById('numero_endereco');
 const complementoInput = document.getElementById('complemento_endereco');
 const observacao = document.getElementById('observacao');
 
+function openCadastroModal(){
+  const dlg = document.getElementById('cadastroDialog');
+  if (dlg) {
+    if (typeof dlg.showModal === 'function') dlg.showModal(); else dlg.setAttribute('open','open');
+  } else {
+    $('#mensagem').html('Cliente não encontrado no cadastro. Cadastre-o para continuar.').fadeIn(300).delay(2000).fadeOut(400);
+  }
+}
+
 
 
 // Controle de cortes dinâmicos por produto
@@ -83,7 +92,9 @@ horario.addEventListener("blur",() =>{
     checa_horario();
 })
 cliente.addEventListener("blur",() =>{
-    checa_cliente();
+    if (!checa_cliente()) {
+        openCadastroModal();
+    }
 })
 
 // validações de entrega em blur (quando aplicável)
@@ -157,6 +168,11 @@ function checa_cliente() {
     const valor = cliente.value.trim();
     if (!valor) {
         error_imput(cliente, "Preencha o nome do cliente");
+        return false;
+    }
+    const id = getClienteIdFromInput(valor);
+    if (!id) {
+        error_imput(cliente, "Cliente não encontrado. Selecione um da lista ou cadastre.");
         return false;
     }
     const form_item = cliente.parentElement;
@@ -240,6 +256,14 @@ function checa_form() {
 
     if (!validado) return;
 
+    // Confirma existência de cliente válido
+    const idCliente = getClienteIdFromInput(cliente.value.trim());
+    if (!idCliente) {
+        $('#mensagem').html('Cliente não encontrado. Cadastre-o para continuar.').fadeIn(300).delay(2000).fadeOut(400);
+        openCadastroModal();
+        return;
+    }
+
     const selecionado = document.querySelector('input[name="recebimento"]:checked');
     const recebimentoValue = selecionado ? selecionado.value : '';
     const enderecoValue = (recebimentoValue === 'entrega' && enderecoInput) ? enderecoInput.value.trim() : '';
@@ -263,6 +287,11 @@ function checa_form() {
         },
         success: function (response) {
             response = (response || '').trim();
+            if (response === 'cliente_invalido') {
+                $('#mensagem').html('Cliente não encontrado. Cadastre-o para continuar.').fadeIn(300).delay(2000).fadeOut(400);
+                openCadastroModal();
+                return;
+            }
             if (response != 'erro') {
                 $('#mensagem').html('Pedido cadastrado com sucesso!');
                 $('#mensagem').fadeIn(300).delay(2000).fadeOut(400);

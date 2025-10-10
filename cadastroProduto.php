@@ -138,6 +138,29 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
   <script src="./js/cadastraProduto.js"></script>
+  <script>
+    (function() {
+      function updateTipoDisabled() {
+        var medidaEl = document.querySelector('input[name="medida"]:checked');
+        var isUnidade = !!(medidaEl && medidaEl.value === 'UNIDADE');
+        var tipos = document.querySelectorAll('input[name="tipo[]"]');
+        tipos.forEach(function(chk) {
+          chk.disabled = isUnidade;
+          if (isUnidade) chk.checked = false;
+          var label = chk.closest('label');
+          if (label) label.style.opacity = isUnidade ? '0.6' : '';
+        });
+      }
+      document.addEventListener('change', function(e) {
+        if (e.target && e.target.name === 'medida') updateTipoDisabled();
+      });
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', updateTipoDisabled);
+      } else {
+        updateTipoDisabled();
+      }
+    })();
+  </script>
 
 </body>
 
