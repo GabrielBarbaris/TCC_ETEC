@@ -53,8 +53,9 @@ function marcarComoPronto(card, btn){
   card.classList.remove('is-pendente');
   card.classList.add('is-pronto');
   card.setAttribute('data-status', 'PRONTO');
-  // injeta o botão de entregar
+  // injeta os botões de ações do status PRONTO
   ensureEntregarButton(card);
+  ensurePendenteButton(card);
   // re-aplica filtro atual, se existir
   try { if (window.__activeFilter) aplicarFiltro(window.__activeFilter); } catch(e){}
 }
@@ -78,6 +79,73 @@ function ensureEntregarButton(card){
   btnEntregar.textContent = 'Marcar como Entregue';
   btnEntregar.addEventListener('click', async function(){ await entregarPedido(btnEntregar); });
   actions.appendChild(btnEntregar);
+}
+
+// Injeta o botão "Deixar Pendente" quando o pedido está PRONTO
+function ensurePendenteButton(card){
+  const actions = card.querySelector('.actions');
+  if (!actions) return;
+  let btnVoltar = actions.querySelector('[data-action="voltar-pendente"]');
+  if (btnVoltar) return;
+  btnVoltar = document.createElement('button');
+  btnVoltar.className = 'btn secondary';
+  btnVoltar.setAttribute('data-action', 'voltar-pendente');
+  btnVoltar.textContent = 'Deixar Pendente';
+  btnVoltar.addEventListener('click', async function(){ await deixarPendente(btnVoltar); });
+  actions.appendChild(btnVoltar);
+}
+
+async function deixarPendente(btn){
+  const card = btn.closest('.pedido');
+  const id = card.getAttribute('data-id');
+  if (!id) return;
+  btn.disabled = true;
+  const original = btn.textContent;
+  btn.textContent = 'Reabrindo...';
+  try{
+    const resp = await fetch('finalizaPedido.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8' },
+      body: new URLSearchParams({ id, acao: 'PENDENTE' })
+    });
+    const data = await resp.json();
+    if (data && data.success && String(data.status || '').toUpperCase() === 'PENDENTE'){
+      marcarComoPendente(card);
+    } else {
+      const msg = (data && (data.message || data.error)) || 'Falha ao reabrir';
+      if (String(msg || '').toLowerCase().includes('pendente')){
+        marcarComoPendente(card);
+      } else {
+        throw new Error(msg);
+      }
+    }
+  } catch(e){
+    alert('Erro ao reabrir o pedido: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = original;
+  }
+}
+
+function marcarComoPendente(card){
+  const badge = card.querySelector('.status-badge');
+  if (badge){
+    badge.textContent = 'Pendente';
+    badge.classList.remove('status-pronto');
+    badge.classList.add('status-pendente');
+  }
+  // Habilita o botão principal de finalizar
+  const btnFinal = card.querySelector('.actions .btn:not(.secondary):not([data-action])');
+  if (btnFinal){ btnFinal.textContent = 'Finalizar'; btnFinal.disabled = false; }
+  // Remove botões específicos de PRONTO
+  const btnEntregar = card.querySelector('[data-action="entregar"]');
+  if (btnEntregar) btnEntregar.remove();
+  const btnVoltar = card.querySelector('[data-action="voltar-pendente"]');
+  if (btnVoltar) btnVoltar.remove();
+  card.classList.remove('is-pronto');
+  card.classList.remove('is-entregue');
+  card.classList.add('is-pendente');
+  card.setAttribute('data-status', 'PENDENTE');
+  try { if (window.__activeFilter) aplicarFiltro(window.__activeFilter); } catch(e){}
 }
 
 async function entregarPedido(btn){
@@ -125,6 +193,11 @@ function marcarComoEntregue(card, btn){
   // também desabilita o botão original de finalizar, se existir
   const btnFinal = card.querySelector('.actions .btn:not(.secondary):not([data-action])');
   if (btnFinal) { btnFinal.disabled = true; btnFinal.textContent = 'Entregue'; }
+  // remove botões de ações de PRONTO
+  const btnEntregar = card.querySelector('[data-action="entregar"]');
+  if (btnEntregar) btnEntregar.remove();
+  const btnVoltar = card.querySelector('[data-action="voltar-pendente"]');
+  if (btnVoltar) btnVoltar.remove();
 
   card.classList.remove('is-pendente');
   card.classList.remove('is-pronto');
@@ -166,6 +239,7 @@ function inicializarFiltros(){
     const btnFinal = card.querySelector('.actions .btn:not(.secondary):not([data-action])');
     if (btnFinal){ btnFinal.disabled = true; btnFinal.textContent = 'Pronto'; }
     ensureEntregarButton(card);
+    ensurePendenteButton(card);
   });
 }
 

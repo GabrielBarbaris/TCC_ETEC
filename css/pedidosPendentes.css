@@ -26,6 +26,7 @@
 }
 .client{ display:flex; flex-direction: column; gap: 4px; }
 .client .name{ color: var(--text-heading); font-weight: 700; font-size: 18px; }
+.client .sub{ color: var(--muted); font-size: 13px; }
 .client .meta{ color: var(--muted); font-size: 13px; }
 
 /* Chips de status e modalidade */
@@ -75,6 +76,7 @@ section.item-list{ padding: 0 16px; overflow: hidden; max-height: 0; transition:
 .pedido header{ padding:16px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
 .client{ display:flex; flex-direction:column; gap:4px; }
 .client .name{ color:var(--text-heading); font-weight:700; font-size:18px; }
+.client .sub{ color:var(--muted); font-size:13px; }
 .client .meta{ color:var(--muted); font-size:13px; }
 .status-badge{ border:1px solid var(--border); border-radius:999px; padding:4px 10px; font-size:12px; background:#fff5f5; border-color:#f3d6d6; color:var(--primary); }
 section.item-list{ padding:0 16px; overflow:hidden; max-height:0; transition:max-height .25s ease-in-out; }
@@ -132,4 +134,30 @@ footer.pedido-footer{ padding:12px 16px; display:flex; align-items:flex-start; j
 
 @media (max-width:560px){
   .filtros-pedidos{ margin-top:84px; }
+}
+
+/* Overrides de status: tamanhos maiores e cores por estado */
+.pedido .status-badge{
+  padding: 6px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+}
+/* Pendente = vermelho */
+.pedido[data-status="PENDENTE"] .status-badge{
+  background: #ffe7e7;
+  border-color: #ffb3b3;
+  color: #c62828;
+}
+/* Pronto = laranja */
+.pedido[data-status="PRONTO"] .status-badge{
+  background: #fff1e0;
+  border-color: #ffd1a6;
+  color: #d97706;
+}
+/* Entregue = verde */
+.pedido[data-status="ENTREGUE"] .status-badge{
+  background: #e8f7ee;
+  border-color: #b6e3c5;
+  color: #1b7f3c;
 }

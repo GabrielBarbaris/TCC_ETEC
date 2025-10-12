@@ -117,6 +117,10 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
           }
           $isEntrega = strtoupper((string)$p['tipo_pedido']) === 'ENTREGA';
           $nomeCliente = isset($p['nome']) ? $p['nome'] : (isset($p['nome_usuario']) ? $p['nome_usuario'] : 'Cliente');
+          $sobrenomeCliente = isset($p['sobrenome']) ? trim((string)$p['sobrenome']) : '';
+          $telefoneCliente = isset($p['telefone']) ? trim((string)$p['telefone']) : '';
+          $tituloCliente = trim($nomeCliente . ($sobrenomeCliente !== '' ? (' ' . $sobrenomeCliente) : ''));
+          $subtituloCliente = $telefoneCliente;
           $dataPedidoFmt = date('d/m/Y H:i', strtotime((string)$p['data_pedido']));
           $endereco = $isEntrega ? montarEnderecoUsuario($p) : '';
           $formaPagamento = isset($p['forma_pagamento']) ? $p['forma_pagamento'] : '';
@@ -153,7 +157,10 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
         <div class="pedido <?php echo 'is-' . strtolower($status ?: 'PENDENTE'); ?>" data-id="<?php echo $idPedido; ?>" data-status="<?php echo htmlspecialchars($status ?: 'PENDENTE'); ?>">
           <header>
             <div class="client">
-              <div class="name"><?php echo htmlspecialchars($nomeCliente); ?></div>
+              <div class="name"><?php echo htmlspecialchars($tituloCliente); ?></div>
+              <?php if (!empty($subtituloCliente)): ?>
+                <div class="sub"><?php echo htmlspecialchars($subtituloCliente); ?></div>
+              <?php endif; ?>
               <div class="meta">Pedido #<?php echo $idPedido; ?> • <?php echo htmlspecialchars($dataPedidoFmt); ?></div>
             </div>
             <span class="status-badge <?php echo $statusClass; ?>"><?php echo $statusText; ?></span>
@@ -164,7 +171,16 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
               <?php foreach ($itens as $item): ?>
                 <div class="item">
                   <div class="title"><?php echo htmlspecialchars(nomeProduto($item)); ?></div>
-                  <div class="qtd"><?php echo htmlspecialchars((string)$item['quantidade']); ?>x</div>
+<?php
+  $tipo = isset($item['tipo_quantidade']) ? strtoupper((string)$item['tipo_quantidade']) : '';
+  if ($tipo === 'PESO') {
+    $qtdFmt = number_format((float)$item['quantidade'], 2, ',', '') . ' Kg';
+  } else {
+    $qtdVal = (float)$item['quantidade'];
+    $qtdFmt = ((intval($qtdVal) == $qtdVal) ? intval($qtdVal) : $qtdVal) . ' un';
+  }
+?>
+                  <div class="qtd"><?php echo htmlspecialchars($qtdFmt); ?></div>
                   <div class="price"><?php echo fmtPreco(isset($item['preco_total_prod']) ? $item['preco_total_prod'] : ($item['preco_unitario'] * $item['quantidade'])); ?></div>
 
                   <?php $corteItem = isset($item['corte_nome']) ? trim((string)$item['corte_nome']) : ''; ?>
