@@ -22,7 +22,7 @@ try {
         exit;
     }
 
-    $sql = "SELECT id_usuario, nome, sobrenome, telefone, endereco FROM tbUsuario WHERE id_usuario = ? LIMIT 1";
+    $sql = "SELECT id_usuario, nome, sobrenome, telefone FROM tbUsuario WHERE id_usuario = ? LIMIT 1";
     if (!$stmt = $conn->prepare($sql)) {
         http_response_code(500);
         echo json_encode(['erro' => 'Falha ao preparar consulta']);
@@ -43,8 +43,7 @@ try {
             'id' => (int)$row['id_usuario'],
             'nome' => (string)($row['nome'] ?? ''),
             'sobrenome' => (string)($row['sobrenome'] ?? ''),
-            'telefone' => (string)($row['telefone'] ?? ''),
-            'endereco' => (string)($row['endereco'] ?? '')
+            'telefone' => (string)($row['telefone'] ?? '')
         ], JSON_UNESCAPED_UNICODE);
     } else {
         http_response_code(404);

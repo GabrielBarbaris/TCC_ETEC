@@ -136,7 +136,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                 // A conexão já foi incluída, não precisa de 'require' de novo.
                 $comandoSqlKits = "SELECT p.* FROM tbProduto p
                                      JOIN tbCategoria c ON p.cod_categoria = c.id_categoria
-                                     WHERE c.nome_categoria = 'Kits' ORDER BY p.nome_produto";
+                                     WHERE c.nome_categoria = 'Kits' ORDER BY p.nome_produto LIMIT 2";
                 $resultKits = $conn->query($comandoSqlKits);
 
                 if ($resultKits && mysqli_num_rows($resultKits) > 0) {
@@ -1759,41 +1759,26 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               clienteId = parseInt(localStorage.getItem('clienteId') || '0', 10) || 0;
             } catch (e) {}
 
-            // Endereço (ENTREGA)
-            var enderecoTxt = '';
-            var cepTxt = '';
-            var numTxt = '';
-            var compTxt = '';
+            var params = new URLSearchParams();
+            params.set('cliente_id', String(clienteId));
+            params.set('recebimento', tipo.toLowerCase()); // Correção: Enviar em minúsculas
+            params.set('horario', horario);
+            params.set('itens', JSON.stringify(payloadItens));
+
             if (tipo === 'ENTREGA') {
+              // Correção: Enviar os campos de endereço separados, como o backend espera.
               var rua = (ruaEl.value || '').trim();
               var bairro = (bairroEl.value || '').trim();
               var cidade = (cidadeEl.value || '').trim();
               var uf = (ufEl.value || '').trim().toUpperCase();
-              numTxt = (numEl.value || '').trim();
-              cepTxt = digitsOnly(cepEl.value || '');
-              compTxt = (compEl.value || '').trim();
+              var numTxt = (numEl.value || '').trim();
 
-              if (!rua) { alert('Preencha o endereço (Rua/Avenida).'); try { ruaEl && ruaEl.focus(); } catch (e) {} return; }
-              if (!numTxt) { alert('Informe o número.'); try { numEl && numEl.focus(); } catch (e) {} return; }
-              if (!bairro) { alert('Informe o bairro.'); try { bairroEl && bairroEl.focus(); } catch (e) {} return; }
-              if (!cidade) { alert('Informe a cidade.'); try { cidadeEl && cidadeEl.focus(); } catch (e) {} return; }
-              if (!uf || uf.length !== 2) { alert('Informe a UF com 2 letras.'); try { ufEl && ufEl.focus(); } catch (e) {} return; }
-              if (cepTxt && cepTxt.length !== 8) { alert('CEP inválido (use 8 dígitos).'); try { cepEl && cepEl.focus(); } catch (e) {} return; }
+              if (!rua || !numTxt || !bairro || !cidade || !uf) { alert('Preencha todos os campos de endereço para entrega.'); return; }
 
-              enderecoTxt = rua + ', ' + numTxt + ' - ' + bairro + ', ' + cidade + ' - ' + uf;
-              if (compTxt) enderecoTxt += ' (' + compTxt + ')';
-            }
-
-            var params = new URLSearchParams();
-            params.set('cliente_id', String(clienteId));
-            params.set('recebimento', tipo);
-            params.set('horario', horario);
-            params.set('itens', JSON.stringify(payloadItens));
-            if (tipo === 'ENTREGA') {
-              params.set('endereco', enderecoTxt);
-              if (cepTxt) params.set('cep', cepTxt);
-              if (numTxt) params.set('numero', numTxt);
-              if (compTxt) params.set('complemento', compTxt);
+              params.set('endereco', rua + ', ' + bairro + ', ' + cidade + ' - ' + uf);
+              params.set('cep', digitsOnly(cepEl.value || ''));
+              params.set('numero', numTxt);
+              params.set('complemento', (compEl.value || '').trim());
             }
 
             fetch('cadastraPedidoBD.php', {

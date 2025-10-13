@@ -56,7 +56,7 @@ VALUES ("manta"),
 -- -----------------------------------------------------------------------------------------
 
 -- Tabela: Produto
-CREATE TABLE tbProduto (
+CREATE TABLE tbproduto (
     id_produto INT AUTO_INCREMENT PRIMARY KEY,
     cod_categoria INT NOT NULL,
     nome_produto VARCHAR(100) NOT NULL,
@@ -69,39 +69,57 @@ CREATE TABLE tbProduto (
     FOREIGN KEY (cod_categoria) REFERENCES tbCategoria(id_categoria)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+
+-- Produtos Bovinos (id_categoria = 1)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Kit Mistura', 27.90, 0.50, 0.10, 'Kit de carnes variadas para o dia a dia.', 'img/kitMistura.png', 'PESO');
+(1, 'Picanha Bovina', 89.90, 0.50, 0.10, 'Corte nobre de picanha, ideal para churrascos.', 'img/picanha.png', 'PESO'),
+(1, 'Coxao Mole', 49.90, 0.50, 0.10, 'Carne macia, ótima para bifes e assados.', 'img/coxaomole.png', 'PESO'),
+(1, 'Patinho Moido', 38.90, 0.50, 0.10, 'Carne moída de patinho, perfeita para receitas do dia a dia.', 'img/patinhomoido.png', 'PESO');
 
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+-- Produtos Aves (id_categoria = 2)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Contra Filé', 69.90, 1.00, 0.10, 'Corte bovino macio e saboroso, ideal para grelha.', 'img/contraFile.png', 'PESO');
+(2, 'Coxa e Sobrecoxa de Frango', 18.90, 1.00, 0.20, 'Corte suculento, ideal para grelhar ou assar.', 'img/coxa_sobrecoxa.png', 'PESO'),
+(2, 'Peito de Frango', 22.90, 0.50, 0.10, 'Corte magro e versátil, ideal para grelhados e filés.', 'img/peito_frango.png', 'PESO'),
+(2, 'Asa Temperada', 19.90, 0.50, 0.10, 'Asinhas de frango já temperadas, prontas para o churrasco.', 'img/asa_temperada.png', 'PESO');
 
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+-- Produtos Suínos (id_categoria = 3)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Carne Moída Bovina', 34.90, 0.50, 0.10, 'Carne moída fresca, ideal para refogados e recheios.', 'img/carneMoida.png', 'PESO');
+(3, 'Lombo Suino', 32.90, 0.50, 0.10, 'Carne suína magra, ideal para assados e recheios.', 'img/lombo_suino.png', 'PESO'),
+(3, 'Costelinha Suina', 29.90, 0.50, 0.10, 'Costelinha suína saborosa, ótima para churrascos.', 'img/costelinha_suina.png', 'PESO'),
+(3, 'Pernil em Cubos', 27.90, 0.50, 0.10, 'Cubos de pernil suíno, ideais para refogados e espetinhos.', 'img/pernil_cubos.png', 'PESO');
 
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+-- Produtos Linguiças (id_categoria = 4)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Pão de Hambúrguer', 9.90, 0.20, 0.10, 'Pão macio próprio para hambúrgueres artesanais.', 'img/pao.png', 'UNIDADE');
+(4, 'Linguiça Toscana', 24.90, 0.50, 0.10, 'Linguiça toscana artesanal, ideal para churrascos.', 'img/linguica_toscana.png', 'PESO'),
+(4, 'Linguiça de Frango', 22.90, 0.50, 0.10, 'Linguiça leve e saborosa feita com carne de frango.', 'img/linguica_frango.png', 'PESO'),
+(4, 'Linguiça Apimentada', 25.90, 0.50, 0.10, 'Linguiça artesanal com toque de pimenta.', 'img/linguica_apimentada.png', 'PESO');
 
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+-- Produtos Embutidos (id_categoria = 5)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Fraldinha Bovina', 59.90, 0.80, 0.10, 'Carne bovina macia, ideal para churrasco e assados.', 'img/fraldinha.png', 'PESO');
+(5, 'Presunto Fatiado', 8.90, 0.10, 0.05, 'Presunto de qualidade, ideal para sanduíches e lanches.', 'img/presunto.png', 'PESO'),
+(5, 'Salame Italiano', 15.90, 0.20, 0.05, 'Salame artesanal com sabor marcante.', 'img/salame.png', 'PESO'),
+(5, 'Mortadela Defumada', 9.90, 0.20, 0.05, 'Mortadela tradicional com sabor defumado.', 'img/mortadela.png', 'PESO');
 
-INSERT INTO tbProduto 
-(cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+-- Produtos Churrasco (id_categoria = 6)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Hambúrguer Bovino Artesanal', 14.90, 0.15, 0.05, 'Hambúrguer artesanal feito com carne selecionada.', 'img/hamburguer.png', 'UNIDADE');
+(6, 'Espetinho Misto', 7.90, 0.20, 0.05, 'Espetinho com carnes variadas para churrasco.', 'img/espetinho_misto.png', 'UNIDADE'),
+(6, 'Medalhao de Frango com Bacon', 9.90, 0.20, 0.05, 'Medalhão de frango enrolado com bacon.', 'img/medalhao_frango_bacon.png', 'UNIDADE'),
+(6, 'Coracao de Frango Temperado', 21.90, 0.50, 0.10, 'Corações temperados prontos para grelha.', 'img/coracao_frango.png', 'PESO');
 
+-- Kits (id_categoria = 7)
+INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
+VALUES
+(7, 'Kit Churrasco', 65.90, 1.50, 0.10, 'Kit completo com carnes e linguiças para o churrasco.', 'img/kit_churrasco.png', 'PESO'),
+(7, 'Kit Semana', 59.90, 1.20, 0.10, 'Kit variado para refeições da semana.', 'img/kit_semana.png', 'PESO'),
+(7, 'Kit Família', 79.90, 2.00, 0.20, 'Kit completo para famílias grandes.', 'img/kit_familia.png', 'PESO');
 
-
-
+		 
 -- --------------------------------------------------------------------------------------------
 -- Tabela: EstoqueProduto
 CREATE TABLE tbEstoqueProduto (
@@ -166,38 +184,3 @@ CREATE TABLE tbPedidoProduto (
         ON DELETE SET NULL ON UPDATE CASCADE
 );
 
--- Produto 1: Kit Mistura
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(1, 1),  -- manta
-(1, 3),  -- panela
-(1, 4);  -- moida
-
--- Produto 2: Contra Filé
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(2, 2),  -- bife
-(2, 5),  -- peça
-(2, 7);  -- tirinha
-
--- Produto 3: Carne Moída Bovina
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(3, 4),  -- moida
-(3, 3),  -- panela
-(3, 1);  -- manta
-
--- Produto 4: Pão de Hambúrguer
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(4, 8),  -- medalhão
-(4, 9),  -- espetinho
-(4, 7);  -- tirinha
-
--- Produto 5: Fraldinha Bovina
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(5, 2),  -- bife
-(5, 5),  -- peça
-(5, 1);  -- manta
-
--- Produto 6: Hambúrguer Bovino Artesanal
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(6, 8),  -- medalhão
-(6, 7),  -- tirinha
-(6, 9);  -- espetinho
