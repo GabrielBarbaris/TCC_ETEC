@@ -127,34 +127,10 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
           $horarioRetirada = isset($p['horario_retirada']) && $p['horario_retirada'] !== null ? substr((string)$p['horario_retirada'], 0, 5) : '';
 
           // Mapeia status para badge e botão
-          $status = strtoupper((string)($p['status'] ?? ''));
-          switch ($status) {
-            case 'PENDENTE':
-              $statusClass = 'status-pendente';
-              $statusText = 'Pendente';
-              $btnDisabled = '';
-              $btnText = 'Finalizar';
-              break;
-            case 'PRONTO':
-              $statusClass = 'status-pronto';
-              $statusText = 'Pronto';
-              $btnDisabled = 'disabled';
-              $btnText = 'Pronto';
-              break;
-            case 'ENTREGUE':
-              $statusClass = 'status-pronto';
-              $statusText = 'Entregue';
-              $btnDisabled = 'disabled';
-              $btnText = 'Entregue';
-              break;
-            default:
-              $statusClass = 'status-pendente';
-              $statusText = ucfirst(strtolower($status ?: 'Pendente'));
-              $btnDisabled = $status === 'PENDENTE' ? '' : 'disabled';
-              $btnText = $status === 'PENDENTE' ? 'Finalizar' : $statusText;
-          }
+          $status = strtoupper((string)($p['status'] ?? 'PENDENTE'));
+          $statusText = ucfirst(strtolower($status));
         ?>
-        <div class="pedido <?php echo 'is-' . strtolower($status ?: 'PENDENTE'); ?>" data-id="<?php echo $idPedido; ?>" data-status="<?php echo htmlspecialchars($status ?: 'PENDENTE'); ?>">
+        <div class="pedido" data-id="<?php echo $idPedido; ?>" data-status="<?php echo htmlspecialchars($status); ?>">
           <header>
             <div class="client">
               <div class="name"><?php echo htmlspecialchars($tituloCliente); ?></div>
@@ -163,7 +139,7 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
               <?php endif; ?>
               <div class="meta">Pedido #<?php echo $idPedido; ?> • <?php echo htmlspecialchars($dataPedidoFmt); ?></div>
             </div>
-            <span class="status-badge <?php echo $statusClass; ?>"><?php echo $statusText; ?></span>
+            <span class="status-badge"><?php echo htmlspecialchars($statusText); ?></span>
           </header>
 
           <section class="item-list">
@@ -226,8 +202,20 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
           </footer>
 
           <div class="actions">
-            <button class="btn" onclick="finalizarPedido(this)" <?php echo $btnDisabled; ?>><?php echo htmlspecialchars($btnText); ?></button>
-            <button class="btn secondary" onclick="toggleMais(this)">saiba mais</button>
+            <?php if ($status === 'PENDENTE'): ?>
+              <button class="btn" onclick="finalizarPedido(this)">Finalizar</button>
+            <?php elseif ($status === 'PRONTO'): ?>
+              <button class="btn" onclick="entregarPedido(this)">Marcar como Entregue</button>
+              <button class="btn secondary" onclick="deixarPendente(this)">Reabrir Pedido</button>
+            <?php elseif ($status === 'ENTREGUE'): ?>
+              <button class="btn" disabled>Entregue</button>
+            <?php else: ?>
+              <button class="btn" disabled><?php echo htmlspecialchars($statusText); ?></button>
+            <?php endif; ?>
+
+            <?php if ($status !== 'ENTREGUE'): ?>
+              <button class="btn secondary" onclick="toggleMais(this)">Saiba mais</button>
+            <?php endif; ?>
           </div>
         </div>
       <?php endwhile; ?>

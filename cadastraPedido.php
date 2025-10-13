@@ -127,7 +127,7 @@
     <style>
       /* Estilos básicos do modal de cadastro (como no index) */
       #cadastroDialog::backdrop { background: rgba(0,0,0,.45); }
-      #cadastroDialog .container { background-color:#efefef; border-radius:16px; max-width:400px; width:100%; box-shadow:0 3px 5px rgba(0,0,0,.5); overflow:hidden; }
+     
       #cadastroDialog .header { background: linear-gradient(120deg,#600E0E,#440D0D); padding:20px; text-align:center; color:#fff; font-size:30px; }
       #cadastroDialog .form { padding:18px; }
       #cadastroDialog .form_content { margin-bottom:8px; padding-bottom:18px; position:relative; color:#807a75; }
@@ -143,7 +143,7 @@
     <!-- Modal Cadastro (igual ao index) -->
     <dialog id="cadastroDialog" style="position:fixed; inset:0; margin:auto; width:min(400px,67vw); border:none; padding:0; border-radius:16px; overflow:hidden;">
       <button id="closeCadastroDialog" title="Fechar" style="position:absolute; top:8px; right:12px; z-index:2; background:#800000; color:#fff; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;">&times;</button>
-      <div class="container">
+      <div class="container2">
         <section class="header"><h2>Nova Conta</h2></section>
         <form id="cadForm" class="form">
           <div class="form_content"><span id="cadMensagem">Menssagem</span></div>

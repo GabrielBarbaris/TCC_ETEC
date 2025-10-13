@@ -77,8 +77,11 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
           -->
           <?php
           require 'conexao.php';
-          $comandoSql = 'SELECT * FROM tbProduto';
-          $result = mysqli_query($conn, $comandoSql);
+          // Modificado para buscar apenas produtos da categoria 'Churrasco'
+          $comandoSql = "SELECT p.* FROM tbProduto p
+                         JOIN tbCategoria c ON p.cod_categoria = c.id_categoria
+                         WHERE c.nome_categoria = 'Churrasco' ORDER BY p.nome_produto";
+          $result = $conn->query($comandoSql);
 
           if (mysqli_num_rows($result) > 0) {
             while ($produto = mysqli_fetch_assoc($result)) {
@@ -129,44 +132,42 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               </div>
 
               <div class="kit_fernandes">
-                <div class="kit">
-                  <div class="overlap-4">
-                    <img class="img-4" src="img/KitChurrasco.png" alt="Kit Churrasco" />
-                    <div class="rectangle-2"></div>
-                    <div class="text-wrapper-6">kit 2</div>
-                    <p class="text-wrapper-7">
-                      O combo perfeito para um churrasco completo: carnes nobres, suculentas e prontas para brilhar na
-                      grelha.
-                    </p>
-                    <p class="r-KG"><span class="text-wrapper">R$43,99 </span> <span class="text-wrapper-8">KG</span>
-                    </p>
-                    <div class="boto">
-                      <div class="overlap-group-2">
-                        <div class="rectangle-3"></div>
-                        <div class="text-wrapper-9">ADICIONAR</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                <?php
+                // A conexão já foi incluída, não precisa de 'require' de novo.
+                $comandoSqlKits = "SELECT p.* FROM tbProduto p
+                                     JOIN tbCategoria c ON p.cod_categoria = c.id_categoria
+                                     WHERE c.nome_categoria = 'Kits' ORDER BY p.nome_produto";
+                $resultKits = $conn->query($comandoSqlKits);
 
-                <div class="kit">
-                  <div class="overlap-5">
-                    <img class="img-4" src="img/KitMistura.png" alt="Kit Mistura" />
-                    <div class="rectangle-4"></div>
-                    <div class="text-wrapper-12">kit 1</div>
-                    <p class="text-wrapper-13">
-                      Um kit especial com uma seleção de carnes fresquinhas e versáteis.
-                    </p>
-                    <p class="r-KG-2"><span class="text-wrapper">R$43,99 </span> <span class="text-wrapper-8">KG</span>
-                    </p>
-                    <div class="boto">
-                      <div class="overlap-group-2">
-                        <div class="rectangle-3"></div>
-                        <div class="text-wrapper-9">ADICIONAR</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+                if ($resultKits && mysqli_num_rows($resultKits) > 0) {
+                  while ($produto = mysqli_fetch_assoc($resultKits)) {
+                    $id = $produto['id_produto'];
+                    $nome = htmlspecialchars($produto['nome_produto'], ENT_QUOTES);
+                    $descricao = htmlspecialchars($produto['descricao'], ENT_QUOTES);
+                    $preco = number_format($produto['preco'], 2, ',', '.');
+                    $url = htmlspecialchars($produto['imagem_url'], ENT_QUOTES);
+
+                    // Reutilizando a mesma estrutura de card das outras seções
+                    echo "<div class='kit'>
+                              <div class='overlap-4'>
+                                <img class='img-4' src='$url' alt='$nome' />
+                                <div class='rectangle-2'></div>
+                                <div class='text-wrapper-6'>$nome</div>
+                                <p class='text-wrapper-7'>$descricao</p>
+                                <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
+                                <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
+                                  <div class='overlap-group-2'>
+                                    <div class='rectangle-3'></div>
+                                    <div class='text-wrapper-9'>ADICIONAR</div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>";
+                  }
+                } else {
+                  echo '<p style="color:white; font-size:18px;">Não existem kits cadastrados no momento.</p>';
+                }
+                ?>
               </div> <!-- .kit_fernandes -->
             </div>
           </div>
@@ -186,73 +187,47 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               <span class="text-wrapper-3">dia</span>
             </p>
           </div>
+          
+          <!--
+            LOOP PHP: busca produtos da categoria 'Bovinos' e renderiza os cards.
+            Esta seção substitui os produtos estáticos.
+          -->
+          <?php
+          // A conexão já foi incluída na seção anterior, não precisa de 'require' de novo.
+          $comandoSqlBovinos = "SELECT p.* FROM tbProduto p
+                               JOIN tbCategoria c ON p.cod_categoria = c.id_categoria
+                               WHERE c.nome_categoria = 'Bovinos' ORDER BY p.nome_produto";
+          $resultBovinos = $conn->query($comandoSqlBovinos);
 
-          <div class="bisteca">
-            <div class="overlap-4">
-              <img class="img-2" src="img/bisteca.png" alt="Bisteca" />
-              <div class="rectangle-2"></div>
-              <div class="text-wrapper-6">bisteca</div>
-              <p class="text-wrapper-7">
-                Carne suculenta e macia, ótima para churrasco.
-              </p>
-              <p class="r-KG"><span class="text-wrapper">R$43,99 </span> <span class="text-wrapper-8">KG</span></p>
-              <div class="boto">
-                <div class="overlap-group-2">
-                  <div class="rectangle-3"></div>
-                  <div class="text-wrapper-9">ADICIONAR</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          if ($resultBovinos && mysqli_num_rows($resultBovinos) > 0) {
+            while ($produto = mysqli_fetch_assoc($resultBovinos)) {
+              $id = $produto['id_produto'];
+              $nome = htmlspecialchars($produto['nome_produto'], ENT_QUOTES);
+              $descricao = htmlspecialchars($produto['descricao'], ENT_QUOTES);
+              $preco = number_format($produto['preco'], 2, ',', '.');
+              $url = htmlspecialchars($produto['imagem_url'], ENT_QUOTES);
 
-          <div class="peito-de-frango">
-            <div class="overlap-4">
-              <img class="img-2" src="img/peitoDeFrango.png" alt="Peito de frango" />
-              <div class="rectangle-2"></div>
-              <div class="text-wrapper-10">peito de frango</div>
-              <p class="text-wrapper-7">Sabor leve, ótimo para grelhar.</p>
-              <p class="r-KG"><span class="text-wrapper">R$43,99 </span> <span class="text-wrapper-8">KG</span></p>
-              <div class="boto">
-                <div class="overlap-group-2">
-                  <div class="rectangle-3"></div>
-                  <div class="text-wrapper-9">ADICIONAR</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="hamburguer">
-            <div class="overlap-4">
-              <img class="img-3" src="img/image.png" alt="" />
-              <img class="img-4" src="img/hamburguer.png" alt="Hambúrguer" />
-              <div class="rectangle-2"></div>
-              <div class="text-wrapper-11">hamburguer</div>
-              <p class="text-wrapper-7">Blend artesanal, pronto para grelhar.</p>
-              <p class="r-KG"><span class="text-wrapper">R$43,99 </span> <span class="text-wrapper-8">KG</span></p>
-              <div class="boto">
-                <div class="overlap-group-2">
-                  <div class="rectangle-3"></div>
-                  <div class="text-wrapper-9">ADICIONAR</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="carne-moida">
-            <div class="overlap-4">
-              <img class="img-3" src="img/carneMoida.png" alt="Carne moída" />
-              <div class="rectangle-2"></div>
-              <div class="text-wrapper-6">acem moido</div>
-              <p class="text-wrapper-7">Versátil para receitas do dia a dia.</p>
-              <p class="r-KG"><span class="text-wrapper">R$43,99 </span> <span class="text-wrapper-8">KG</span></p>
-              <div class="boto">
-                <div class="overlap-group-2">
-                  <div class="rectangle-3"></div>
-                  <div class="text-wrapper-9">ADICIONAR</div>
-                </div>
-              </div>
-            </div>
-          </div>
+              // Reutilizando a mesma estrutura de card da seção de churrasco
+              echo "<div class='picanha'>
+                        <div class='overlap-4'>
+                          <img class='img-3' src='$url' alt='$nome' />
+                          <div class='rectangle-5'></div>
+                          <div class='text-wrapper-17'>$nome</div>
+                          <p class='text-wrapper-7'>$descricao</p>
+                          <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
+                          <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
+                            <div class='overlap-group-2'>
+                              <div class='rectangle-3'></div>
+                              <div class='text-wrapper-9'>ADICIONAR</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>";
+            }
+          } else {
+            echo '<p>Não existem produtos bovinos cadastrados!</p>';
+          }
+          ?>
         </section>
       </div> <!-- .corpo_1 -->
 

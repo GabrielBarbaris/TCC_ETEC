@@ -34,11 +34,16 @@
   margin: 0 auto;
 }
 
-.corpo {
+.tela-inicial .corpo{
   margin: auto;
-  display: flex;
+
   justify-content: center;
   flex-direction: row;
+  display: flex;
+  gap: 24px;
+}
+.tela-inicial .corpo_1{
+  width: 100%;
 }
 
 
@@ -154,7 +159,6 @@
   font-weight: 400;
   color: transparent;
   font-size: 48px;
-  text-align: center;
   letter-spacing: 0;
   line-height: normal;
   white-space: nowrap;
@@ -2058,18 +2062,19 @@
   left: 2px;
 }
 
-.churrasco_qualidade {
+.churrasco_qualidade,
+.dia_dia {
   width: 100%;
   max-width: 1400px;
   margin: auto;
   display: flex;
   justify-content: flex-start;
   align-items: stretch;
-  margin-block: 50px;
+  margin-top: 50px;
+  margin-bottom: 50px;
   gap: 20px;
   flex-wrap: nowrap;
   overflow-x: auto;
-  overflow-y: hidden;
   padding: 10px 8px 14px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
@@ -2080,18 +2085,21 @@
   flex: 0 0 331px;
 }
 
+/* Cards dentro da seção "dia a dia" */
+.dia_dia>.picanha {
+  flex: 0 0 331px;
+}
+
 /* Barra de rolagem horizontal */
-.churrasco_qualidade::-webkit-scrollbar {
+.churrasco_qualidade::-webkit-scrollbar,
+.dia_dia::-webkit-scrollbar {
   height: 8px;
 }
 
-.churrasco_qualidade::-webkit-scrollbar-thumb {
+.churrasco_qualidade::-webkit-scrollbar-thumb,
+.dia_dia::-webkit-scrollbar-thumb {
   background: #bdbdbd;
   border-radius: 10px;
-}
-
-.churrasco_qualidade::-webkit-scrollbar-track {
-  background: transparent;
 }
 
 .kit_fernandes {
@@ -2100,15 +2108,6 @@
   display: flex;
   justify-content: center;
   margin-top: 155px;
-}
-
-.dia_dia {
-  width: 1331px;
-  height: 550px;
-  margin: auto;
-  display: flex;
-  justify-content: center;
-  margin-block: 50px;
 }
 
 .tela-inicial .text-wrapper-63 {

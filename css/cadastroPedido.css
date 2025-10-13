@@ -242,6 +242,9 @@ section.pedido {
   justify-content: space-between;
   margin-bottom: 8px;
 }
+.header{
+  font-family:  'Shaimus Clean-Regular';
+}
 
 .painel-itens__header h4 {
   font-family: Baloo, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, "Helvetica Neue", Arial, "Noto Sans";
