@@ -87,7 +87,7 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="css/cadastroPedido.css" />
     <link rel="stylesheet" href="css/pedidosPendentes.css" />
-    <title>peditos realizados</title>
+    <title>Pedidos realizados</title>
     
 </head>
 <body>

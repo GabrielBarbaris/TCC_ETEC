@@ -498,7 +498,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       <div id="confRetiradaWrap" style="display:block;">
         <div style="display:flex; flex-direction:column; max-width:200px;">
           <label for="confHorario">Horário desejado</label>
-          <input id="confHorario" type="time" required>
+          <input id="confHorario" type="time" required min="08:00" max="19:00">
         </div>
       </div>
 
@@ -1649,6 +1649,23 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             var horario = (horarioEl && horarioEl.value) ? horarioEl.value : '';
             if (!horario) {
               alert('Informe o horário desejado.');
+              try { horarioEl && horarioEl.focus(); } catch (e) {}
+              return;
+            }
+            // Validação de horário permitido (08:00 às 19:00)
+            var parts = String(horario).split(':');
+            var h = parseInt(parts[0], 10);
+            var m = parseInt(parts[1] || '0', 10);
+            if (isNaN(h) || isNaN(m)) {
+              alert('Horário inválido. Use um horário entre 08:00 e 19:00.');
+              try { horarioEl && horarioEl.focus(); } catch (e) {}
+              return;
+            }
+            var total = h * 60 + m;
+            var minHHMM = 8 * 60;   // 08:00
+            var maxHHMM = 19 * 60;  // 19:00
+            if (total < minHHMM || total > maxHHMM) {
+              alert('Horário permitido apenas entre 08:00 e 19:00.');
               try { horarioEl && horarioEl.focus(); } catch (e) {}
               return;
             }

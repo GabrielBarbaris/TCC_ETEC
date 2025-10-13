@@ -244,9 +244,7 @@ function fmtPreco($v): string { return 'R$ ' . number_format((float)$v, 2, ',', 
             <input type="text" id="searchInput" placeholder="pesquisar">
           </div>
 
-          <button id="btnOpenLogin" title="Entrar" type="button" style="background:none; border:none; cursor:pointer;">
-            <img class="user-user" src="img/login.png" alt="login" />
-          </button>
+          
 
           <button title="Ver sacola" type="button" onclick="window.location.href='meusPedidos.php'">
             <img class="basket" src="img/pedido.png" alt="pedido" />
