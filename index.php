@@ -96,7 +96,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                           <img class='img-3' src='$url' alt='$nome' />
                           <div class='rectangle-5'></div>
                           <div class='text-wrapper-17'>$nome</div>
-                          <p class='text-wrapper-7'>$descricao</p>
+                          
                           <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
                           <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
                             <div class='overlap-group-2'>
@@ -153,7 +153,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                                 <img class='img-4' src='$url' alt='$nome' />
                                 <div class='rectangle-2'></div>
                                 <div class='text-wrapper-6'>$nome</div>
-                                <p class='text-wrapper-7'>$descricao</p>
+                                
                                 <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
                                 <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
                                   <div class='overlap-group-2'>
@@ -213,7 +213,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                           <img class='img-3' src='$url' alt='$nome' />
                           <div class='rectangle-5'></div>
                           <div class='text-wrapper-17'>$nome</div>
-                          <p class='text-wrapper-7'>$descricao</p>
+                         
                           <p class='r-KG'><span class='text-wrapper'>R$$preco </span> <span class='text-wrapper-8'>KG</span></p>
                           <div class='boto btn-add-prod' data-prod-id='$id' tabindex='0' role='button'>
                             <div class='overlap-group-2'>
@@ -392,7 +392,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             <img class="user-user" src="img/login.png" alt="login" />
           </button>
 
-          <button title="Ver sacola">
+          <button title="Ver sacola" type="button" onclick="window.location.href='meusPedidos.php'">
             <img class="basket" src="img/pedido.png" alt="pedido" />
           </button>
         </div>
@@ -1268,13 +1268,7 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       const ufEl = document.getElementById('ufInput');
       const compEl = document.getElementById('compInput');
 
-      // Reinicia o pedido ao recarregar a página: limpa carrinho e endereço salvo
-      try {
-        localStorage.removeItem('carrinho');
-        localStorage.removeItem('pedidoEntrega');
-      } catch (e) {}
-      if (resumo) resumo.textContent = '';
-
+      
       function digitsOnly(s) {
         return (s || '').replace(/\D/g, '');
       }
@@ -2147,6 +2141,8 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
       btnLogout && btnLogout.addEventListener('click', function() {
         try {
           localStorage.removeItem('clienteId');
+          localStorage.removeItem('carrinho');
+          localStorage.removeItem('pedidoEntrega');
         } catch (e) {}
         window.location.href = 'index.php?logout=1';
       });

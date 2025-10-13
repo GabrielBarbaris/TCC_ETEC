@@ -353,14 +353,15 @@
 
 .tela-inicial .text-wrapper-7 {
   position: absolute;
-  width: 283px;
-  height: 67px;
-  top: 303px;
-  left: 20px;
-  font-family: "Calibri-Regular", Helvetica;
+  width: 178px;
+  height: 50px;
+  top: 265px;
+  left: 75px;
+  font-family: "Shaimus Clean-Regular", Helvetica;
   font-weight: 400;
-  color: #565656;
-  font-size: 16px;
+  color: #262626;
+  font-size: 27px;
+  text-align: center;
   letter-spacing: 0;
   line-height: normal;
 }
@@ -667,7 +668,7 @@
   font-family: "Shaimus Clean-Regular", Helvetica;
   font-weight: 400;
   color: #262626;
-  font-size: 36px;
+  font-size: 31px;
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
