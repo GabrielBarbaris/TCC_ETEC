@@ -413,6 +413,7 @@
 
 .tela-inicial .text-wrapper-9 {
   position: absolute;
+  cursor: pointer;
   width: 131px;
   height: 35px;
   left: 22px;
@@ -933,6 +934,7 @@
 
 .tela-inicial .text-wrapper-29 {
   position: absolute;
+  cursor: pointer;
   width: 161px;
   height: 26px;
   top: 67px;
@@ -1361,7 +1363,7 @@
   font-family: "Shaimus Clean-Regular", Helvetica;
   font-weight: 400;
   color: #343333;
-  font-size: 24px;
+  font-size: 18px;
   text-align: center;
   letter-spacing: 0;
   line-height: normal;
@@ -1372,7 +1374,7 @@
   position: absolute;
   width: 114px;
   height: 10px;
-  top: 14px;
+  top: 10px;
   left: 224px;
   font-family: "Shaimus Clean-Regular", Helvetica;
   font-weight: 400;
@@ -1447,13 +1449,13 @@
   position: absolute;
   width: 139px;
   height: 18px;
-  top: 83px;
-  left: 70px;
+  top: 86px;
+  left: 94px;
   font-family: "Cabin-Regular", Helvetica;
   font-weight: 400;
   color: #1e1c1c80;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
   letter-spacing: 0;
   line-height: normal;
 }
@@ -1462,13 +1464,13 @@
   position: absolute;
   width: 56px;
   height: 14px;
-  top: 61px;
-  left: 34px;
+  top: 62px;
+  left: 46px;
   font-family: "Cabin-Regular", Helvetica;
   font-weight: 400;
   color: #1e1c1c80;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
   letter-spacing: 0;
   line-height: normal;
   white-space: nowrap;
@@ -1478,13 +1480,13 @@
   position: absolute;
   width: 56px;
   height: 14px;
-  top: 38px;
-  left: 35px;
+  top: 40px;
+  left:52px;
   font-family: "Cabin-Regular", Helvetica;
   font-weight: 400;
   color: #1e1c1c80;
   font-size: 12px;
-  text-align: center;
+  text-align: left;
   letter-spacing: 0;
   line-height: normal;
   white-space: nowrap;

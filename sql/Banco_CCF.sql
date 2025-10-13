@@ -70,54 +70,76 @@ CREATE TABLE tbproduto (
         ON DELETE CASCADE ON UPDATE CASCADE
 );
 
+-- =======================
 -- Produtos Bovinos (id_categoria = 1)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(1, 'Picanha Bovina', 89.90, 0.50, 0.10, 'Corte nobre de picanha, ideal para churrascos.', 'img/picanha.png', 'PESO'),
-(1, 'Coxao Mole', 49.90, 0.50, 0.10, 'Carne macia, ótima para bifes e assados.', 'img/coxaomole.png', 'PESO'),
-(1, 'Patinho Moido', 38.90, 0.50, 0.10, 'Carne moída de patinho, perfeita para receitas do dia a dia.', 'img/patinhomoido.png', 'PESO');
+(1, 'Picanha Bovina', 89.90, 0.50, 0.10, 'Corte nobre para churrasco e grelha.', 'img/uploads/picanha.WEBP', 'PESO'),
+(1, 'Coxao Mole', 49.90, 0.50, 0.10, 'Carne ideal para bifes e assados.', 'img/uploads/coxaoMole.jpg', 'PESO'),
+(1, 'Patinho Moido', 38.90, 0.50, 0.10, 'Carne moida leve e saborosa.', 'img/uploads/patinho.WEBP', 'PESO'),
+(1, 'Fraldinha', 59.90, 0.60, 0.10, 'Corte suculento ideal para churrascos.', 'img/uploads/fraldinha.WEBP', 'PESO');
 
+-- =======================
 -- Produtos Aves (id_categoria = 2)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(2, 'Coxa e Sobrecoxa de Frango', 18.90, 1.00, 0.20, 'Corte suculento, ideal para grelhar ou assar.', 'img/coxa_sobrecoxa.png', 'PESO'),
-(2, 'Peito de Frango', 22.90, 0.50, 0.10, 'Corte magro e versátil, ideal para grelhados e filés.', 'img/peito_frango.png', 'PESO'),
-(2, 'Asa Temperada', 19.90, 0.50, 0.10, 'Asinhas de frango já temperadas, prontas para o churrasco.', 'img/asa_temperada.png', 'PESO');
+(2, 'Peito de Frango', 22.90, 0.50, 0.10, 'Peito magro e versatil.', 'img/uploads/peito.WEBP', 'PESO'),
+(2, 'Coxa e Sobrecoxa', 18.90, 1.00, 0.20, 'Corte ideal para assar.', 'img/uploads/coxaSobrecoxa.WEBP', 'PESO'),
+(2, 'Asa Temperada', 19.90, 0.50, 0.10, 'Asinhas prontas para o churrasco.', 'img/uploads/asa.WEBP', 'PESO'),
+(2, 'Frango Inteiro', 24.90, 1.50, 0.20, 'Frango fresco para preparo completo.', 'img/uploads/frango.WEBP', 'PESO');
 
--- Produtos Suínos (id_categoria = 3)
+-- =======================
+-- Produtos Suinos (id_categoria = 3)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(3, 'Lombo Suino', 32.90, 0.50, 0.10, 'Carne suína magra, ideal para assados e recheios.', 'img/lombo_suino.png', 'PESO'),
-(3, 'Costelinha Suina', 29.90, 0.50, 0.10, 'Costelinha suína saborosa, ótima para churrascos.', 'img/costelinha_suina.png', 'PESO'),
-(3, 'Pernil em Cubos', 27.90, 0.50, 0.10, 'Cubos de pernil suíno, ideais para refogados e espetinhos.', 'img/pernil_cubos.png', 'PESO');
+(3, 'Lombo Suino', 32.90, 0.50, 0.10, 'Corte magro e macio.', 'img/uploads/lombo.WEBP', 'PESO'),
+(3, 'Costelinha Suina', 29.90, 0.50, 0.10, 'Perfeita para churrasco.', 'img/uploads/costelinha.WEBP', 'PESO'),
+(3, 'Pernil em Cubos', 27.90, 0.50, 0.10, 'Cubos ideais para refogados.', 'img/uploads/pernil.WEBP', 'PESO'),
+(3, 'Bisteca Suina', 31.90, 0.50, 0.10, 'Tradicional bisteca para grelhar.', 'img/uploads/bisteca.WEBP', 'PESO');
 
--- Produtos Linguiças (id_categoria = 4)
+-- =======================
+-- Produtos Linguicas (id_categoria = 4)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(4, 'Linguiça Toscana', 24.90, 0.50, 0.10, 'Linguiça toscana artesanal, ideal para churrascos.', 'img/linguica_toscana.png', 'PESO'),
-(4, 'Linguiça de Frango', 22.90, 0.50, 0.10, 'Linguiça leve e saborosa feita com carne de frango.', 'img/linguica_frango.png', 'PESO'),
-(4, 'Linguiça Apimentada', 25.90, 0.50, 0.10, 'Linguiça artesanal com toque de pimenta.', 'img/linguica_apimentada.png', 'PESO');
+(4, 'Linguica Toscana', 24.90, 0.50, 0.10, 'Tradicional linguica artesanal.', 'img/uploads/toscana.WEBP', 'PESO'),
+(4, 'Linguica de Frango', 22.90, 0.50, 0.10, 'Mais leve e saborosa.', 'img/uploads/lingFrango.WEBP', 'PESO'),
+(4, 'Linguica Apimentada', 25.90, 0.50, 0.10, 'Com toque picante.', 'img/uploads/apimentada.WEBP', 'PESO'),
+(4, 'Linguica Defumada', 26.90, 0.50, 0.10, 'Sabor marcante defumado.', 'img/uploads/lingDefumada.WEBP', 'PESO');
 
+-- =======================
 -- Produtos Embutidos (id_categoria = 5)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(5, 'Presunto Fatiado', 8.90, 0.10, 0.05, 'Presunto de qualidade, ideal para sanduíches e lanches.', 'img/presunto.png', 'PESO'),
-(5, 'Salame Italiano', 15.90, 0.20, 0.05, 'Salame artesanal com sabor marcante.', 'img/salame.png', 'PESO'),
-(5, 'Mortadela Defumada', 9.90, 0.20, 0.05, 'Mortadela tradicional com sabor defumado.', 'img/mortadela.png', 'PESO');
+(5, 'Presunto Fatiado', 8.90, 0.10, 0.05, 'Ideal para lanches.', 'img/uploads/presunto.WEBP', 'PESO'),
+(5, 'Salame Italiano', 15.90, 0.20, 0.05, 'Sabor intenso artesanal.', 'img/uploads/salame.jpeg', 'PESO'),
+(5, 'Mortadela Defumada', 9.90, 0.20, 0.05, 'Tradicional mortadela defumada.', 'img/uploads/mortadela.jpeg', 'PESO'),
+(5, 'Peito de Peru', 12.90, 0.15, 0.05, 'Fatiado e leve.', 'img/uploads/peru.jpg', 'PESO');
 
+-- =======================
 -- Produtos Churrasco (id_categoria = 6)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(6, 'Espetinho Misto', 7.90, 0.20, 0.05, 'Espetinho com carnes variadas para churrasco.', 'img/espetinho_misto.png', 'UNIDADE'),
-(6, 'Medalhao de Frango com Bacon', 9.90, 0.20, 0.05, 'Medalhão de frango enrolado com bacon.', 'img/medalhao_frango_bacon.png', 'UNIDADE'),
-(6, 'Coracao de Frango Temperado', 21.90, 0.50, 0.10, 'Corações temperados prontos para grelha.', 'img/coracao_frango.png', 'PESO');
+(6, 'Espetinho Misto', 7.90, 0.20, 0.05, 'Com carnes variadas.', 'img/uploads/espetinho.WEBP', 'UNIDADE'),
+(6, 'Medalhao de Frango com Bacon', 9.90, 0.20, 0.05, 'Frango enrolado com bacon.', 'img/uploads/medalhao.WEBP', 'UNIDADE'),
+(6, 'Coracao de Frango Temperado', 21.90, 0.50, 0.10, 'Pronto para grelha.', 'img/uploads/coracao.WEBP', 'PESO'),
+(6, 'Espetinho de Linguica', 8.50, 0.20, 0.05, 'Espetinho artesanal de linguica.', 'img/uploads/lingEspetinho.WEBP', 'UNIDADE');
 
+-- =======================
 -- Kits (id_categoria = 7)
+-- =======================
 INSERT INTO tbproduto (cod_categoria, nome_produto, preco, peso_minimo, intervalo_peso, descricao, imagem_url, tipo_quantidade)
 VALUES
-(7, 'Kit Churrasco', 65.90, 1.50, 0.10, 'Kit completo com carnes e linguiças para o churrasco.', 'img/kit_churrasco.png', 'PESO'),
-(7, 'Kit Semana', 59.90, 1.20, 0.10, 'Kit variado para refeições da semana.', 'img/kit_semana.png', 'PESO'),
-(7, 'Kit Família', 79.90, 2.00, 0.20, 'Kit completo para famílias grandes.', 'img/kit_familia.png', 'PESO');
+(7, 'Kit Churrasco', 65.90, 1.50, 0.10, 'Kit completo para churrasco.', 'img/uploads/KitChurrasco.png', 'PESO'),
+(7, 'Kit Semana', 59.90, 1.20, 0.10, 'Kit variado para o dia a dia.', 'img/uploads/KitChurrasco.png', 'PESO'),
+(7, 'Kit Familia', 79.90, 2.00, 0.20, 'Ideal para familias grandes.', 'img/uploads/KitChurrasco.png', 'PESO'),
+(7, 'Kit Economico', 49.90, 1.00, 0.10, 'Kit basico com cortes variados.', 'img/uploads/KitChurrasco.png', 'PESO');
+
 
 		 
 -- --------------------------------------------------------------------------------------------
@@ -143,6 +165,157 @@ CREATE TABLE tbQuantidadeCorte(
    FOREIGN KEY (cod_corte) REFERENCES tbcorte(id_corte)
         ON DELETE CASCADE ON UPDATE CASCADE
 );
+
+-- ===========================================
+-- CATEGORIA: BOVINOS (id_categoria = 1)
+-- ===========================================
+-- 1: Picanha Bovina
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(1, 5), -- peça
+(1, 1), -- manta
+(1, 2); -- bife
+
+-- 2: Coxão Mole
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(2, 2), -- bife
+(2, 3), -- panela
+(2, 5); -- peça
+
+-- 3: Patinho Moído
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(3, 4), -- moída
+(3, 6), -- strogonoff
+(3, 2); -- bife
+
+-- 4: Fraldinha
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(4, 1), -- manta
+(4, 5), -- peça
+(4, 7); -- tirinha
+
+
+-- ===========================================
+-- CATEGORIA: AVES (id_categoria = 2)
+-- ===========================================
+-- 5: Peito de Frango
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(5, 2), -- bife
+(5, 6), -- strogonoff
+(5, 7); -- tirinha
+
+-- 6: Coxa e Sobrecoxa
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(6, 5), -- peça
+(6, 3); -- panela
+
+-- 7: Asa Temperada
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(7, 9); -- espetinho
+
+-- 8: Frango Inteiro
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(8, 5); -- peça
+
+
+-- ===========================================
+-- CATEGORIA: SUÍNOS (id_categoria = 3)
+-- ===========================================
+-- 9: Lombo Suíno
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(9, 5), -- peça
+(9, 2), -- bife
+(9, 7); -- tirinha
+
+-- 10: Costelinha Suína
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(10, 1), -- manta
+(10, 5); -- peça
+
+-- 11: Pernil em Cubos
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(11, 3), -- panela
+(11, 7); -- tirinha
+
+-- 12: Bisteca Suína
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(12, 2), -- bife
+(12, 5); -- peça
+
+
+-- ===========================================
+-- CATEGORIA: LINGUIÇAS (id_categoria = 4)
+-- ===========================================
+-- 13: Linguiça Toscana
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(13, 9); -- espetinho
+
+-- 14: Linguiça de Frango
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(14, 9); -- espetinho
+
+-- 15: Linguiça Apimentada
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(15, 9); -- espetinho
+
+-- 16: Linguiça Defumada
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(16, 9); -- espetinho
+
+
+-- ===========================================
+-- CATEGORIA: EMBUTIDOS (id_categoria = 5)
+-- ===========================================
+-- Não fazem cortes — são industrializados.
+
+
+-- ===========================================
+-- CATEGORIA: CHURRASCO (id_categoria = 6)
+-- ===========================================
+-- 21: Espetinho Misto
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(21, 9); -- espetinho
+
+-- 22: Medalhão de Frango com Bacon
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(22, 8); -- medalhão
+
+-- 23: Coração de Frango Temperado
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(23, 5); -- peça
+
+-- 24: Espetinho de Linguiça
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(24, 9); -- espetinho
+
+
+-- ===========================================
+-- CATEGORIA: KITS (id_categoria = 7)
+-- ===========================================
+-- Kits são compostos por vários cortes, então associamos múltiplos tipos
+-- 25: Kit Churrasco
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(25, 1), -- manta
+(25, 5), -- peça
+(25, 9); -- espetinho
+
+-- 26: Kit Semana
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(26, 2), -- bife
+(26, 3), -- panela
+(26, 4); -- moída
+
+-- 27: Kit Família
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(27, 1), -- manta
+(27, 2), -- bife
+(27, 5); -- peça
+
+-- 28: Kit Econômico
+INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
+(28, 3), -- panela
+(28, 4), -- moída
+(28, 5); -- peça
+
 -- --------------------------------------------------------------------------------------------
 
 
