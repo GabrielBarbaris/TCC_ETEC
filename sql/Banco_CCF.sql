@@ -272,20 +272,13 @@ INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
 -- CATEGORIA: CHURRASCO (id_categoria = 6)
 -- ===========================================
 -- 21: Espetinho Misto
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(21, 9); -- espetinho
 
--- 22: Medalhão de Frango com Bacon
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(22, 8); -- medalhão
 
 -- 23: Coração de Frango Temperado
 INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
 (23, 5); -- peça
 
--- 24: Espetinho de Linguiça
-INSERT INTO tbQuantidadeCorte (cod_produto, cod_corte) VALUES
-(24, 9); -- espetinho
+
 
 
 -- ===========================================
