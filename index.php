@@ -1761,25 +1761,37 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
 
             var params = new URLSearchParams();
             params.set('cliente_id', String(clienteId));
-            params.set('recebimento', tipo.toLowerCase()); // Correção: Enviar em minúsculas
+            params.set('recebimento', tipo); // O backend espera 'ENTREGA' ou 'RETIRADA' em maiúsculas
             params.set('horario', horario);
             params.set('itens', JSON.stringify(payloadItens));
 
+            // Para pedidos do tipo 'ENTREGA', monta e envia os campos de endereço separados.
             if (tipo === 'ENTREGA') {
-              // Correção: Enviar os campos de endereço separados, como o backend espera.
               var rua = (ruaEl.value || '').trim();
               var bairro = (bairroEl.value || '').trim();
               var cidade = (cidadeEl.value || '').trim();
               var uf = (ufEl.value || '').trim().toUpperCase();
               var numTxt = (numEl.value || '').trim();
+              var cepTxt = digitsOnly(cepEl.value || '');
+              var compTxt = (compEl.value || '').trim();
 
-              if (!rua || !numTxt || !bairro || !cidade || !uf) { alert('Preencha todos os campos de endereço para entrega.'); return; }
+              // Validação dos campos de endereço
+              if (!rua || !numTxt || !bairro || !cidade || !uf) { 
+                alert('Preencha todos os campos de endereço para entrega (Endereço, Número, Bairro, Cidade e UF).'); 
+                return; 
+              }
 
-              params.set('endereco', rua + ', ' + bairro + ', ' + cidade + ' - ' + uf);
-              params.set('cep', digitsOnly(cepEl.value || ''));
+              // O backend espera um campo 'endereco' com a rua, bairro, cidade e UF.
+              // Os outros campos são enviados separadamente.
+              params.set('endereco', rua + ', ' + bairro + ', ' + cidade + ' - ' + uf); 
+              params.set('cep', cepTxt);
               params.set('numero', numTxt);
-              params.set('complemento', (compEl.value || '').trim());
+              params.set('complemento', compTxt);
             }
+            
+            // Adicionado para depuração: mostra os dados que serão enviados
+            console.log('Enviando dados para cadastraPedidoBD.php:');
+            for (var pair of params.entries()) { console.log(pair[0]+ ': '+ pair[1]); }
 
             fetch('cadastraPedidoBD.php', {
                 method: 'POST',
@@ -1793,6 +1805,9 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               })
               .then(function(txt) {
                 txt = (txt || '').trim();
+                // Adicionado para depuração: mostra a resposta do servidor
+                console.log('Resposta do servidor (cadastraPedidoBD.php):', txt);
+
                 if (txt === 'ok') {
                   alert('Pedido enviado com sucesso!');
                   try {
@@ -1808,11 +1823,14 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
                   // Recarrega para garantir UI limpa (sacola e totais resetados)
                   location.reload();
                 } else {
-                  alert('Falha ao enviar o pedido.');
+                  // Mensagem de erro mais detalhada
+                  alert('Falha ao enviar o pedido. Verifique os dados e tente novamente. Resposta do servidor: ' + txt);
                 }
               })
-              .catch(function() {
-                alert('Falha de comunicação com o servidor.');
+              .catch(function(error) {
+                // Adicionado para depuração: mostra erros de rede/comunicação
+                console.error('Erro na requisição fetch:', error);
+                alert('Falha de comunicação com o servidor. Verifique o console para mais detalhes.');
               });
           });
           saveBtn._bound = true;
