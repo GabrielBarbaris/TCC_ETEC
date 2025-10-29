@@ -2128,10 +2128,17 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
             },
             body: data.toString()
           })
-          .then(r => r.ok ? r.json() : null)
+          .then(r => {
+            // Se a resposta não for OK, ainda tentamos ler o JSON para obter a mensagem de erro
+            if (!r.ok) {
+              return r.json().then(err => Promise.reject(err));
+            }
+            return r.json();
+          })
           .then(resp => {
             if (resp && resp.ok) {
               // atualiza placeholders e recarrega para refletir alterações
+              // ... (código de sucesso omitido para brevidade)
               try {
                 if (nomeEl) {
                   nomeEl.placeholder = nome;
@@ -2145,14 +2152,19 @@ $clienteLogado = isset($_SESSION['id_cliente']) || isset($_SESSION['cliente_id']
               } catch (e) {}
               if (typeof perfilDlg?.close === 'function') try {
                 perfilDlg.close();
-              } catch (e) {}
+              } catch (e) { }
               location.reload();
               return;
-            } else {
-              alert('Falha ao salvar alterações.');
             }
           })
-          .catch(() => alert('Erro de comunicação com o servidor.'));
+          .catch(err => {
+            if (err && err.erro === 'telefone_existente') {
+              alert(err.message || 'Este telefone já está cadastrado em outra conta.');
+              setErr(telefoneEl, true);
+            } else {
+              alert('Erro de comunicação com o servidor ou falha ao salvar.');
+            }
+          });
       });
 
       btnLogout && btnLogout.addEventListener('click', function() {

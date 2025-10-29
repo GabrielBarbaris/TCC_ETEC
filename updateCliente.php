@@ -22,6 +22,21 @@ try {
     http_response_code(400); echo json_encode(['erro'=>'Campos obrigatórios ausentes']); exit;
   }
 
+  // Verifica se o telefone já está em uso por OUTRO usuário
+  if ($stmt = $conn->prepare('SELECT id_usuario FROM tbUsuario WHERE telefone = ? AND id_usuario != ? LIMIT 1')) {
+    $stmt->bind_param('si', $telefone, $uid);
+    if ($stmt->execute()) {
+      $stmt->store_result();
+      if ($stmt->num_rows > 0) {
+        $stmt->close();
+        http_response_code(409); // 409 Conflict: indica um conflito com o estado atual do recurso.
+        echo json_encode(['erro' => 'telefone_existente', 'message' => 'Este telefone já está cadastrado em outra conta.']);
+        exit;
+      }
+    }
+    $stmt->close();
+  }
+
   // Atualiza
   if (!$stmt = $conn->prepare('UPDATE tbUsuario SET nome = ?, sobrenome = ?, telefone = ? WHERE id_usuario = ? LIMIT 1')) {
     http_response_code(500); echo json_encode(['erro'=>'Falha ao preparar']); exit;

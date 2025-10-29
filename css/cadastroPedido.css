@@ -26,15 +26,7 @@ body {
   flex-direction: column;
 }
 
-.container {
-  width: 100%;
-  max-width: 1200px;
-  padding: 96px 16px 40px;
-  margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 320px;
-  gap: 16px;
-}
+
 
 .tela1 {
   display: flex;
