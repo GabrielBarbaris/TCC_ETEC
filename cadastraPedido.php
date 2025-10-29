@@ -17,7 +17,13 @@
     include "menuAdm.php";
     ?>
 
-    <div class="container">
+    <div class="container" style ="width: 100%;
+  max-width: 1200px;
+  padding: 96px 16px 40px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 16px;">
         <div class="tela1">
             <h3 class="titulo">Cadastro de Pedido</h3>
 
